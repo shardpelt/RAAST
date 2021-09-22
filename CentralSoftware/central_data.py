@@ -1,23 +1,23 @@
 from wind import *
 from gyroscope import *
-from coordinates import *
+from coordinates import Coordinates
 
 # CentralData
 class CentralData:
 
 	def __init__(self):
-		self.sonarDetection = False,
 		self.gyroscope = Gyroscope(),
 		self.wind = Wind(),
 		self.coordinates = Coordinates(),
-		self.rudderPos = None,
-		self.sailPos = None,
+		self.rudderAngle = None,
+		self.sailAngle = None,
 		self.compass = None,
-		self.powerAis = False
+		self.movementOnSonar = False,
+		self.powerStateAis = "Off"
 
 
-	def set_sonarDetection(self, value):
-		pass
+	def set_sonarMovement(self, movement: bool):
+		self.movementOnSonar = movement
 		# TODO: - Krijgen we een boolean of zit hier metadata zoals afstand en hoek bij?
 		#		- Krijgen we data bij detectie of constant?
 
@@ -34,24 +34,22 @@ class CentralData:
 		# TODO: - Vanuit welke hoek krijgen we de direction?
 
 
-	# value -> degrees
-	def set_rudderPos(self, value):
-		self.rudderPos = value
+	def set_rudderAngle(self, angle: int):
+		self.rudderAngle = angle % 360
 
 
-	# value -> degrees
-	def set_sailPos(self, value):
-		self.rudderPos = value
+	def set_sailAngle(self, angle: int):
+		self.rudderAngle = angle % 360
 
 
-	def set_compass(self, value):
-		self.compass = value
+	def set_compassAngle(self, angle: int):
+		self.compass = angle % 360
 
 
-	def set_gps(self):
-		pass
-		# TODO: - Welke format krijgen we GPS binnen?
+	def set_gpsCoordinates(self, latitude: float, longitude: float):
+		self.coordinates.latitude = latitude
+		self.coordinates.longitude = longitude
 
 
-	def set_ais(self, value):
-		self.powerAis = value
+	def set_powerStateAis(self, powerState: str):
+		self.powerStateAis = powerState
