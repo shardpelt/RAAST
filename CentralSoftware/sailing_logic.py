@@ -1,5 +1,8 @@
 from helper import Helper
 
+# Logic from framework other group
+# //TODO: Check which parts are handy for us
+
 class SailingLogic:
     def __init__(self):
         self.sailInControl = True

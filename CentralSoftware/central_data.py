@@ -1,22 +1,26 @@
 from wind import *
 from gyroscope import *
-from coordinates import Coordinates
+from coordinate import *
+from route import *
 
-# CentralData
 class CentralData:
 
 	def __init__(self):
-		self.gyroscope = Gyroscope(),
-		self.wind = Wind(),
-		self.coordinates = Coordinates(),
 		self.rudderAngle = None,
 		self.sailAngle = None,
+		self.wind = Wind(),
+		self.route = Route(		# TODO: Start en finish coördinaten moeten via een verbinding aanpasbaar zijn
+			(Coordinate(48.0, -47.0), Coordinate(45.5, -47.0)),	# Coördinaten startlijn tussen Line-0 en Line-1
+			(Coordinate(55.0, -16.0), Coordinate(51.0, -16.0))  # Coördinaten finishlijn tussen Line-0 en Line-1
+		),
+		self.gyroscope = Gyroscope(),
+		self.currentCoordinate = Coordinate(),
 		self.compass = None,
 		self.movementOnSonar = False,
 		self.powerStateAis = "Off"
 
 
-	def set_sonarMovement(self, movement: bool):
+	def set_movementOnSonar(self, movement: bool):
 		self.movementOnSonar = movement
 		# TODO: - Krijgen we een boolean of zit hier metadata zoals afstand en hoek bij?
 		#		- Krijgen we data bij detectie of constant?
@@ -46,9 +50,9 @@ class CentralData:
 		self.compass = angle % 360
 
 
-	def set_gpsCoordinates(self, latitude: float, longitude: float):
-		self.coordinates.latitude = latitude
-		self.coordinates.longitude = longitude
+	def set_currentCoordinate(self, latitude: float, longitude: float):
+		self.currentCoordinate.latitude = latitude
+		self.currentCoordinate.longitude = longitude
 
 
 	def set_powerStateAis(self, powerState: str):
