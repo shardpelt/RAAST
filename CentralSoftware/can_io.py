@@ -7,7 +7,7 @@ class CannIO:
     def __init__(self):
         #self.bus = can.interface.Bus() # TODO: Het bustype is vereist -> wordt bepaald door ander team
         self.moduleId = None
-        self.loadModuleIds("Recources/ModuleId.json") # TODO: Elke module een Id toewijzen en verwerken in json file
+        self.loadModuleIds("Recources/sensorId.json") # TODO: Elke module een Id toewijzen en verwerken in json file
         self.centralData = CentralData()
 
     def loadModuleIds(self, fileName):
