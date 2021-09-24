@@ -1,12 +1,13 @@
 import json
 from Sensors.coordinate import Coordinate
 
-class Route:
+class SailingCourse:
 
     def __init__(self):
-        self.mainWaypoints = []  # TODO: JSON coördinaten moeten via een verbinding aanpasbaar zijn
+        self.finish = None
+        self.waypoints = []  # TODO: JSON coördinaten moeten via een verbinding aanpasbaar zijn
         self.setupMainWaypoints()
-        self.mainWaypointsJson = "Recources/mainWaypoints.json"
+        self.mainWaypointsJson = "Recources/waypoints.json"
         self.sailWayPoints = []
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
 
@@ -16,7 +17,7 @@ class Route:
 
     @property
     def currMainWayPoint(self) -> Coordinate:
-        return self.mainWaypoints[0]
+        return self.waypoints[0]
 
 
     def setupMainWaypoints(self):
@@ -27,7 +28,7 @@ class Route:
         with open(self.mainWaypointsJson) as mainWaypointsJson:
             mainWaypointsObject = json.load(mainWaypointsJson)
             for waypoint in mainWaypointsObject:
-                self.mainWaypoints.append(Coordinate(waypoint["latitude"], waypoint["longitude"]))
+                self.waypoints.append(Coordinate(waypoint["latitude"], waypoint["longitude"]))
 
         # TODO: Calculate extra mainWayPoints (on what basis? length etc)
 

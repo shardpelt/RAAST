@@ -1,7 +1,7 @@
 from Sensors.wind import Wind
 from Sensors.gyroscope import Gyroscope
 from Sensors.coordinate import Coordinate
-from route import Route
+from sailingCourse import SailingCourse
 
 class CentralData:
 
@@ -9,7 +9,7 @@ class CentralData:
         self.rudderAngle = None,
         self.sailAngle = None,
         self.wind = Wind(),
-        self.route = Route(),
+        self.sailingCourse = SailingCourse(),
         self.gyroscope = Gyroscope(),
         self.currentCoordinate = Coordinate(),
         self.compass = None,
@@ -19,13 +19,13 @@ class CentralData:
 
     # Call when currentCoordinate gets updated
     def checkWaypointReached(self):
-        if self.route.checkWaypointReached(self.currentCoordinate):
+        if self.sailingCourse.checkWaypointReached(self.currentCoordinate):
             self.updateRoute()
 
 
     # Call when checkRoute
     def updateRoute(self):
-        self.route.update()
+        self.sailingCourse.update()
 
 
 

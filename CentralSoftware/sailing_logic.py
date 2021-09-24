@@ -1,4 +1,6 @@
+from Sensors.coordinate import Coordinate
 from helper import Helper
+import math as m
 
 # Logic from framework other group
 # //TODO: Check which parts are handy for us
@@ -6,6 +8,13 @@ from helper import Helper
 class SailingLogic:
     def __init__(self):
         self.sailInControl = True
+
+    def optimalAngleToWaypoint(self, currCoordinate: Coordinate, waypoint: Coordinate):
+        xDelta = waypoint.longitude - currCoordinate.longitude
+        yDelta = waypoint.latitude - currCoordinate.latitude
+
+        radians = m.atan(yDelta / xDelta)
+        return radians
 
 
     def compute_optimal_sailing_angle(self, sailboat_rotation: float, wind_direction: float) -> float:

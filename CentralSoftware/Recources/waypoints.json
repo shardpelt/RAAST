@@ -1,0 +1,12 @@
+{
+  "finish":
+    { "topCoordinate":
+      {"latitude0": 55.0, "longitude0": -16.0},
+      "bottomCoordinate":
+      {"latitude1": 51.0, "longitude1": -16.0}
+    },
+  "waypoints": [
+    {}
+  ]
+}
+
