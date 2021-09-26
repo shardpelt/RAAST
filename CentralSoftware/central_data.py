@@ -1,6 +1,7 @@
+from Sensors.compass import Compass
 from Sensors.wind import Wind
 from Sensors.gyroscope import Gyroscope
-from Sensors.coordinate import Coordinate
+from coordinate import Coordinate
 from sailingCourse import SailingCourse
 
 class CentralData:
@@ -12,7 +13,7 @@ class CentralData:
         self.sailingCourse = SailingCourse(),
         self.gyroscope = Gyroscope(),
         self.currentCoordinate = Coordinate(),
-        self.compass = None,
+        self.compass = Compass(),
         self.movementOnSonar = False,
         self.powerStateAis = "Off"
 
@@ -26,8 +27,6 @@ class CentralData:
     # Call when checkRoute
     def updateRoute(self):
         self.sailingCourse.update()
-
-
 
 
     def set_movementOnSonar(self, movement: bool):

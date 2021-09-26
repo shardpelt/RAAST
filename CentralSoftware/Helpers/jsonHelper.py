@@ -1,0 +1,33 @@
+import json
+from finish import Finish
+from coordinate import Coordinate
+
+class JsonHelper:
+
+    @staticmethod
+    def setupFinish(file):
+        """
+            This method is only called once at startup
+            Sets up the finish coordinates for the race
+        """
+        with open(file) as finishJson:
+            finishObject = json.load(finishJson)
+            top = finishObject["topCoordinate"]
+            bottom = finishObject["bottomCoordinate"]
+
+            return Finish(Coordinate(top["latitude"], top[["longitude"]]), Coordinate(bottom["latitude"], bottom[["longitude"]]))
+
+    @staticmethod
+    def setupWaypoints(file):
+        """
+            This method is only called once at startup
+            Sets up the waypoints for the route to be sailed
+        """
+        waypoints = []
+        with open(file) as waypointsJson:
+            waypointsObject = json.load(waypointsJson)
+
+            for waypoint in waypointsObject:
+                waypoints.append(Coordinate(waypoint["latitude"], waypoint["longitude"]))
+
+        return waypoints

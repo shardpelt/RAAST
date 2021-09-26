@@ -1,13 +1,13 @@
 import math as m
-from Sensors.coordinate import Coordinate
+from coordinate import Coordinate
 
 def optimalAngleToWaypoint(currCoordinate : Coordinate, waypoint: Coordinate):
     xDelta = waypoint.longitude - currCoordinate.longitude
     yDelta = waypoint.latitude - currCoordinate.latitude
 
-    radians = m.atan(yDelta / xDelta)
+    radians = m.atan(xDelta / yDelta)
     return radians
 
 
 
-optimalAngleToWaypoint(Coordinate(8, 0), Coordinate(12, 4))
+print(optimalAngleToWaypoint(Coordinate(10, 10), Coordinate(20, 50)))
