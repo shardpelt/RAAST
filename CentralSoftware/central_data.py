@@ -1,8 +1,8 @@
 from Sensors.compass import Compass
 from Sensors.wind import Wind
 from Sensors.gyroscope import Gyroscope
-from coordinate import Coordinate
-from sailingCourse import SailingCourse
+from Sailing.coordinate import Coordinate
+from Sailing.sailingCourse import SailingCourse
 
 class CentralData:
 
@@ -17,16 +17,15 @@ class CentralData:
         self.movementOnSonar = False,
         self.powerStateAis = "Off"
 
+    # Check once every x meters? Or in time..
+    def checkCourse(self):
+        self.sailingCourse.calculateBestCourse(self.currentCoordinate, self.wind.angle)
+
 
     # Call when currentCoordinate gets updated
     def checkWaypointReached(self):
         if self.sailingCourse.checkWaypointReached(self.currentCoordinate):
-            self.updateRoute()
-
-
-    # Call when checkRoute
-    def updateRoute(self):
-        self.sailingCourse.update()
+            self.sailingCourse.calculateBestCourse(self.currentCoordinate, self.wind.angle)
 
 
     def set_movementOnSonar(self, movement: bool):

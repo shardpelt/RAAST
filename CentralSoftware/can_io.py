@@ -17,5 +17,3 @@ class CannIO:
     # TODO: - Write methods which accept incomming data from CAN
     #       - Save incomming data from CAN to centralData object
     #       - Methods which can write data to the rudder/ (sail)
-    
-    def sum()

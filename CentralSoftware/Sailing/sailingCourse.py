@@ -1,5 +1,6 @@
 from Helpers.jsonHelper import JsonHelper
-from coordinate import Coordinate
+from Sailing.sailingLogic import SailingLogic
+from Sailing.coordinate import Coordinate
 
 class SailingCourse:
 
@@ -8,16 +9,18 @@ class SailingCourse:
         self.finish = JsonHelper.setupFinish("Recources/finish.json")
         self.waypoints = JsonHelper.setupWaypoints("Recources/waypoints.json")
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
+        self.sailingLogic = SailingLogic()
 
     @property
     def currWaypoint(self) -> Coordinate:
-        return self.waypoints[0]
+        return self.waypoints[1]
 
 
-    def calculateBestCourse(self):
+    def calculateBestCourse(self, currCoordinate: Coordinate, windAngle: float) -> float:
         """
             Calculates the best sailing course to the next waypoint
         """
+        return self.sailingLogic.getBestCourseAngle(currCoordinate, self.currWaypoint, windAngle)
 
 
     def checkWaypointReached(self, currCoordinate: Coordinate) -> bool:
