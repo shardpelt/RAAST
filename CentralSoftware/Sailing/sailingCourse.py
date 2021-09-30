@@ -8,19 +8,20 @@ class SailingCourse:
         # TODO: JSON coördinaten moeten via een verbinding aanpasbaar zijn
         self.finish = JsonHelper.setupFinish("Recources/finish.json")
         self.waypoints = JsonHelper.setupWaypoints("Recources/waypoints.json")
+        self.boarders = JsonHelper.setupBoarders("Recources/boarders.json")
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
         self.sailingLogic = SailingLogic()
 
     @property
     def currWaypoint(self) -> Coordinate:
-        return self.waypoints[1]
+        return self.waypoints[0]
 
 
-    def calculateBestCourse(self, currCoordinate: Coordinate, windAngle: float) -> float:
+    def calculateBestCourseAngle(self, currCoordinate: Coordinate, windAngle: float) -> float:
         """
             Calculates the best sailing course to the next waypoint
         """
-        return self.sailingLogic.getBestCourseAngle(currCoordinate, self.currWaypoint, windAngle)
+        return self.sailingLogic.getBestCourseAngle(currCoordinate, self.currWaypoint, windAngle, self.boarders)
 
 
     def checkWaypointReached(self, currCoordinate: Coordinate) -> bool:
@@ -35,6 +36,8 @@ class SailingCourse:
 
         return False
 
+    def updateToNextWaypoint(self):
+        self.waypoints.pop(0)
 
 
     def circumnavigateObstacle(self):

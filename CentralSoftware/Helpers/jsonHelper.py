@@ -31,3 +31,10 @@ class JsonHelper:
                 waypoints.append(Coordinate(waypoint["latitude"], waypoint["longitude"]))
 
         return waypoints
+
+    @staticmethod
+    def setupBoarders(file):
+        with open(file) as boardersJson:
+            boarders = json.load(boardersJson)
+
+        return boarders

@@ -9,6 +9,7 @@ class CentralData:
     def __init__(self):
         self.rudderAngle = None,
         self.sailAngle = None,
+        self.wantedCourse = None,
         self.wind = Wind(),
         self.sailingCourse = SailingCourse(),
         self.gyroscope = Gyroscope(),
@@ -17,15 +18,18 @@ class CentralData:
         self.movementOnSonar = False,
         self.powerStateAis = "Off"
 
-    # Check once every x meters? Or in time..
-    def checkCourse(self):
-        self.sailingCourse.calculateBestCourse(self.currentCoordinate, self.wind.angle)
+    @property
+    def currentCourse(self):
+        return self.compass.angle
 
+    # Call: 2
+    def updateCourse(self):
+        self.wantedCourse = self.sailingCourse.calculateBestCourse(self.currentCoordinate, self.wind.angle)
 
-    # Call when currentCoordinate gets updated
+    # Call: 1
     def checkWaypointReached(self):
         if self.sailingCourse.checkWaypointReached(self.currentCoordinate):
-            self.sailingCourse.calculateBestCourse(self.currentCoordinate, self.wind.angle)
+            self.sailingCourse.updateToNextWaypoint()
 
 
     def set_movementOnSonar(self, movement: bool):

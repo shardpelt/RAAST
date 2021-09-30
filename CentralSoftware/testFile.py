@@ -67,10 +67,30 @@ def calcAngleInDeadzone(optimalAngle, windAngle):
         return angleLeftToDeadzone
     return angleRightToDeadzone
 
+boarderMarge = 10
+def boatAtBoarders(currCoordinate, boarders):
+    if currCoordinate.latitude <= (boarders["down"] + boarderMarge):
+        return True
+    elif currCoordinate.latitude >= (boarders["top"] - boarderMarge):
+        return True
+    elif currCoordinate.longitude <= (boarders["left"] + boarderMarge):
+        return True
+    elif currCoordinate.longitude >= (boarders["right"] - boarderMarge):
+        return True
 
-print(calcAngleInDeadzone(90, 110))
+    return False
+
+    # if currCoordinate.longitude(boarders["down"] + boarderMarge)
+    #
+    # if (boarders["down"] + boarderMarge) >= currCoordinate.latitude >= (boarders["top"] - boarderMarge) \
+    #     or (boarders["left"] + boarderMarge) >= currCoordinate.longitude >= (boarders["right"] - boarderMarge):
+    #         return True
+    # else:
+    #     return False
+
+print(boatAtBoarders(Coordinate(100, 100), {"top": 111,"down": 0,"left": 50,"right": 120}))
 
 
+#print(calcAngleInDeadzone(90, 110))
 #print(hypotenuseAngleToWaypoint(Coordinate(6, 7), Coordinate(3, 10)))
-
 #print(getNearestAngleD(135, 45, 135))
