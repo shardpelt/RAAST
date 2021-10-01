@@ -13,7 +13,7 @@ class SailingCourse:
         self.sailingLogic = SailingLogic()
 
     @property
-    def currWaypoint(self) -> Coordinate:
+    def currentWaypoint(self) -> Coordinate:
         return self.waypoints[0]
 
 
@@ -21,7 +21,7 @@ class SailingCourse:
         """
             Calculates the best sailing course to the next waypoint
         """
-        return self.sailingLogic.getBestCourseAngle(currCoordinate, self.currWaypoint, windAngle, self.boarders)
+        return self.sailingLogic.getBestCourseAngle(currCoordinate, self.currentWaypoint, windAngle, self.boarders)
 
 
     def checkWaypointReached(self, currCoordinate: Coordinate) -> bool:
@@ -30,18 +30,18 @@ class SailingCourse:
             :param currCoordinate: The current coordinate the boat is at
             :returns: Boolean (True if boat has reached current sailWayPoint, False if not)
         """
-        if (self.currWaypoint.latitude - self.waypointMargin) <= currCoordinate.latitude <= (self.currWaypoint.latitude + self.waypointMargin) \
-                and (self.currWaypoint.longitude - self.waypointMargin) <= currCoordinate.longitude <= (self.currWaypoint.longitude + self.waypointMargin):
+        if (self.currentWaypoint.latitude - self.waypointMargin) <= currCoordinate.latitude <= (self.currentWaypoint.latitude + self.waypointMargin) \
+                and (self.currentWaypoint.longitude - self.waypointMargin) <= currCoordinate.longitude <= (self.currentWaypoint.longitude + self.waypointMargin):
             return True
 
         return False
 
-    def updateToNextWaypoint(self):
+    def updateToNextWaypoint(self) -> None:
         self.waypoints.pop(0)
 
 
-    def circumnavigateObstacle(self):
+    def findWayAroundObstacle(self, coordinate: Coordinate, distance: float, angle: float) -> None:
         """
             Function should have input on where obstacle is and navigate around is
         """
-        pass
+

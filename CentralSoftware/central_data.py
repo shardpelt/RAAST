@@ -31,6 +31,8 @@ class CentralData:
         if self.sailingCourse.checkWaypointReached(self.currentCoordinate):
             self.sailingCourse.updateToNextWaypoint()
 
+    def circumnavigateObstacle(self, coordinate: Coordinate, distance: float, angle: float):
+        self.sailingCourse.findWayAroundObstacle(coordinate, distance, angle)
 
     def set_movementOnSonar(self, movement: bool):
         self.movementOnSonar = movement
