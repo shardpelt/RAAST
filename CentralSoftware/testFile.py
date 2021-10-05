@@ -88,9 +88,31 @@ def boatAtBoarders(currCoordinate, boarders):
     # else:
     #     return False
 
-print(boatAtBoarders(Coordinate(100, 100), {"top": 111,"down": 0,"left": 50,"right": 120}))
+#print(boatAtBoarders(Coordinate(100, 100), {"top": 111,"down": 0,"left": 50,"right": 120}))
 
 
 #print(calcAngleInDeadzone(90, 110))
 #print(hypotenuseAngleToWaypoint(Coordinate(6, 7), Coordinate(3, 10)))
 #print(getNearestAngleD(135, 45, 135))
+
+sonarInfinity = 10
+def circumnavigateSonarDetection(sonar):
+        i = 0 - int(len(sonar) / 2)
+        leftAngle = sonarInfinity
+        rightAngle = sonarInfinity
+        smallestDistance = sonarInfinity
+        
+        while i < len(sonar) / 2:
+            if sonar[i] < sonarInfinity:
+                if sonar [i] < smallestDistance:
+                    smallestDistance = sonar[i]
+                if leftAngle == sonarInfinity:
+                    leftAngle = i
+                else:
+                    rightAngle = i
+                
+            i = i + 1
+        
+        return [leftAngle, rightAngle, smallestDistance]
+
+print(circumnavigateSonarDetection([10, 10, 10, 5, 10, 3, 10, 10, 10, 10]))

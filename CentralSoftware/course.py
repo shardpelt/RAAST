@@ -13,6 +13,7 @@ class Course:
         self.closeHauledSide = ""
         self.tackingAngleMarge = AngleHelper.toRadians(5)
         self.boarderMarge = 0.005
+        self.sonarInfinity = 1_000_000
 
     def calculateBestAngle(self, currCoordinate: Coordinate, waypoint: Coordinate, windAngle: float, boarders: dict):
         """
@@ -65,7 +66,25 @@ class Course:
 
             self.sailingCloseHauled, self.closeHauledSide = True, "R"
             return angleRightToDeadzone
-
+    
+    def circumnavigateSonarDetection(self, sonar):
+        i = 0 - len(sonar) / 2
+        leftAngle = self.sonarInfinity
+        rightAngle = self.sonarInfinity
+        smallestDistance = self.sonarInfinity
+        
+        while i < len(sonar) / 2:
+            if sonar[i] < self.sonarInfinity:
+                if sonar [i] < smallestDistance:
+                    smallestDistance = sonar[i]
+                if leftAngle == self.sonarInfinity:
+                    leftAngle = i
+                else:
+                    rightAngle = i
+                
+            i = i + 1
+        
+        return [leftAngle, rightAngle, smallestDistance]
 
     def boatAtBoarders(self, currCoordinate, boarders):
         if currCoordinate.latitude <= (boarders["down"] + self.boarderMarge):
