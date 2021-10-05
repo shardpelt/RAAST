@@ -1,5 +1,5 @@
 import math as m
-from Sailing.coordinate import Coordinate
+from Route.coordinate import Coordinate
 
 class AngleHelper:
 

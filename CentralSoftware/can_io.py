@@ -4,6 +4,7 @@ import can
 
 class CannIO:
 
+
     def __init__(self):
         #self.bus = can.interface.Bus() # TODO: Het bustype is vereist -> wordt bepaald door ander team
         self.moduleId = None

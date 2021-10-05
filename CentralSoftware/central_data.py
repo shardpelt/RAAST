@@ -1,38 +1,31 @@
-from Sensors.compass import Compass
 from Sensors.wind import Wind
-from Sensors.gyroscope import Gyroscope
-from Sailing.coordinate import Coordinate
-from Sailing.sailingCourse import SailingCourse
+from Route.coordinate import Coordinate
+from Route.route import Route
+from course import Course
+from boat import Boat
 
 class CentralData:
 
     def __init__(self):
-        self.rudderAngle = None,
-        self.sailAngle = None,
-        self.wantedCourse = None,
+        self.boat = Boat(),
+        self.route = Route(),
+        self.course = Course(),
         self.wind = Wind(),
-        self.sailingCourse = SailingCourse(),
-        self.gyroscope = Gyroscope(),
-        self.currentCoordinate = Coordinate(),
-        self.compass = Compass(),
         self.movementOnSonar = False,
         self.powerStateAis = "Off"
 
-    @property
-    def currentCourse(self):
-        return self.compass.angle
-
     # Call: 2
     def updateCourse(self):
-        self.wantedCourse = self.sailingCourse.calculateBestCourse(self.currentCoordinate, self.wind.angle)
+        self.course.calculateBestAngle(self.boat.coordinate, self.route.currentWaypoint, self.wind.angle, self.route.boarders)
 
     # Call: 1
     def checkWaypointReached(self):
-        if self.sailingCourse.checkWaypointReached(self.currentCoordinate):
-            self.sailingCourse.updateToNextWaypoint()
+        if self.route.checkWaypointReached(self.boat.coordinate):
+            self.route.updateToNextWaypoint()
+
 
     def circumnavigateObstacle(self, coordinate: Coordinate, distance: float, angle: float):
-        self.sailingCourse.findWayAroundObstacle(coordinate, distance, angle)
+        self.route.findWayAroundObstacle(coordinate, distance, angle)
 
     def set_movementOnSonar(self, movement: bool):
         self.movementOnSonar = movement

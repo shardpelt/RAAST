@@ -1,11 +1,12 @@
 import sys
 sys.path.append("..")
-from Sailing.coordinate import Coordinate
+from Route.coordinate import Coordinate
 from Helpers.angleHelper import AngleHelper
 import math as m
 
-class SailingLogic:
+class Course:
     def __init__(self):
+        self.wantedAngle = None
         self.radians45 = AngleHelper.toRadians(45)
         self.fullRadians = 2 * m.pi
         self.sailingCloseHauled = False # CloseHauled -> 45 graden aan de wind
@@ -13,7 +14,7 @@ class SailingLogic:
         self.tackingAngleMarge = AngleHelper.toRadians(5)
         self.boarderMarge = 0.005
 
-    def getBestCourseAngle(self, currCoordinate: Coordinate, waypoint: Coordinate, windAngle: float, boarders: dict):
+    def calculateBestAngle(self, currCoordinate: Coordinate, waypoint: Coordinate, windAngle: float, boarders: dict):
         """
             :arg currCoordinate: Coordinate of the boat
             :arg waypoint: Coordinate of the current waypoint
@@ -27,15 +28,14 @@ class SailingLogic:
             self.forgetWantedCourse()
 
         if self.windFromDeadzone(optimalAngle, windAngle):
-            return self.calcAngleInDeadzone(optimalAngle, windAngle)
+            self.wantedAngle = self.calculateBestAngleInDeadzone(optimalAngle, windAngle)
 
         elif self.windFromBehind(optimalAngle, windAngle):
-            return optimalAngle
-
-        return optimalAngle
+            self.wantedAngle = optimalAngle
 
 
-    def calcAngleInDeadzone(self, optimalAngle, windAngle):
+
+    def calculateBestAngleInDeadzone(self, optimalAngle, windAngle):
         angleLeftToDeadzone = (windAngle - self.radians45) % self.fullRadians
         angleRightToDeadzone = (windAngle + self.radians45) % self.fullRadians
         deltaAngles = AngleHelper.getDifferenceOfAngles(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)

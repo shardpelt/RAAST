@@ -1,8 +1,7 @@
 from Helpers.jsonHelper import JsonHelper
-from Sailing.sailingLogic import SailingLogic
-from Sailing.coordinate import Coordinate
+from Route.coordinate import Coordinate
 
-class SailingCourse:
+class Route:
 
     def __init__(self):
         # TODO: JSON coördinaten moeten via een verbinding aanpasbaar zijn
@@ -10,19 +9,10 @@ class SailingCourse:
         self.waypoints = JsonHelper.setupWaypoints("Recources/waypoints.json")
         self.boarders = JsonHelper.setupBoarders("Recources/boarders.json")
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
-        self.sailingLogic = SailingLogic()
 
     @property
     def currentWaypoint(self) -> Coordinate:
         return self.waypoints[0]
-
-
-    def calculateBestCourseAngle(self, currCoordinate: Coordinate, windAngle: float) -> float:
-        """
-            Calculates the best sailing course to the next waypoint
-        """
-        return self.sailingLogic.getBestCourseAngle(currCoordinate, self.currentWaypoint, windAngle, self.boarders)
-
 
     def checkWaypointReached(self, currCoordinate: Coordinate) -> bool:
         """

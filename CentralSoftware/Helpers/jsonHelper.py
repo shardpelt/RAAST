@@ -1,6 +1,6 @@
 import json
-from Sailing.finish import Finish
-from Sailing.coordinate import Coordinate
+from Route.finish import Finish
+from Route.coordinate import Coordinate
 
 class JsonHelper:
 
