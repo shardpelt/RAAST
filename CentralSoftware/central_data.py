@@ -15,9 +15,9 @@ class CentralData:
         self.sonar = Sonar()
         self.ais = None
 
+
     def checkCriticalDataChanges(self):
         pass
-
 
     def set_movementOnSonar(self, sonar: list):
         self.sonar = sonar
@@ -44,8 +44,8 @@ class CentralData:
         self.compass.angle = angle % AngleHelper.fullRadians
 
     def set_currentCoordinate(self, latitude: float, longitude: float):
-        self.boatCoordinate.latitude = latitude
-        self.boatCoordinate.longitude = longitude
+        self.currentCoordinate.latitude = latitude
+        self.currentCoordinate.longitude = longitude
 
     def set_powerStateAis(self, ais):
         self.ais = ais
