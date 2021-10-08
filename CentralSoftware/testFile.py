@@ -115,4 +115,19 @@ def circumnavigateSonarDetection(sonar):
         
         return [leftAngle, rightAngle, smallestDistance]
 
-print(circumnavigateSonarDetection([10, 10, 10, 5, 10, 3, 10, 10, 10, 10]))
+#print(circumnavigateSonarDetection([10, 10, 10, 5, 10, 3, 10, 10, 10, 10]))
+
+class P:
+    def __init__(self):
+        self.data = "data1"
+
+class C1:
+    def __init__(self, data):
+        self.data = data
+
+class C2:
+    def __init__(self):
+        super().__init__()
+
+d = {"h": True}
+print(d["h"])

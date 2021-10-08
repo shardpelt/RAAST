@@ -2,6 +2,8 @@ import math as m
 from Route.coordinate import Coordinate
 
 class AngleHelper:
+    fullRadians = 2 * m.pi
+    fullDegrees = 360
 
     @staticmethod
     def toRadians(degrees):

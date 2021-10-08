@@ -2,39 +2,36 @@ import sys
 sys.path.append("..")
 from Route.coordinate import Coordinate
 from Helpers.angleHelper import AngleHelper
+from central_data import CentralData
 import math as m
 
 class Course:
-    def __init__(self):
+    def __init__(self, centralData: CentralData):
+        self.data = centralData
         self.wantedAngle = None
         self.radians45 = AngleHelper.toRadians(45)
         self.fullRadians = 2 * m.pi
-        self.sailingCloseHauled = False # CloseHauled -> 45 graden aan de wind
-        self.closeHauledSide = ""
+        self.closeHauled = {"flag":False, "chosenSide":"", "forbiddenSide":""}
         self.tackingAngleMarge = AngleHelper.toRadians(5)
         self.boarderMarge = 0.005
         self.sonarInfinity = 1_000_000
 
-    def calculateBestAngle(self, currCoordinate: Coordinate, waypoint: Coordinate, windAngle: float, boarders: dict):
+    def update(self, waypoint: Coordinate, boarders: dict):
         """
-            :arg currCoordinate: Coordinate of the boat
             :arg waypoint: Coordinate of the current waypoint
-            :arg windAngle: The radians at which the wind is blowing in relation to North
             :arg boarders: The absolute boarders in which the boat should stay during the trip
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
-        optimalAngle = AngleHelper.hypotenuseAngleToWaypoint(currCoordinate, waypoint)
+        optimalAngle = AngleHelper.hypotenuseAngleToWaypoint(self.data.currentCoordinate, waypoint)
 
-        if self.boatAtBoarders(currCoordinate, boarders):
+        if self.boatAtBoarders(self.data.currentCoordinate, boarders):
             self.forgetWantedCourse()
 
-        if self.windFromDeadzone(optimalAngle, windAngle):
-            self.wantedAngle = self.calculateBestAngleInDeadzone(optimalAngle, windAngle)
+        if self.windFromDeadzone(optimalAngle, self.data.wind.angle):
+            self.wantedAngle = self.calculateBestAngleInDeadzone(optimalAngle, self.data.wind.angle)
 
-        elif self.windFromBehind(optimalAngle, windAngle):
+        elif self.windFromBehind(optimalAngle, self.data.wind.angle):
             self.wantedAngle = optimalAngle
-
-
 
     def calculateBestAngleInDeadzone(self, optimalAngle, windAngle):
         angleLeftToDeadzone = (windAngle - self.radians45) % self.fullRadians
@@ -44,27 +41,31 @@ class Course:
         print(angleLeftToDeadzone, angleRightToDeadzone, deltaAngles)
 
         # If already sailing closeHauled try to continue direction chosen or perform tacking maneuvre
-        if self.sailingCloseHauled:
+        if self.closeHauled["flag"]:
 
             # Check if angle to waypoint is 90 degrees -> perform tack maneuvre
             if deltaAngles["L"] <= self.tackingAngleMarge:
-                self.sailingCloseHauled, self.closeHauledSide = True, "L"
+                self.closeHauled["flag"] = True
+                self.closeHauled["chosenSide"] = "left"
                 return angleLeftToDeadzone
             elif deltaAngles["R"] <= self.tackingAngleMarge:
-                self.sailingCloseHauled, self.closeHauledSide = True, "R"
+                self.closeHauled["flag"] = True
+                self.closeHauled["chosenSide"] = "right"
                 return angleRightToDeadzone
             else:
-                if self.closeHauledSide == "L":
+                if self.closeHauled["chosenSide"] == "left":
                     return angleLeftToDeadzone
                 return angleRightToDeadzone
 
         # If not already sailing closeHauled, check which angle from deadzone is best to sail at.
         else:
             if deltaAngles["L"] <= deltaAngles["R"]:
-                self.sailingCloseHauled, self.closeHauledSide = True, "L"
+                self.closeHauled["flag"] = True
+                self.closeHauled["chosenSide"] = "left"
                 return angleLeftToDeadzone
 
-            self.sailingCloseHauled, self.closeHauledSide = True, "R"
+            self.closeHauled["flag"] = True
+            self.closeHauled["chosenSide"] = "right"
             return angleRightToDeadzone
     
     def circumnavigateSonarDetection(self, sonar):
@@ -99,8 +100,8 @@ class Course:
         return False
 
     def forgetWantedCourse(self):
-        self.sailingCloseHauled = False
-        self.closeHauledSide = ""
+        self.closeHauled["flag"] = True
+        self.closeHauled["chosenSide"] = ""
 
     def windFromDeadzone(self, optimal, wind):
         if AngleHelper.betweenAngles((wind - self.radians45) % self.fullRadians, optimal, (wind + self.radians45) % self.fullRadians):
@@ -115,9 +116,5 @@ class Course:
         return False
 
 
-# sl = SailingLogic()
-#
-# print(AngleHelper.toDegrees(sl.getBestCourseAngle(Coordinate(3, 1), Coordinate(3, 10), AngleHelper.toRadians(90))))
-# print(AngleHelper.toDegrees(sl.getBestCourseAngle(Coordinate(5, 3), Coordinate(3, 10), AngleHelper.toRadians(50))))
-# print(AngleHelper.toDegrees(sl.getBestCourseAngle(Coordinate(7, 5), Coordinate(3, 10), AngleHelper.toRadians(90))))
-# print(AngleHelper.toDegrees(sl.getBestCourseAngle(Coordinate(9, 7), Coordinate(3, 10), AngleHelper.toRadians(90))))
+    def checkCurrentCourse(self):
+        pass
