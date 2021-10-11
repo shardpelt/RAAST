@@ -2,7 +2,7 @@ import sys
 sys.path.append("..")
 from Route.coordinate import Coordinate
 from Helpers.angleHelper import AngleHelper
-from central_data import CentralData
+from CentralData.central_data import CentralData
 import math as m
 
 class Course:
@@ -34,11 +34,9 @@ class Course:
             self.wantedAngle = optimalAngle
 
     def calculateBestAngleInDeadzone(self, optimalAngle, windAngle):
-        angleLeftToDeadzone = (windAngle - self.radians45) % self.fullRadians
-        angleRightToDeadzone = (windAngle + self.radians45) % self.fullRadians
+        angleLeftToDeadzone = windAngle - self.radians45
+        angleRightToDeadzone = windAngle + self.radians45
         deltaAngles = AngleHelper.getDifferenceOfAngles(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
-
-        print(angleLeftToDeadzone, angleRightToDeadzone, deltaAngles)
 
         # If already sailing closeHauled try to continue direction chosen or perform tacking maneuvre
         if self.closeHauled["flag"]:
@@ -104,14 +102,14 @@ class Course:
         self.closeHauled["chosenSide"] = ""
 
     def windFromDeadzone(self, optimal, wind):
-        if AngleHelper.betweenAngles((wind - self.radians45) % self.fullRadians, optimal, (wind + self.radians45) % self.fullRadians):
+        if AngleHelper.betweenAngles(optimal, wind - self.radians45, wind + self.radians45):
             return True
         return False
 
     def windFromBehind(self, optimal, wind):
-        backOfBoatAngle = (optimal - m.pi) % 2 * m.pi
+        backOfBoatAngle = optimal - AngleHelper.fullRadians / 2
 
-        if AngleHelper.betweenAngles((wind - self.radians45) % self.fullRadians, backOfBoatAngle, (wind + self.radians45) % self.fullRadians):
+        if AngleHelper.betweenAngles(backOfBoatAngle, wind - self.radians45, wind + self.radians45):
             return True
         return False
 

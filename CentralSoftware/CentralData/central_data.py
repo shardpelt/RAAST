@@ -1,3 +1,4 @@
+from CentralData.central_data_image import CentralDataImage
 from Sensors.compass import Compass
 from Sensors.gyroscope import Gyroscope
 from Sensors.sonar import Sonar
@@ -14,10 +15,14 @@ class CentralData:
         self.wind = Wind()
         self.sonar = Sonar()
         self.ais = None
+        self.controlMode = 2
 
+    def checkCriticalDataChanges(self, image: CentralDataImage):
+        maxWindDeviation = 10
 
-    def checkCriticalDataChanges(self):
-        pass
+        if image.wind is not None:
+            return AngleHelper.betweenAngles(image.wind.angle, self.wind.angle - maxWindDeviation, self.wind.angle + maxWindDeviation)
+        return False
 
     def set_movementOnSonar(self, sonar: list):
         self.sonar = sonar

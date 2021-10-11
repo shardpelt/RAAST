@@ -1,6 +1,6 @@
 import json
-from central_data import CentralData
-import can
+from CentralData.central_data import CentralData
+
 
 class CannIO:
     def __init__(self, centralData: CentralData):

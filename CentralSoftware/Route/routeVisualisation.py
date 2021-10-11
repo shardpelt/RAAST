@@ -2,7 +2,7 @@ import os
 import sys
 import pygame
 sys.path.append("..")
-from central_data import CentralData
+from CentralData.central_data import CentralData
 from Route.coordinate import Coordinate
 
 pygame.init()

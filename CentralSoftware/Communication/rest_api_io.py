@@ -1,6 +1,6 @@
-from central_data import CentralData
+from CentralData.central_data import CentralData
 
-class SatelliteIO:
+class RestApiIO:
     def __init__(self, centralData: CentralData):
         self.data = centralData
 

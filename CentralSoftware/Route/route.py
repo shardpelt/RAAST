@@ -1,5 +1,4 @@
-from Helpers.jsonHelper import JsonHelper
-from central_data import CentralData
+from CentralData.central_data import CentralData
 from Route.coordinate import Coordinate
 
 class Route:
@@ -17,7 +16,7 @@ class Route:
 
     def checkWaypointReached(self) -> bool:
         """
-            Wheter the boat's current coordinate is within the next waypoint's coordinate +/- margin
+            Whether the boat's current coordinate is within the next waypoint's coordinate +/- margin
             :returns: Boolean (True if boat has reached current sailWayPoint, False if not)
         """
         if (self.currentWaypoint.latitude - self.waypointMargin) <= self.data.currentCoordinate.latitude <= (self.currentWaypoint.latitude + self.waypointMargin) \

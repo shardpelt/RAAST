@@ -13,17 +13,22 @@ class AngleHelper:
     def toDegrees(radians):
         return radians * (180 / m.pi)
 
+    def reduceAngle(*angles):
+        return tuple(angle % AngleHelper.fullRadians for angle in angles)
+
     @staticmethod
-    def betweenAngles(left, n, right):
+    def betweenAngles(n, left, right):
         """
             Check if angle n is between a left and right angle
         """
+        n, left, right = AngleHelper.reduceAngle(n, left, right)
         if left < right:
             return left <= n <= right
         return n >= left or n <= right
 
     @staticmethod
     def getDifferenceOfAngles(mainAngle, leftAngle, rightAngle):
+        mainAngle, leftAngle, rightAngle = AngleHelper.reduceAngle(mainAngle, leftAngle, rightAngle)
         if leftAngle >= mainAngle:
             deltaL = abs(mainAngle + (2 * m.pi - leftAngle))
         else:
