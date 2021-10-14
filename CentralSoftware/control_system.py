@@ -6,12 +6,12 @@ from Communication.can_io import CannIO
 from Communication.rest_api_io import RestApiIO
 from course import Course
 
-class Main:
+class ControlSystem:
     def __init__(self):
         self.centralData = CentralData()                # Data object in which every datapoint is stored
         self.centralDataImage = CentralDataImage()      # Storing important last used data for calculations
         self.canIo = CannIO(self.centralData)           # Communication with CAN-bus handler
-        self.restApiIo = RestApiIO(self.centralData)    # Communication with API handler
+        self.restApiIo = RestApiIO(self)                # Communication with API handler
         self.route = Route(self.centralData)            # Object in which the route information is stored
         self.course = Course(self.centralData)          # Object in which the course is calculated and stored
         self.pid = PidController(0.5, 0.02, 0.005)      # PID-controller which calculates best sail/rudder output
@@ -23,6 +23,9 @@ class Main:
         while True:
             self.sail()
 
+    def updateControlLevel(self, mode):
+        self.canIo.changeMode(mode)
+        self.restApiIo.changeMode(mode)
 
     def sail(self):
         # Checks/updates to the Route

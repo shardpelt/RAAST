@@ -132,14 +132,12 @@ class Main:
 class One(Thread):
     def __init__(self):
         super().__init__()
+        self.o = "One"
 
     def run(self):
         while True:
-            print("one")
+            print(self.o)
             sleep(3)
-
-    def a(self):
-        print("done")
 
 class Two(Thread):
     def __init__(self):
@@ -152,5 +150,5 @@ class Two(Thread):
 
 main = Main(One(), Two())
 main.run()
-sleep(2)
-main.one.a()
+sleep(10)
+main.one.o = "BBBBB"

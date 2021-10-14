@@ -14,6 +14,9 @@ class CannIO(Thread):
         with open(fileName) as moduleIdJson:
             self.moduleId = json.load(moduleIdJson)
 
+    def changeMode(self, mode):
+        pass
+
     def run(self):
         while True:
             # TODO: Open ports for incomming can data/ write data to centralData object
