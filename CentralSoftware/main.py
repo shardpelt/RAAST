@@ -1,21 +1,20 @@
 from CentralData.central_data_image import CentralDataImage
 from Route.route import Route
 from CentralData.central_data import CentralData
-from pid_controller import PID
+from pid_controller import PidController
 from Communication.can_io import CannIO
 from Communication.rest_api_io import RestApiIO
 from course import Course
 
 class Main:
     def __init__(self):
-        self.centralData = CentralData()
-        self.centralDataImage = CentralDataImage() # Storing last used central data object used for calculations
-        self.canIo = CannIO(self.centralData)
-        self.restApiIo = RestApiIO(self.centralData)
-        self.route = Route(self.centralData)
-        self.course = Course(self.centralData)
-        self.pid = PID()
-
+        self.centralData = CentralData()                # Data object in which every datapoint is stored
+        self.centralDataImage = CentralDataImage()      # Storing important last used data for calculations
+        self.canIo = CannIO(self.centralData)           # Communication with CAN-bus handler
+        self.restApiIo = RestApiIO(self.centralData)    # Communication with API handler
+        self.route = Route(self.centralData)            # Object in which the route information is stored
+        self.course = Course(self.centralData)          # Object in which the course is calculated and stored
+        self.pid = PidController(0.5, 0.02, 0.005)      # PID-controller which calculates best sail/rudder output
 
     def start(self):
         self.canIo.start()
@@ -43,7 +42,5 @@ class Main:
 
         # Updates the boat's mechanical
         if self.course.checkCurrentCourse():
-            self.pid.Work()
-
-
-
+            pidOutput = self.pid.getOutput(self.course.wantedAngle, self.centralData.compass.angle)
+            self.canIo.setRudder(pidOutput)

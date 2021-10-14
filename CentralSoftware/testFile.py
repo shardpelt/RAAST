@@ -117,17 +117,24 @@ def circumnavigateSonarDetection(sonar):
 
 #print(circumnavigateSonarDetection([10, 10, 10, 5, 10, 3, 10, 10, 10, 10]))
 
-class P:
-    def __init__(self):
-        self.data = "data1"
+class Main:
+    def __init__(self, one, two):
+        self.one = one
+        self.two = two
 
-class C1:
-    def __init__(self, data):
-        self.data = data
+    def run(self):
+        self.one.run()
+        self.two.run()
 
-class C2:
-    def __init__(self):
-        super().__init__()
+class One:
+    def run(self):
+        while True:
+            print("one")
 
-d = {"h": True}
-print(d["h"])
+class Two:
+    def run(self):
+        while True:
+            print("two")
+
+main = Main(One(), Two())
+main.run()
