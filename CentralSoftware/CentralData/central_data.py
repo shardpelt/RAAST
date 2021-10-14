@@ -21,7 +21,7 @@ class CentralData:
         maxWindDeviation = 10
 
         if image.wind is not None:
-            return AngleHelper.betweenAngles(image.wind.angle, self.wind.angle - maxWindDeviation, self.wind.angle + maxWindDeviation)
+            return AngleHelper.angleIsBetweenAngles(image.wind.angle, self.wind.angle - maxWindDeviation, self.wind.angle + maxWindDeviation)
         return False
 
     def set_movementOnSonar(self, sonar: list):

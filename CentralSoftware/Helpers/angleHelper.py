@@ -13,22 +13,29 @@ class AngleHelper:
     def toDegrees(radians):
         return radians * (180 / m.pi)
 
-    def reduceAngle(*angles):
+    def reduceAngles(*angles):
+        """
+            Makes sure that for every angle as input, the angle is between 0 and 2pi radians
+        """
         return tuple(angle % AngleHelper.fullRadians for angle in angles)
 
     @staticmethod
-    def betweenAngles(n, left, right):
+    def angleIsBetweenAngles(n, left, right):
         """
-            Check if angle n is between a left and right angle
+            Checks for a given angle (n) if it is between an angle of its left and right sight.
         """
-        n, left, right = AngleHelper.reduceAngle(n, left, right)
+        n, left, right = AngleHelper.reduceAngles(n, left, right)
         if left < right:
             return left <= n <= right
         return n >= left or n <= right
 
     @staticmethod
-    def getDifferenceOfAngles(mainAngle, leftAngle, rightAngle):
-        mainAngle, leftAngle, rightAngle = AngleHelper.reduceAngle(mainAngle, leftAngle, rightAngle)
+    def getDeltasOfLeftAndRight(mainAngle, leftAngle, rightAngle):
+        """
+            Computes the difference between the mainAngle and the left/right angle
+            This method is used to determine which angle is best to set course at
+        """
+        mainAngle, leftAngle, rightAngle = AngleHelper.reduceAngles(mainAngle, leftAngle, rightAngle)
         if leftAngle >= mainAngle:
             deltaL = abs(mainAngle + (2 * m.pi - leftAngle))
         else:
@@ -40,7 +47,6 @@ class AngleHelper:
             deltaR = abs(mainAngle - rightAngle)
 
         return {"L": deltaL, "R": deltaR}
-
 
     @staticmethod
     def hypotenuseAngleToWaypoint(currCoordinate: Coordinate, waypoint: Coordinate):

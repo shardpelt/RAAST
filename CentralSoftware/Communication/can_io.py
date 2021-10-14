@@ -22,3 +22,6 @@ class CannIO(Thread):
 
     def setRudder(self, angle):
         pass
+
+    def setSail(self, angle):
+        pass

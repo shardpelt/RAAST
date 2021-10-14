@@ -1,4 +1,7 @@
 import math as m
+from threading import Thread
+from time import sleep
+
 from Route.coordinate import Coordinate
 from Helpers.angleHelper import AngleHelper as ah
 
@@ -123,18 +126,31 @@ class Main:
         self.two = two
 
     def run(self):
-        self.one.run()
-        self.two.run()
+        self.one.start()
+        self.two.start()
 
-class One:
+class One(Thread):
+    def __init__(self):
+        super().__init__()
+
     def run(self):
         while True:
             print("one")
+            sleep(3)
 
-class Two:
+    def a(self):
+        print("done")
+
+class Two(Thread):
+    def __init__(self):
+        super().__init__()
+
     def run(self):
         while True:
             print("two")
+            sleep(3)
 
 main = Main(One(), Two())
 main.run()
+sleep(2)
+main.one.a()

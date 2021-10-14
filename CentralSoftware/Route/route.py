@@ -32,6 +32,7 @@ class Route:
         """
             Function should have input on where obstacle is and navigate around is
         """
+        objects = self.data.sonar.getSeenObjects()
 
     def checkThreatDetection(self):
         # TODO: Checks if sonar, AIS or storm is

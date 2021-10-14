@@ -14,7 +14,6 @@ class Course:
         self.closeHauled = {"flag":False, "chosenSide":"", "forbiddenSide":""}
         self.tackingAngleMarge = AngleHelper.toRadians(5)
         self.boarderMarge = 0.005
-        self.sonarInfinity = 1_000_000
 
     def update(self, waypoint: Coordinate, boarders: dict):
         """
@@ -36,7 +35,7 @@ class Course:
     def calculateBestAngleInDeadzone(self, optimalAngle, windAngle):
         angleLeftToDeadzone = windAngle - self.radians45
         angleRightToDeadzone = windAngle + self.radians45
-        deltaAngles = AngleHelper.getDifferenceOfAngles(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
+        deltaAngles = AngleHelper.getDeltasOfLeftAndRight(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
 
         # If already sailing closeHauled try to continue direction chosen or perform tacking maneuvre
         if self.closeHauled["flag"]:
@@ -65,25 +64,6 @@ class Course:
             self.closeHauled["flag"] = True
             self.closeHauled["chosenSide"] = "right"
             return angleRightToDeadzone
-    
-    def circumnavigateSonarDetection(self, sonar):
-        i = 0 - len(sonar) / 2
-        leftAngle = self.sonarInfinity
-        rightAngle = self.sonarInfinity
-        smallestDistance = self.sonarInfinity
-        
-        while i < len(sonar) / 2:
-            if sonar[i] < self.sonarInfinity:
-                if sonar [i] < smallestDistance:
-                    smallestDistance = sonar[i]
-                if leftAngle == self.sonarInfinity:
-                    leftAngle = i
-                else:
-                    rightAngle = i
-                
-            i = i + 1
-        
-        return [leftAngle, rightAngle, smallestDistance]
 
     def boatAtBoarders(self, currCoordinate, boarders):
         if currCoordinate.latitude <= (boarders["down"] + self.boarderMarge):
@@ -102,14 +82,14 @@ class Course:
         self.closeHauled["chosenSide"] = ""
 
     def windFromDeadzone(self, optimal, wind):
-        if AngleHelper.betweenAngles(optimal, wind - self.radians45, wind + self.radians45):
+        if AngleHelper.angleIsBetweenAngles(optimal, wind - self.radians45, wind + self.radians45):
             return True
         return False
 
     def windFromBehind(self, optimal, wind):
         backOfBoatAngle = optimal - AngleHelper.fullRadians / 2
 
-        if AngleHelper.betweenAngles(backOfBoatAngle, wind - self.radians45, wind + self.radians45):
+        if AngleHelper.angleIsBetweenAngles(backOfBoatAngle, wind - self.radians45, wind + self.radians45):
             return True
         return False
 
