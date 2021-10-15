@@ -1,12 +1,10 @@
 import json
-from threading import Thread
-from CentralData.central_data import CentralData
+from boat import Boat
 
-class CannIO(Thread):
-    def __init__(self, centralData: CentralData):
-        super().__init__()
+class CanIO:
+    def __init__(self, boat: Boat):
         #self.bus = can.interface.Bus() # TODO: Bustype?
-        self.data = centralData
+        self.boat = boat
         self.moduleId = None
         self.loadModuleIds("Recources/sensorId.json") # TODO: Elke module een Id toewijzen
 
@@ -14,13 +12,8 @@ class CannIO(Thread):
         with open(fileName) as moduleIdJson:
             self.moduleId = json.load(moduleIdJson)
 
-    def changeMode(self, mode):
-        pass
-
-    def run(self):
-        while True:
-            # TODO: Open ports for incomming can data/ write data to centralData object
-
+    def start(self):
+        if self.boat.controlMode == 3:
             pass
 
     def setRudder(self, angle):

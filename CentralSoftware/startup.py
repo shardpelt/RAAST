@@ -1,5 +1,5 @@
-from control_system import ControlSystem
+from boat import Boat
 
 if __name__ == '__main__':
-    cs = ControlSystem()
-    cs.start()
+    transat = Boat()
+    transat.start()

@@ -121,34 +121,15 @@ def circumnavigateSonarDetection(sonar):
 #print(circumnavigateSonarDetection([10, 10, 10, 5, 10, 3, 10, 10, 10, 10]))
 
 class Main:
-    def __init__(self, one, two):
-        self.one = one
-        self.two = two
+    def __init__(self, boat):
+        self.boat = boat
 
-    def run(self):
-        self.one.start()
-        self.two.start()
+class Sub(Main):
+    def __init__(self, boat):
+        super().__init__(boat)
 
-class One(Thread):
-    def __init__(self):
-        super().__init__()
-        self.o = "One"
 
-    def run(self):
-        while True:
-            print(self.o)
-            sleep(3)
 
-class Two(Thread):
-    def __init__(self):
-        super().__init__()
 
-    def run(self):
-        while True:
-            print("two")
-            sleep(3)
-
-main = Main(One(), Two())
-main.run()
-sleep(10)
-main.one.o = "BBBBB"
+s = Sub(5)
+print(s.boat)
