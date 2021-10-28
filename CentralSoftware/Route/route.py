@@ -1,13 +1,17 @@
 from CentralData.central_data import CentralData
+from Helpers.jsonHelper import JsonHelper
+from Route.boarders import Boarders
 from Route.coordinate import Coordinate
+from Route.finish import Finish
+
 
 class Route:
     def __init__(self, centralData: CentralData):
         # TODO: JSON coördinaten moeten via een verbinding aanpasbaar zijn
         self.data = centralData
         self.finish = None #JsonHelper.setupFinish("../Recources/finish.json")
-        self.waypoints = None #JsonHelper.setupWaypoints("Recources/waypoints.json")
-        self.boarders = None #JsonHelper.setupBoarders("Recources/boarders.json")
+        self.waypoints = None #JsonHelper.setupWaypoints("../Recources/waypoints.json")
+        self.boarders = None #JsonHelper.setupBoarders("../Recources/boarders.json")
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
 
     @property

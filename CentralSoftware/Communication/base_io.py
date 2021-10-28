@@ -1,8 +1,8 @@
-from boat import Boat
-
 class BaseIO:
-    def __init__(self, boat: Boat):
+    def __init__(self, boat):
         self.boat = boat
-        self.selfIpAddress = '127.0.0.1'
-        self.selfPortNumber = 5678
-        self.interval = 1 if boat.controlMode == 3 else (3600 * 6)
+        self.ipAddress = '127.0.0.1'
+        self.portNumber = 5678
+
+    def updateBoatData(self, updatedBoat):
+        self.boat = updatedBoat

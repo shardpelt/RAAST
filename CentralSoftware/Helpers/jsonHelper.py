@@ -1,4 +1,6 @@
 import json
+
+from Route.boarders import Boarders
 from Route.finish import Finish
 from Route.coordinate import Coordinate
 
@@ -37,4 +39,4 @@ class JsonHelper:
         with open(file) as boardersJson:
             boarders = json.load(boardersJson)
 
-        return boarders
+        return Boarders(boarders["top"], boarders["down"], boarders["left"], boarders["right"])

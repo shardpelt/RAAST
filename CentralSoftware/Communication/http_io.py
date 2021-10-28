@@ -1,7 +1,8 @@
-from boat import Boat
+from Communication.base_io import BaseIO
 
-class HttpIO:
-    def __init__(self, boat: Boat):
+class HttpIO(BaseIO):
+    def __init__(self, boat):
+        super().__init__(boat)
         self.boat = boat
 
     def run(self) -> None:
@@ -13,3 +14,4 @@ class HttpIO:
 
     def changeMode(self, mode):
         pass
+

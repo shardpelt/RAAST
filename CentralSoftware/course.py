@@ -3,19 +3,22 @@ sys.path.append("..")
 from Route.coordinate import Coordinate
 from Helpers.angleHelper import AngleHelper
 from CentralData.central_data import CentralData
-import math as m
 
 class Course:
+    radians45 = AngleHelper.toRadians(45)
+
     def __init__(self, centralData: CentralData):
         self.data = centralData
         self.wantedAngle = None
-        self.radians45 = AngleHelper.toRadians(45)
-        self.fullRadians = 2 * m.pi
+        self.wantedAngleMarge = 5 # TODO: beste marge op de koers nader te bepalen
         self.closeHauled = {"flag":False, "chosenSide":"", "forbiddenSide":""}
         self.tackingAngleMarge = AngleHelper.toRadians(5)
         self.boarderMarge = 0.005
 
-    def update(self, waypoint: Coordinate, boarders: dict):
+    def isOnTrack(self):
+        return AngleHelper.angleIsBetweenAngles(self.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
+
+    def updateWantedAngle(self, waypoint: Coordinate, boarders: dict):
         """
             :arg waypoint: Coordinate of the current waypoint
             :arg boarders: The absolute boarders in which the boat should stay during the trip
@@ -24,15 +27,15 @@ class Course:
         optimalAngle = AngleHelper.hypotenuseAngleToWaypoint(self.data.currentCoordinate, waypoint)
 
         if self.boatAtBoarders(self.data.currentCoordinate, boarders):
-            self.forgetWantedCourse()
+            self.forgetCloseHauledCourse()
 
         if self.windFromDeadzone(optimalAngle, self.data.wind.angle):
-            self.wantedAngle = self.calculateBestAngleInDeadzone(optimalAngle, self.data.wind.angle)
+            self.wantedAngle = self.calcBestAngleWindFromDeadzone(optimalAngle, self.data.wind.angle)
 
         elif self.windFromBehind(optimalAngle, self.data.wind.angle):
             self.wantedAngle = optimalAngle
 
-    def calculateBestAngleInDeadzone(self, optimalAngle, windAngle):
+    def calcBestAngleWindFromDeadzone(self, optimalAngle, windAngle):
         angleLeftToDeadzone = windAngle - self.radians45
         angleRightToDeadzone = windAngle + self.radians45
         deltaAngles = AngleHelper.getDeltasOfLeftAndRight(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
@@ -77,7 +80,7 @@ class Course:
 
         return False
 
-    def forgetWantedCourse(self):
+    def forgetCloseHauledCourse(self):
         self.closeHauled["flag"] = True
         self.closeHauled["chosenSide"] = ""
 
@@ -94,5 +97,4 @@ class Course:
         return False
 
 
-    def checkCurrentCourse(self):
-        pass
+

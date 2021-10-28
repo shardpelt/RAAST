@@ -1,8 +1,9 @@
 import json
-from boat import Boat
+from Communication.base_io import BaseIO
 
-class CanIO:
-    def __init__(self, boat: Boat):
+class CanIO(BaseIO):
+    def __init__(self, boat):
+        super().__init__(boat)
         #self.bus = can.interface.Bus() # TODO: Bustype?
         self.boat = boat
         self.moduleId = None
