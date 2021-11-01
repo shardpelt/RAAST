@@ -5,3 +5,6 @@ class Gyroscope:
         self.yPos = None
         self.zPos = None
 
+    def isUpRight(self):
+        return True
+

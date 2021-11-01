@@ -3,7 +3,6 @@ from Route.route import Route
 from SensorData.sensor_data import SensorData
 from Helpers.rudderHelper import RudderHelper
 from Course.course import Course
-from Helpers.sailHelper import SailHelper
 
 class Boat:
     def __init__(self):
@@ -13,13 +12,13 @@ class Boat:
         self.route = Route(self.sensorData)             # Object in which the route information is stored
         self.course = Course(self.sensorData)           # Object in which the course is calculated and stored
         self.rudderHelper = RudderHelper()              # Contains methods to determine best angle for rudder
-        #self.sailHelper = SailHelper()                 # May be needed when the sail is programmable
 
     def start(self):
         self.communication.configure()
 
         while True:
-            self.run()
+            if self.sensorData.gyroscope.isUpRight():   # Only go through the control loop if the boat is up right
+                self.run()
 
     def run(self):
         # Checks/updates to the Route

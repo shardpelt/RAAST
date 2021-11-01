@@ -33,9 +33,9 @@ class Communication:
             self.activeCommunications = [self.socket]
 
     def send(self, data, mediums):
-        for communication in mediums:
-            if communication in self.activeCommunications:
-                communication.send(data)
+        for medium in mediums:
+            if medium in self.activeCommunications:
+                medium.send(data)
 
     def sendRudderAngle(self, angle):
         data = {"rudderAngle": angle}

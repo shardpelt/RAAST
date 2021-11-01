@@ -1,33 +1,57 @@
-import json
-import socket
+
 import asyncio
 
-# testServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# testServer.bind(("127.0.0.1", 5697))
-# testServer.listen(1)
-# boatSocket, boatAddress = testServer.accept()
-#
-# print(boatSocket, boatAddress)
-#
-# while True:
-#     boatData = json.loads(boatSocket.recv(1048).decode("utf-8"))
-#     print(boatData)
 
-# simulationServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# simulationServer.connect(("localhost", 5678))
-#
-# input("send?")
-# simulationServer.send(bytes(json.dumps([1, 2, 3]), "utf-8"))
-
-class X:
-    i = 8
+class Client:
     def __init__(self):
-        self.e = 5
+        self.reader, self.writer = None, None
 
-    def a(self):
-        print(self.i)
+    async def setup(self):
+        self.reader, self.writer = await asyncio.open_connection(
+            '127.0.0.1', 8888)
 
-x = X()
-x.a()
+    def send(self, message):
+        print(f'Send: {message!r}')
+        self.writer.write(message.encode())
 
+c = Client()
+asyncio.run(c.setup())
+
+
+# async def tcp_echo_client(message):
+#
+#     print(f'Send: {message!r}')
+#     writer.write(message.encode())
+#
+#     data = await reader.read(100)
+#     print(f'Received: {data.decode()!r}')
+#
+#     print('Close the connection')
+#    writer.close()
+
+
+
+
+# import asyncio
+#
+# class Client:
+#     def __init__(self):
+#         self.reader = None
+#         self.writer = None
+#
+#     async def setup(self):
+#         self.reader, self.writer = await asyncio.open_connection(
+#             '127.0.0.1', 8888)
+#
+#     def send(self, message):
+#         self.writer.write(message.encode())
+#
+#
+# client = Client()
+# asyncio.run(client.setup())
+#
+# print(client.reader, client.writer)
+#
+# msg = input("send message >> ")
+# client.send(msg)
 
