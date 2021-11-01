@@ -9,7 +9,7 @@ class PidController:
         self.xErrorOld = 0  # om de toename te benaderen
         self.prevTime = time.time()
 
-    def getBestNextAngle(self, xSetpoint, xActual):  # setpoint -> wat moet het worden, actual -> wat moet het nu is
+    def calcNewAngle(self, xSetpoint, xActual):  # setpoint -> wat moet het worden, actual -> wat moet het nu is
         deltaT = self.getDeltaT(time.time())
 
         xError = xActual - xSetpoint
@@ -31,10 +31,3 @@ class PidController:
         self.prevTime = currTime
 
         return deltaT
-
-
-# controller = PidController(0.5, 0.02, 0.005)
-#
-# a1 = controller.getY(20, 10)
-# a2 = controller.getY(20, 10 - a1)
-# a3 = controller.getY(20, 10 - a1 - a2)

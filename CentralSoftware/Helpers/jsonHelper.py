@@ -1,5 +1,4 @@
 import json
-
 from Route.boarders import Boarders
 from Route.finish import Finish
 from Route.coordinate import Coordinate

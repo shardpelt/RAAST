@@ -10,7 +10,7 @@ class Communication:
         self.socket = SocketIO(boat)
         self.allCommunications = [self.socket, self.http, self.socket]
         self.activeCommunications = None
-        self.interval = 1
+        self.messageInterval = 1
 
     def configure(self):
         self.setActiveCommunications()
@@ -28,7 +28,7 @@ class Communication:
             self.activeCommunications = [self.can, self.http]
         elif self.boat.controlMode == 2:                        # Full-autonomous
             self.activeCommunications = [self.can, self.http]
-            self.interval = 60 * 60 * 6
+            self.messageInterval = 60 * 60 * 6
         elif self.boat.controlMode == 3:                        # Simulation
             self.activeCommunications = [self.socket]
 
