@@ -8,9 +8,9 @@ class Route:
     def __init__(self, sensorData: SensorData):
         # TODO: JSON coördinaten moeten via een verbinding aanpasbaar zijn
         self.data = sensorData
-        self.finish = None #JsonHelper.setupFinish("../Recources/finish.json")
-        self.waypoints = None #JsonHelper.setupWaypoints("../Recources/waypoints.json")
-        self.boarders = None #JsonHelper.setupBoarders("../Recources/boarders.json")
+        self.finish = JsonHelper.setupFinish("../Recources/finish.json")
+        self.waypoints = JsonHelper.setupWaypoints("../Recources/waypoints.json")
+        self.boarders = JsonHelper.setupBoarders("../Recources/boarders.json")
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
 
     @property
@@ -40,3 +40,5 @@ class Route:
     def checkThreatDetection(self):
         # TODO: Checks if sonar, AIS or storm is
         pass
+
+r = Route(SensorData())

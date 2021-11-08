@@ -13,10 +13,10 @@ class JsonHelper:
         """
         with open(file) as finishJson:
             finishObject = json.load(finishJson)
-            top = finishObject["topCoordinate"]
-            bottom = finishObject["bottomCoordinate"]
+            topCoor = finishObject["topCoordinate"]
+            bottomCoor = finishObject["bottomCoordinate"]
 
-            return Finish(Coordinate(top["latitude"], top[["longitude"]]), Coordinate(bottom["latitude"], bottom[["longitude"]]))
+            return Finish(Coordinate(topCoor["latitude"], topCoor["longitude"]), Coordinate(bottomCoor["latitude"], bottomCoor["longitude"]))
 
     @staticmethod
     def setupWaypoints(file):
