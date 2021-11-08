@@ -1,4 +1,5 @@
 from Communication.communication import Communication
+from Helpers.sailHelper import SailHelper
 from Route.route import Route
 from SensorData.sensor_data import SensorData
 from Helpers.rudderHelper import RudderHelper
@@ -12,6 +13,7 @@ class Boat:
         self.route = Route(self.sensorData)             # Object in which the route information is stored
         self.course = Course(self.sensorData)           # Object in which the course is calculated and stored
         self.rudderHelper = RudderHelper()              # Contains methods to determine best angle for rudder
+        self.sailHelper = SailHelper()                  # Contains methods to determine best sail angle
 
     def start(self):
         self.communication.configure()
@@ -36,7 +38,11 @@ class Boat:
             self.course.forgetCloseHauledCourse()
             self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
-        # Updates to the rudder
+        # Checks/updates the rudder
         if self.course.isOffTrack():
-            angle = self.rudderHelper.getNewBestAngle(self.course.wantedAngle, self.sensorData.compass.angle)
-            self.communication.sendRudderAngle(angle)
+            rudderAngle = self.rudderHelper.getNewBestAngle(self.course.wantedAngle, self.sensorData.compass.angle)
+            self.communication.sendRudderAngle(rudderAngle)
+
+        # Checks/updates the sail
+        sailAngle = self.sailHelper.getNewBestAngle(self.sensorData.wind.angle)
+        self.communication.sendSailAngle(sailAngle)

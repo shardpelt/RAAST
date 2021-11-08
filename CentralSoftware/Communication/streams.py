@@ -2,17 +2,11 @@ import asyncio
 
 async def handle_echo(reader, writer):
     while True:
+        print("Waiting for message..")
         data = await reader.read(100)
         message = data.decode()
         addr = writer.get_extra_info('peername')
         print(f"Received {message!r} from {addr!r}")
-
-    # print(f"Send: {message!r}")
-    # writer.write(data)
-    # await writer.drain()
-    #
-    # print("Close the connection")
-    # writer.close()
 
 async def main():
     server = await asyncio.start_server(
@@ -26,6 +20,14 @@ async def main():
 
 asyncio.run(main())
 
+
+
+# print(f"Send: {message!r}")
+# writer.write(data)
+# await writer.drain()
+#
+# print("Close the connection")
+# writer.close()
 
 
 # import asyncio
