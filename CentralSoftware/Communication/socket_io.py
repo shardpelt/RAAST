@@ -10,15 +10,13 @@ class SocketIO(BaseIO):
         self.started = False
         self.simulationSocket = None
         self.simulationAddress = None
-        self.threadForIncommingData = Thread(target=self.receive)
 
     def serverSetup(self):
         boatServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         boatServer.bind((self.ipAddress, self.portNumber))
         boatServer.listen(1)
+        print("- SocketIO waiting for client connection")
         self.simulationSocket, self.simulationAddress = boatServer.accept()
-
-        self.threadForIncommingData.start()
 
     def receive(self):
         while self.started:
@@ -35,4 +33,3 @@ class SocketIO(BaseIO):
 
     def stop(self):
         self.started = False
-        self.threadForIncommingData.join()

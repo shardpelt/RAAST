@@ -13,12 +13,15 @@ class Communication:
         self.messageInterval = 1
 
     def configure(self):
+        print("- Configuring communication")
         self.setActiveCommunications()
 
         for communication in self.allCommunications:
             if communication in self.activeCommunications and not communication.started:
+                print(f"- Started communication: {communication}")
                 communication.start()
             elif communication not in self.activeCommunications:
+                print(f"- Stopped communication: {communication}")
                 communication.stop()
 
     def setActiveCommunications(self):

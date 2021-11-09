@@ -40,3 +40,5 @@ class Route:
     def checkThreatDetection(self):
         # TODO: Checks if sonar, AIS or storm is
         pass
+
+r = Route(SensorData())

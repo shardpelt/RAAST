@@ -1,3 +1,5 @@
+import asyncio
+import time
 from Communication.communication import Communication
 from Helpers.sailHelper import SailHelper
 from Route.route import Route
@@ -16,35 +18,44 @@ class Boat:
         self.sailHelper = SailHelper()                  # Contains methods to determine best sail angle
 
     def start(self):
-        self.communication.configure()
+        communicationThread = threading.Thread(target=self.communication.configure)
+        controlLoopThread = threading.Thread(target=self.run)
 
-        while True:
-            if self.sensorData.gyroscope.isUpRight():   # Only go through the control loop if the boat is up right
-                self.run()
+        communicationThread.start()
+        controlLoopThread.start()
+
 
     # TODO: Make this loop asyncio
     def run(self):
-        # Checks/updates to the Route
-        routeChanged = False
-        if self.route.checkThreatDetection():
-            self.route.findWayAroundObstacles()
-            routeChanged = True
-        elif self.route.checkWaypointReached():
-            self.route.updateToNextWaypoint()
-            routeChanged = True
+        while True:
 
-        # Checks/updates to the Course
-        if routeChanged:
-            self.sensorData.makeImage()
-            self.course.forgetCloseHauledCourse()
-            self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
+            # Only go through the control loop if the boat is up right
+            if self.sensorData.gyroscope.isUpRight():
 
-        # Checks/updates the rudder
-        if self.course.isOffTrack():
-            rudderAngle = self.rudderHelper.getNewBestAngle(self.course.wantedAngle, self.sensorData.compass.angle)
-            self.communication.sendRudderAngle(rudderAngle)
+                # Checks/updates to the Route
+                routeChanged = False
+                if self.route.checkThreatDetection():
+                    self.route.findWayAroundObstacles()
+                    routeChanged = True
+                elif self.route.checkWaypointReached():
+                    self.route.updateToNextWaypoint()
+                    routeChanged = True
 
-        # Checks/updates the sail
-        if self.sensorData.checkCriticalDataChanges():
-            sailAngle = self.sailHelper.getNewBestAngle(self.sensorData.wind.angle)
-            self.communication.sendSailAngle(sailAngle)
+                # Checks/updates to the Course
+                if routeChanged:
+                    self.sensorData.makeImage()
+                    self.course.forgetCloseHauledCourse()
+                    self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
+
+                # Checks/updates the rudder
+                if self.course.isOffTrack():
+                    rudderAngle = self.rudderHelper.getNewBestAngle(self.course.wantedAngle, self.sensorData.compass.angle)
+                    self.communication.sendRudderAngle(rudderAngle)
+
+                # Checks/updates the sail
+                if self.sensorData.checkCriticalDataChanges():
+                    sailAngle = self.sailHelper.getNewBestAngle(self.sensorData.wind.angle)
+                    self.communication.sendSailAngle(sailAngle)
+
+                time.sleep(5)
+                print("- Control loop executed")
