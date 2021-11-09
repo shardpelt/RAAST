@@ -22,7 +22,7 @@ class SensorData:
     def makeImage(self):
         self.image.wind = copy.deepcopy(self.wind)
 
-    def checkCriticalDataChanges(self):
+    def checkChangesInWind(self):
         maxWindDeviation = 10
 
         if self.image.wind is not None:

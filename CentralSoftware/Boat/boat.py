@@ -34,7 +34,7 @@ class Boat:
             routeChanged = True
 
         # Checks/updates to the Course
-        if self.sensorData.checkCriticalDataChanges() or routeChanged:
+        if routeChanged:
             self.sensorData.makeImage()
             self.course.forgetCloseHauledCourse()
             self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
@@ -45,5 +45,6 @@ class Boat:
             self.communication.sendRudderAngle(rudderAngle)
 
         # Checks/updates the sail
-        sailAngle = self.sailHelper.getNewBestAngle(self.sensorData.wind.angle)
-        self.communication.sendSailAngle(sailAngle)
+        if self.sensorData.checkCriticalDataChanges():
+            sailAngle = self.sailHelper.getNewBestAngle(self.sensorData.wind.angle)
+            self.communication.sendSailAngle(sailAngle)
