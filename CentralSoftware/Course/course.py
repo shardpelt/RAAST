@@ -1,5 +1,3 @@
-import sys
-sys.path.append("..")
 from Route.coordinate import Coordinate
 from SensorData.sensor_data import SensorData
 from Helpers.angleHelper import AngleHelper
@@ -18,16 +16,13 @@ class Course:
     def isOffTrack(self):
         return not self.angleHelper.angleIsBetweenAngles(self.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
 
-    def getBestSailAngle(self):
-        pass
-
     def updateWantedAngle(self, waypoint: Coordinate, boarders: dict):
         """
             :arg waypoint: Coordinate of the current waypoint
             :arg boarders: The absolute boarders in which the boat should stay during the trip
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
-        optimalAngle = self.angleHelper.hypotenuseAngleToWaypoint(self.data.currentCoordinate, waypoint)
+        optimalAngle = self.angleHelper.calcRhumbLine(self.data.currentCoordinate, waypoint)
 
         if self.boatAtBoarders(self.data.currentCoordinate, boarders):
             self.forgetCloseHauledCourse()
@@ -86,5 +81,3 @@ class Course:
     def forgetCloseHauledCourse(self):
         self.closeHauled["flag"] = True
         self.closeHauled["chosenSide"] = ""
-
-

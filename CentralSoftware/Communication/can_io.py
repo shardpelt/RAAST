@@ -2,6 +2,7 @@ import json
 from Communication.base_io import BaseIO
 
 class CanIO(BaseIO):
+    # TODO: asyncio
     def __init__(self, boat):
         super().__init__(boat)
         #self.bus = can.interface.Bus() # TODO: Bustype?
@@ -17,8 +18,5 @@ class CanIO(BaseIO):
         if self.boat.controlMode == 3:
             pass
 
-    def setRudder(self, angle):
-        pass
-
-    def setSail(self, angle):
+    def send(self):
         pass

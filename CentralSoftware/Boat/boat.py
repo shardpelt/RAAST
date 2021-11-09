@@ -22,6 +22,7 @@ class Boat:
             if self.sensorData.gyroscope.isUpRight():   # Only go through the control loop if the boat is up right
                 self.run()
 
+    # TODO: Make this loop asyncio
     def run(self):
         # Checks/updates to the Route
         routeChanged = False

@@ -8,8 +8,10 @@ class AngleHelper(HelperBase):
 
     def getDeltaLeftAndRightToAngle(self, mainAngle, leftAngle, rightAngle):
         """
-            Computes the difference between the mainAngle and the left/right angle
-            This method is used to determine which angle is best to set course at
+            :arg mainAngle: The angle of which the deltas should be calculated
+            :arg leftAngle: The angle left to the mainAngle
+            :arg rightAngle: The angle right to the mainAngle
+            :returns: The difference between mainAngle and left/right angle, used for determing nearest direction to sail at
         """
         mainAngle, leftAngle, rightAngle = self.reduceAngles(mainAngle, leftAngle, rightAngle)
         if leftAngle >= mainAngle:
@@ -24,13 +26,21 @@ class AngleHelper(HelperBase):
 
         return {"L": deltaL, "R": deltaR}
 
-    def hypotenuseAngleToWaypoint(self, currCoordinate: Coordinate, waypoint: Coordinate):
+    @staticmethod
+    def calcRhumbLine(current: Coordinate, waypoint: Coordinate):
         """
-            Calculates the angle to the next waypoint which is, without any other inputs like wind etc, the most optimal.
-            :arg currCoordinate: The current coordinate of the boat
-            :arg waypoint: The waypoint which the boat is headed
-            :returns: The most optimal angle in radians to next waypoint, without taking into account the wind etc.
+            :arg current: Current coordinate of the boat
+            :arg waypoint: Current waypoint of the boat
+            :returns: The angle to the next waypoint, in accordance to the 'loxodroom' formula
         """
-        xDelta = waypoint.longitude - currCoordinate.longitude
-        yDelta = waypoint.latitude - currCoordinate.latitude
+        deltaWidth = m.log(m.tan(waypoint.latitude/2 + m.pi/4)/m.tan(current.latitude/2 + m.pi/4))
+        return m.atan2(deltaWidth, waypoint.longitude - current.longitude)
+
+
+    def hypotenuseAngleToWaypoint(self, current: Coordinate, waypoint: Coordinate):
+        """
+            USE CALCRHUMBLINE INSTEAD
+        """
+        xDelta = waypoint.longitude - current.longitude
+        yDelta = waypoint.latitude - current.latitude
         return m.atan2(yDelta, xDelta)
