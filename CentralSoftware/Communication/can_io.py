@@ -18,5 +18,8 @@ class CanIO(BaseIO):
         if self.boat.controlMode == 3:
             pass
 
+    def stop(self):
+        pass
+
     def send(self):
         pass

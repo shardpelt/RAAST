@@ -4,8 +4,5 @@ class Wind:
 		self.angle = None
 		self.speed = None
 
-	def set_angle(self, value):
-		self.angle = value
-
-	def set_speed(self, value):
-		self.speed = value
+	def hasData(self):
+		return self.angle is not None

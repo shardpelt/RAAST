@@ -8,20 +8,19 @@ class Communication:
         self.can = CanIO(boat)
         self.http = HttpIO(boat)
         self.socket = SocketIO(boat)
-        self.allCommunications = [self.socket, self.http, self.socket]
+        self.allCommunications = [self.socket]
         self.activeCommunications = None
         self.messageInterval = 1
 
     def configure(self):
-        print("- Configuring communication")
+        print("COMMUNICATION - Configuring communication")
         self.setActiveCommunications()
 
         for communication in self.allCommunications:
             if communication in self.activeCommunications and not communication.started:
-                print(f"- Started communication: {communication}")
                 communication.start()
             elif communication not in self.activeCommunications:
-                print(f"- Stopped communication: {communication}")
+                print(f"COMMUNICATION - Stopped communication: {communication}")
                 communication.stop()
 
     def setActiveCommunications(self):

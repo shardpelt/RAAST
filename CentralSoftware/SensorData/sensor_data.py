@@ -4,6 +4,7 @@ from SensorData.Entities.compass import Compass
 from SensorData.Entities.gyroscope import Gyroscope
 from SensorData.Entities.sonar import Sonar
 from SensorData.Entities.wind import Wind
+from Route.coordinate import Coordinate
 from Helpers.angleHelper import AngleHelper
 
 class SensorData:
@@ -12,17 +13,20 @@ class SensorData:
         self.rudderAngle = None
         self.sailAngle = None
         self.gyroscope = Gyroscope()
-        self.currentCoordinate = None
+        self.currentCoordinate = Coordinate()
         self.compass = Compass()
         self.wind = Wind()
         self.sonar = Sonar()
         self.ais = None
         self.image = SensorDataImage()      # Storing important last used data for calculations
 
-    def makeImage(self):
+    def makeImage(self) -> None:
         self.image.wind = copy.deepcopy(self.wind)
 
-    def checkChangesInWind(self):
+    def hasRequiredData(self) -> bool:
+        return self.gyroscope.isUpRight() and self.currentCoordinate.hasData() and self.compass.hasData() and self.wind.hasData()
+
+    def checkChangesInWind(self) -> bool:
         maxWindDeviation = 10
 
         if self.image.wind is not None:

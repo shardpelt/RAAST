@@ -5,8 +5,11 @@ class HttpIO(BaseIO):
         super().__init__(boat)
         self.boat = boat
 
-    def run(self) -> None:
+    def start(self) -> None:
         # TODO: Add rest api functionality to communicatie with satellite
+        pass
+
+    def stop(self):
         pass
 
     def changeControlLevel(self, mode):

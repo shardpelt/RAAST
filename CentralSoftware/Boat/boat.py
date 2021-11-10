@@ -1,5 +1,5 @@
-import asyncio
 import time
+import threading
 from Communication.communication import Communication
 from Helpers.sailHelper import SailHelper
 from Route.route import Route
@@ -24,13 +24,11 @@ class Boat:
         communicationThread.start()
         controlLoopThread.start()
 
-
-    # TODO: Make this loop asyncio
     def run(self):
         while True:
 
-            # Only go through the control loop if the boat is up right
-            if self.sensorData.gyroscope.isUpRight():
+            # Only go through the control loop if data requirements are satisfied
+            if self.sensorData.hasRequiredData() and self.route.hasNextWaypoint():
 
                 # Checks/updates to the Route
                 routeChanged = False
@@ -42,7 +40,7 @@ class Boat:
                     routeChanged = True
 
                 # Checks/updates to the Course
-                if routeChanged:
+                if self.course.wantedAngle is None or routeChanged:
                     self.sensorData.makeImage()
                     self.course.forgetCloseHauledCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
@@ -53,9 +51,13 @@ class Boat:
                     self.communication.sendRudderAngle(rudderAngle)
 
                 # Checks/updates the sail
-                if self.sensorData.checkCriticalDataChanges():
+                if self.sensorData.checkChangesInWind():
                     sailAngle = self.sailHelper.getNewBestAngle(self.sensorData.wind.angle)
                     self.communication.sendSailAngle(sailAngle)
 
+                print("CONTROL - Control loop executed -")
                 time.sleep(5)
-                print("- Control loop executed")
+
+            else:
+                print("CONTROL - Not enough data to sail -")
+                time.sleep(3)

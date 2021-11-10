@@ -1,3 +1,4 @@
+from Route.boarders import Boarders
 from Route.coordinate import Coordinate
 from SensorData.sensor_data import SensorData
 from Helpers.angleHelper import AngleHelper
@@ -16,7 +17,7 @@ class Course:
     def isOffTrack(self):
         return not self.angleHelper.angleIsBetweenAngles(self.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
 
-    def updateWantedAngle(self, waypoint: Coordinate, boarders: dict):
+    def updateWantedAngle(self, waypoint: Coordinate, boarders: Boarders):
         """
             :arg waypoint: Coordinate of the current waypoint
             :arg boarders: The absolute boarders in which the boat should stay during the trip
@@ -29,8 +30,8 @@ class Course:
 
         if self.angleHelper.windFromDeadzone(optimalAngle, self.data.wind.angle):
             self.wantedAngle = self.calcBestAngleWindFromDeadzone(optimalAngle, self.data.wind.angle)
-
-        elif self.angleHelper.windFromBehind(optimalAngle, self.data.wind.angle):
+        else:
+        #elif self.angleHelper.windFromBehind(optimalAngle, self.data.wind.angle):
             self.wantedAngle = optimalAngle
 
     def calcBestAngleWindFromDeadzone(self, optimalAngle, windAngle):
@@ -66,14 +67,14 @@ class Course:
             self.closeHauled["chosenSide"] = "right"
             return angleRightToDeadzone
 
-    def boatAtBoarders(self, currCoordinate, boarders):
-        if currCoordinate.latitude <= (boarders["down"] + self.boarderMarge):
+    def boatAtBoarders(self, currCoordinate: Coordinate, boarders: Boarders):
+        if currCoordinate.latitude <= (boarders.down + self.boarderMarge):
             return True
-        elif currCoordinate.latitude >= (boarders["top"] - self.boarderMarge):
+        elif currCoordinate.latitude >= (boarders.top - self.boarderMarge):
             return True
-        elif currCoordinate.longitude <= (boarders["left"] + self.boarderMarge):
+        elif currCoordinate.longitude <= (boarders.left + self.boarderMarge):
             return True
-        elif currCoordinate.longitude >= (boarders["right"] - self.boarderMarge):
+        elif currCoordinate.longitude >= (boarders.right - self.boarderMarge):
             return True
 
         return False
