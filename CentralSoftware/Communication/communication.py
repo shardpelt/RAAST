@@ -50,4 +50,3 @@ class Communication:
     def sendAllBoatData(self):
         data = {"allBoatData": self.boat}
         self.send(data, [self.socket, self.http])
-
