@@ -1,33 +1,59 @@
+from Helpers.angleHelper import AngleHelper
 import time
+from Helpers.helperBase import HelperBase
 
 class PidController:
     def __init__(self, p, i, d):
         self.p = p
         self.i = i
         self.d = d
-        self.yI = 0         # startwaarde (integrerende component)
-        self.xErrorOld = 0  # om de toename te benaderen
-        self.prevTime = time.time()
+        self.yI = 0                 # startwaarde (integrerende component)
+        self.errorOld = 0           # om de toename te benaderen
+        self.prevTime = None
 
-    def calcNewAngle(self, xSetpoint, xActual):  # setpoint -> wat moet het worden, actual -> wat moet het nu is
-        deltaT = self.getDeltaT(time.time())
+    def calcNewAngle(self, actual, setpoint):
+        deltaT = 1 #self.getDeltaT(time.time())     # TODO: Wat is de deltaT in de eerste flow van de loop?
 
-        xError = xActual - xSetpoint
+        error = self.calcError(actual, setpoint)
+        print(f"- error: {AngleHelper.toDegrees(error)}")
 
-        yP = self.p * xError
+        yP = self.p * error
 
         # Hoe langer de koers niet klopt des te meer de yI gaat spelen -> reageert pas na lange tijd
-        self.yI += self.i * xError * deltaT
+        self.yI += self.i * error * deltaT
 
         # Zorgt voor een snelle aanpassing van de koers (misschien dus laag houden)
-        yD = self.d * (xError - self.xErrorOld) / deltaT
-        self.xErrorOld = xError
+        yD = self.d * (error - self.errorOld) / deltaT
+        self.errorOld = error
 
-        print(f"error: {xError}, y: {yP + self.yI + yD}, newActual: {xActual - (yP + self.yI + yD)}")
-        return yP + self.yI + yD
+        angle = yP + self.yI + yD
+
+        return angle
 
     def getDeltaT(self, currTime):
         deltaT = currTime - self.prevTime
         self.prevTime = currTime
-
         return deltaT
+
+    @staticmethod
+    def calcError(actual, setpoint):
+        if abs(setpoint - actual) > AngleHelper.toRadians(180):
+            if actual < setpoint:
+                error = (0 - actual) - (HelperBase.fullRadians - setpoint)
+            else:
+                error = (HelperBase.fullRadians - actual) + setpoint
+        else:
+            error = setpoint - actual
+
+        return error
+
+    def reset(self):
+        self.yI = None
+        self.errorOld = None
+        self.prevTime = None
+
+
+# pid = PidController(0.5, 0.02, 0.0005)
+# print(pid.calcNewAngle(AngleHelper.toRadians(5), AngleHelper.toRadians(355)))
+# # err = pid.calcError(AngleHelper.toRadians(5), AngleHelper.toRadians(355))
+# # print(AngleHelper.toDegrees(err))

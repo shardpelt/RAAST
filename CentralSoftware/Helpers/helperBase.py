@@ -1,9 +1,8 @@
 import math as m
 
 class HelperBase:
-    def __init__(self):
-        self.fullRadians = 2 * m.pi
-        self.radians45 = self.toRadians(45)
+    fullRadians = 2 * m.pi
+    radians45 = 45 * (m.pi / 180)
 
     @staticmethod
     def toRadians(degrees):

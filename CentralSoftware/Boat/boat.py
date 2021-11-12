@@ -1,11 +1,24 @@
 import time
 import threading
 from Communication.communication import Communication
+from Helpers.angleHelper import AngleHelper
 from Helpers.sailHelper import SailHelper
 from Route.route import Route
 from SensorData.sensor_data import SensorData
 from Helpers.rudderHelper import RudderHelper
 from Course.course import Course
+
+"""
+The boat can only sail when 
+    - Required data from the sensors is available (gyroscope, gps, wind, compass)
+    - Next waypoint is known
+Control Loop flow:
+    - Possible threat detection from sensors and checking if waypoint is reached
+    - If there is not yet an wantedCourseAngle or the route has been changed, we set up an fresh course
+    - If there is already an course, but the boat is not sailing at right angle, we adjust the rudder through PID control
+    - If there are any changes in the wind angle, according to the wind angle we set the sail to last time, the sail is updated as well. 
+    - After each loop we wait for an chosen amount of time
+"""
 
 class Boat:
     def __init__(self):
@@ -26,11 +39,8 @@ class Boat:
 
     def run(self):
         while True:
-
-            # Only go through the control loop if data requirements are satisfied
             if self.sensorData.hasRequiredData() and self.route.hasNextWaypoint():
 
-                # Checks/updates to the Route
                 routeChanged = False
                 if self.route.checkThreatDetection():
                     self.route.findWayAroundObstacles()
@@ -39,21 +49,21 @@ class Boat:
                     self.route.updateToNextWaypoint()
                     routeChanged = True
 
-                # Checks/updates to the Course
                 if self.course.wantedAngle is None or routeChanged:
                     self.sensorData.makeImage()
                     self.course.forgetCloseHauledCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
-                # Checks/updates the rudder
                 if self.course.isOffTrack():
-                    rudderAngle = self.rudderHelper.getNewBestAngle(self.course.wantedAngle, self.sensorData.compass.angle)
-                    self.communication.sendRudderAngle(rudderAngle)
+                    rudderAngle = self.rudderHelper.getNewBestAngle(self.sensorData.compass.angle, self.course.wantedAngle)
+                    #self.communication.sendRudderAngle(rudderAngle)
+                    print(AngleHelper.toDegrees(rudderAngle))
+                else:
+                    self.rudderHelper.pid.reset()
 
-                # Checks/updates the sail
                 if self.sensorData.checkChangesInWind():
                     sailAngle = self.sailHelper.getNewBestAngle(self.sensorData.wind.angle)
-                    self.communication.sendSailAngle(sailAngle)
+                    #self.communication.sendSailAngle(sailAngle)
 
                 print("CONTROL - Control loop executed -")
                 time.sleep(5)
