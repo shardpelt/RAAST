@@ -1,23 +1,27 @@
 class Sonar:
     def __init__(self):
-        self.scan = []
+        self.scan = None
+        self.totalScanAngle = 90
         self.infinity = 1_000_000
 
-    def getSeenObjects(self, sonar):
-        i = 0 - len(sonar) / 2
-        leftAngle = self.infinity
-        rightAngle = self.infinity
+    def hasData(self):
+        return self.scan is not None
+
+    def getScanAnalysis(self, sonar) -> tuple:
+        i = 0 - self.totalScanAngle / 2
+        firstAngle = self.infinity
+        lastAngle = self.infinity
         smallestDistance = self.infinity
 
-        while i < len(sonar) / 2:
+        while i < self.totalScanAngle / 2:
             if sonar[i] < self.infinity:
                 if sonar[i] < smallestDistance:
                     smallestDistance = sonar[i]
-                if leftAngle == self.infinity:
-                    leftAngle = i
+                if firstAngle == self.infinity:
+                    firstAngle = i
                 else:
-                    rightAngle = i
+                    lastAngle = i
 
             i = i + 1
 
-        return [leftAngle, rightAngle, smallestDistance]
+        return firstAngle, lastAngle, smallestDistance

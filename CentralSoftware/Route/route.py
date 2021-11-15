@@ -1,8 +1,7 @@
 from SensorData.sensor_data import SensorData
 from Route.coordinate import Coordinate
 from Helpers.jsonHelper import JsonHelper
-from Route.boarders import Boarders
-from Route.finish import Finish
+from SensorData.Entities.sonar import Sonar
 
 class Route:
     def __init__(self, sensorData: SensorData):
@@ -23,7 +22,7 @@ class Route:
     def checkWaypointReached(self) -> bool:
         """
             Whether the boat's current coordinate is within the next waypoint's coordinate +/- margin
-            :returns: Boolean (True if boat has reached current sailWayPoint, False if not)
+            :returns: True if boat has reached the current waypoint zone, False if not
         """
         if self.data.currentCoordinate is not None:
             if (self.currentWaypoint.latitude - self.waypointMargin) <= self.data.currentCoordinate.latitude <= (self.currentWaypoint.latitude + self.waypointMargin) \
@@ -36,11 +35,8 @@ class Route:
         self.waypoints.pop(0)
 
     def findWayAroundObstacles(self) -> None:
-        """
-            Function should have input on where obstacle is and navigate around is
-        """
-        objects = self.data.sonar.getSeenObjects()
+        scanAnalysis = self.data.sonar.getScanAnalysis()
 
-    def checkThreatDetection(self):
-        # TODO: Checks if sonar, AIS or storm is
-        pass
+
+    def checkThreatDetection(self) -> bool:
+        return self.data.sonar.hasData()
