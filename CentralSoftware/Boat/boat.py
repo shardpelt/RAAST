@@ -22,13 +22,14 @@ Control Loop flow:
 
 class Boat:
     def __init__(self):
-        self.controlMode = 3                            # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
-        self.communication = Communication(self)        # Communication handler
-        self.sensorData = SensorData()                  # Data object in which every datapoint is stored
-        self.route = Route(self.sensorData)             # Object in which the route information is stored
-        self.course = Course(self.sensorData)           # Object in which the course is calculated and stored
-        self.rudderHelper = RudderHelper()              # Contains methods to determine best angle for rudder
-        self.sailHelper = SailHelper()                  # Contains methods to determine best sail angle
+        self.controlMode = 3                                # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
+        self.controlSleep = 5
+        self.communication = Communication(self)            # Communication handler
+        self.sensorData = SensorData()                      # Data object in which every datapoint is stored
+        self.route = Route(self.sensorData)                 # Object in which the route information is stored
+        self.course = Course(self.sensorData)               # Object in which the course is calculated and stored
+        self.rudderHelper = RudderHelper(self.controlSleep) # Contains methods to determine best angle for rudder
+        self.sailHelper = SailHelper()                      # Contains methods to determine best sail angle
 
     def start(self):
         communicationThread = threading.Thread(target=self.communication.configure)
@@ -66,8 +67,8 @@ class Boat:
                     #self.communication.sendSailAngle(sailAngle)
 
                 print("CONTROL - Control loop executed -")
-                time.sleep(5)
 
             else:
                 print("CONTROL - Not enough data to sail -")
-                time.sleep(3)
+
+            time.sleep(self.controlSleep)

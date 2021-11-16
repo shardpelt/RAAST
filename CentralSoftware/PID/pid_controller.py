@@ -3,16 +3,17 @@ import time
 from Helpers.helperBase import HelperBase
 
 class PidController:
-    def __init__(self, p, i, d):
+    def __init__(self, p, i, d, sleepTime):
         self.p = p
         self.i = i
         self.d = d
         self.yI = 0                 # startwaarde (integrerende component)
         self.errorOld = 0           # om de toename te benaderen
         self.prevTime = None
+        self.sleepTime = sleepTime
 
     def calcNewAngle(self, actual, setpoint):
-        deltaT = 1 #self.getDeltaT(time.time())     # TODO: Wat is de deltaT in de eerste flow van de loop?
+        deltaT = self.getDeltaT(time.time())
 
         error = self.calcError(actual, setpoint)
         print(f"- error: {AngleHelper.toDegrees(error)}")
@@ -31,6 +32,9 @@ class PidController:
         return angle
 
     def getDeltaT(self, currTime):
+        if self.prevTime is None:
+            self.prevTime = currTime - self.sleepTime
+
         deltaT = currTime - self.prevTime
         self.prevTime = currTime
         return deltaT
@@ -53,7 +57,10 @@ class PidController:
         self.prevTime = None
 
 
-# pid = PidController(0.5, 0.02, 0.0005)
+# pid = PidController(0.5, 0.02, 0.0005, 5)
+#
 # print(pid.calcNewAngle(AngleHelper.toRadians(5), AngleHelper.toRadians(355)))
+#
+
 # # err = pid.calcError(AngleHelper.toRadians(5), AngleHelper.toRadians(355))
 # # print(AngleHelper.toDegrees(err))
