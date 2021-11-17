@@ -44,18 +44,18 @@ class SensorData:
         #		- Krijgen we data bij omslag of constant?
 
     def set_wind(self, speed, angle):
-        self.wind.set_speed(speed)
-        self.wind.set_angle(angle)
+        self.wind.speed = speed
+        self.wind.angle = angle % 360
         # TODO: - Vanuit welke hoek krijgen we de direction?
 
     def set_rudderAngle(self, angle: float):
-        self.rudderAngle = angle % self.angleHelper.fullRadians
+        self.rudderAngle = angle % 360
 
     def set_sailAngle(self, angle: float):
-        self.sailAngle = angle % self.angleHelper.fullRadians
+        self.sailAngle = angle % 360
 
     def set_compassAngle(self, angle: float):
-        self.compass.angle = angle % self.angleHelper.fullRadians
+        self.compass.angle = angle % 360
 
     def set_currentCoordinate(self, latitude: float, longitude: float):
         self.currentCoordinate.latitude = latitude

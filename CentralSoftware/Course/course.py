@@ -11,7 +11,7 @@ class Course:
         self.wantedAngleMarge = 5 # TODO: beste marge op de koers/zeil nader te bepalen
         self.wantedSailMarge = 5
         self.closeHauled = {"flag":False, "chosenSide":"", "forbiddenSide":""}
-        self.tackingAngleMarge = self.angleHelper.toRadians(5)
+        self.tackingAngleMarge = 5
         self.boarderMarge = 0.005
 
     def isOffTrack(self):
@@ -35,8 +35,8 @@ class Course:
             self.wantedAngle = optimalAngle
 
     def calcBestAngleWindFromDeadzone(self, optimalAngle, windAngle):
-        angleLeftToDeadzone = windAngle - self.angleHelper.radians45
-        angleRightToDeadzone = windAngle + self.angleHelper.radians45
+        angleLeftToDeadzone = windAngle - 45
+        angleRightToDeadzone = windAngle + 45
         deltaAngles = self.angleHelper.getDeltaLeftAndRightToAngle(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
 
         # If already sailing closeHauled try to continue direction chosen or perform tacking maneuvre

@@ -1,6 +1,4 @@
-from Helpers.angleHelper import AngleHelper
 import time
-from Helpers.helperBase import HelperBase
 
 class PidController:
     def __init__(self, p, i, d, sleepTime):
@@ -16,7 +14,7 @@ class PidController:
         deltaT = self.getDeltaT(time.time())
 
         error = self.calcError(actual, setpoint)
-        print(f"- error: {AngleHelper.toDegrees(error)}")
+        print(f"- error: {error}")
 
         yP = self.p * error
 
@@ -41,11 +39,11 @@ class PidController:
 
     @staticmethod
     def calcError(actual, setpoint):
-        if abs(setpoint - actual) > AngleHelper.toRadians(180):
+        if abs(setpoint - actual) > 180:
             if actual < setpoint:
-                error = (0 - actual) - (HelperBase.fullRadians - setpoint)
+                error = (0 - actual) - (360 - setpoint)
             else:
-                error = (HelperBase.fullRadians - actual) + setpoint
+                error = (360 - actual) + setpoint
         else:
             error = setpoint - actual
 

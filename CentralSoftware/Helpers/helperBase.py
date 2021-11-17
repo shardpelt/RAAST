@@ -1,9 +1,6 @@
 import math as m
 
 class HelperBase:
-    fullRadians = 2 * m.pi
-    radians45 = 45 * (m.pi / 180)
-
     @staticmethod
     def toRadians(degrees):
         return degrees * (m.pi / 180)
@@ -12,11 +9,12 @@ class HelperBase:
     def toDegrees(radians):
         return radians * (180 / m.pi)
 
-    def reduceAngles(self, *angles):
+    @staticmethod
+    def reduceAngles(*angles):
         """
-            Makes sure that for every angle as input, the angle is between 0 and 2pi radians
+            Makes sure that for every angle as input, the angle is between 0 and 360 degrees
         """
-        return tuple(angle % self.fullRadians for angle in angles)
+        return tuple(angle % 360 for angle in angles)
 
     def angleIsBetweenAngles(self, n, left, right):
         """
@@ -28,13 +26,13 @@ class HelperBase:
         return n >= left or n <= right
 
     def windFromDeadzone(self, optimal, wind):
-        if self.angleIsBetweenAngles(optimal, wind - self.radians45, wind + self.radians45):
+        if self.angleIsBetweenAngles(optimal, wind - 45, wind + 45):
             return True
         return False
 
     def windFromBehind(self, optimal, wind):
-        backOfBoatAngle = optimal - self.fullRadians / 2
+        backOfBoatAngle = optimal - 180
 
-        if self.angleIsBetweenAngles(backOfBoatAngle, wind - self.radians45, wind + self.radians45):
+        if self.angleIsBetweenAngles(backOfBoatAngle, wind - 45, wind + 45):
             return True
         return False

@@ -1,5 +1,4 @@
 import json
-from Helpers.angleHelper import AngleHelper as ah
 from Route.boarders import Boarders
 from Route.finish import Finish
 from Route.coordinate import Coordinate
@@ -17,7 +16,7 @@ class JsonHelper:
             topCoor = finishObject["topCoordinate"]
             bottomCoor = finishObject["bottomCoordinate"]
 
-            return Finish(Coordinate(ah.toRadians(topCoor["latitude"]), ah.toRadians(topCoor["longitude"])), Coordinate(ah.toRadians(bottomCoor["latitude"]), ah.toRadians(bottomCoor["longitude"])))
+            return Finish(Coordinate(topCoor["latitude"], topCoor["longitude"]), Coordinate(bottomCoor["latitude"], bottomCoor["longitude"]))
 
     @staticmethod
     def setupWaypoints(file):
@@ -30,7 +29,7 @@ class JsonHelper:
             waypointsObject = json.load(waypointsJson)
 
             for waypoint in waypointsObject:
-                waypoints.append(Coordinate(ah.toRadians(waypoint["latitude"]), ah.toRadians(waypoint["longitude"])))
+                waypoints.append(Coordinate(waypoint["latitude"], waypoint["longitude"]))
 
         return waypoints
 
@@ -39,4 +38,4 @@ class JsonHelper:
         with open(file) as boardersJson:
             boarders = json.load(boardersJson)
 
-        return Boarders(ah.toRadians(boarders["top"]), ah.toRadians(boarders["down"]), ah.toRadians(boarders["left"]), ah.toRadians(boarders["right"]))
+        return Boarders(boarders["top"], boarders["down"], boarders["left"], boarders["right"])

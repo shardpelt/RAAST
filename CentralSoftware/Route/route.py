@@ -37,6 +37,5 @@ class Route:
     def findWayAroundObstacles(self) -> None:
         scanAnalysis = self.data.sonar.getScanAnalysis()
 
-
     def checkThreatDetection(self) -> bool:
         return self.data.sonar.hasData()

@@ -8,10 +8,27 @@ class SailHelper(HelperBase):
         self.windLeftToSail = [{"wind": 180, "sail": 90, "interpolate": True}, {"wind": 225, "sail": 45, "interpolate": True}, {"wind": 270, "sail": 10, "interpolate": False}, {"wind": 360, "sail": 10, "interpolate": None}]
 
     # Wind according to the boat's angle
-    def getNewBestAngle(self, relativeWindAngle):
+    def getNewBestAngleInterpolated(self, relativeWindAngle):
         windToSail = self.windRightToSail if 0 <= relativeWindAngle <= 180 else self.windLeftToSail
         for i, windSail in enumerate(windToSail):
             if windSail["wind"] <= relativeWindAngle <= windToSail[i + 1]["wind"]:
                 if windSail["interpolate"]:
                     return Interpolator.getSail(windSail, windToSail[i + 1], relativeWindAngle)
                 return windSail["sail"]
+
+    @staticmethod
+    def getNewBestAngle(boatAngle, relativeWindAngle):
+        """
+            Needs the boatAngle to calculate the absolute angle of the wind
+            The difference of the boatAngle according to the absolute wind angle is divided by 2 to find the ideal sail angle
+        """
+        absWindAngle = (boatAngle + relativeWindAngle)
+
+        sailAngle = (absWindAngle - boatAngle) / 2
+        if relativeWindAngle <= 180:
+            return -sailAngle
+        else:
+            return 90 - sailAngle % 90
+
+# sh = SailHelper()
+# print(sh.getNewBestAngle(0, 350))
