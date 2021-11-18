@@ -6,9 +6,9 @@ class BaseIO:
 
     def updateBoatData(self, message: dict):
         if message["sensor"] == "wind":
-            self.boat.sensorData.wind.angle = int(message["value"])
+            self.boat.data.wind.angle = int(message["value"])
         elif message["sensor"] == "gps":
-            self.boat.sensorData.currentCoordinate.latitude = float(message["latitude"])
-            self.boat.sensorData.currentCoordinate.longitude = float(message["longitude"])
+            self.boat.data.currentCoordinate.latitude = float(message["latitude"])
+            self.boat.data.currentCoordinate.longitude = float(message["longitude"])
         elif message["sensor"] == "compass":
-            self.boat.sensorData.compass.angle = int(message["value"])
+            self.boat.data.compass.angle = int(message["value"])

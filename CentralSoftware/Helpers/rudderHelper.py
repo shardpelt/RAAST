@@ -15,7 +15,6 @@ class RudderHelper(HelperBase):
         elif rudderAngle < -self.maxWantedAngle:
             rudderAngle = -self.maxWantedAngle
 
-        print(f"- rudderAngle: {rudderAngle}")
         return rudderAngle
 
 

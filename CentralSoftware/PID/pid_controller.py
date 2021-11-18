@@ -14,7 +14,6 @@ class PidController:
         deltaT = self.getDeltaT(time.time())
 
         error = self.calcError(actual, setpoint)
-        print(f"- error: {error}")
 
         yP = self.p * error
 

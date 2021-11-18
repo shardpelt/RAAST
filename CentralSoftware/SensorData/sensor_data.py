@@ -24,7 +24,8 @@ class SensorData:
         self.image.wind = copy.deepcopy(self.wind)
 
     def hasRequiredData(self) -> bool:
-        return self.gyroscope.isUpRight() and self.currentCoordinate.hasData() and self.compass.hasData() and self.wind.hasData()
+        #self.gyroscope.isUpRight()
+        return True and self.currentCoordinate.hasData() and self.compass.hasData() and self.wind.hasData()
 
     def checkChangesInWind(self) -> bool:
         maxWindDeviation = 10

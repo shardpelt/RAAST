@@ -51,20 +51,20 @@ class Boat:
                     routeChanged = True
 
                 if self.course.wantedAngle is None or routeChanged:
+                    self.communication.sendWaypoints() # ONLY FOR SIMULATION
                     self.data.makeImage()
                     self.course.forgetCloseHauledCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
                 if self.course.isOffTrack():
                     rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
-                    #self.communication.sendRudderAngle(rudderAngle)
-                    print(AngleHelper.toDegrees(rudderAngle))
+                    self.communication.sendRudderAngle(rudderAngle)
                 else:
                     self.rudderHelper.pid.reset()
 
                 if self.data.checkChangesInWind():
                     sailAngle = self.sailHelper.getNewBestAngle(self.data.compass.angle, self.data.wind.angle)
-                    #self.communication.sendSailAngle(sailAngle)
+                    self.communication.sendSailAngle(sailAngle)
 
                 print("CONTROL - Control loop executed -")
 

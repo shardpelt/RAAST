@@ -1,3 +1,4 @@
+import json
 from Communication.socket_io import SocketIO
 from Communication.can_io import CanIO
 from Communication.http_io import HttpIO
@@ -19,9 +20,6 @@ class Communication:
         for communication in self.allCommunications:
             if communication in self.activeCommunications and not communication.started:
                 communication.start()
-            elif communication not in self.activeCommunications:
-                print(f"COMMUNICATION - Stopped communication: {communication}")
-                communication.stop()
 
     def setActiveCommunications(self):
         if self.boat.controlMode == 0:                          # Controller
@@ -36,17 +34,21 @@ class Communication:
 
     def send(self, data, mediums):
         for medium in mediums:
-            if medium in self.activeCommunications:
+            if medium in self.activeCommunications and medium.alive:
                 medium.send(data)
 
-    def sendRudderAngle(self, angle):
-        data = {"rudderAngle": angle}
-        self.send(data, [self.can, self.socket])
+    def sendRudderAngle(self, angle: int):
+        data = ["rudderAngle", angle]
+        self.send(json.dumps(data), [self.can, self.socket])
 
-    def sendSailAngle(self, angle):
-        data = {"sailAngle": angle}
-        self.send(data, [self.can, self.socket])
+    def sendSailAngle(self, angle: int):
+        data = ["sailAngle", angle]
+        self.send(json.dumps(data), [self.can, self.socket])
+
+    def sendWaypoints(self):
+        data = ["waypoints", [wp.__dict__ for wp in self.boat.route.waypoints]]
+        self.send(json.dumps(data), [self.socket])
 
     def sendAllBoatData(self):
-        data = {"allBoatData": self.boat}
+        data = ["allBoatData", self.boat]
         self.send(data, [self.socket, self.http])
