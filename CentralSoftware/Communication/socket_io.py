@@ -40,11 +40,15 @@ class SocketIO(BaseIO):
             self.resetSocket()
 
     def start(self):
+        self.started = True
         self.serverSetup()
 
         while self.started:
             self.waitForConnection()
             self.receive()
+
+    def stop(self):
+        self.started = False
 
     def resetSocket(self):
         self.simulationSocket, self.simulationAddress = None, None

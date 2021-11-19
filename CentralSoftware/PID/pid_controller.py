@@ -1,14 +1,13 @@
 import time
 
 class PidController:
-    def __init__(self, p, i, d, sleepTime):
+    def __init__(self, p, i, d):
         self.p = p
         self.i = i
         self.d = d
         self.yI = 0                 # startwaarde (integrerende component)
         self.errorOld = 0           # om de toename te benaderen
         self.prevTime = None
-        self.sleepTime = sleepTime
 
     def calcNewAngle(self, actual, setpoint):
         deltaT = self.getDeltaT(time.time())
@@ -30,7 +29,7 @@ class PidController:
 
     def getDeltaT(self, currTime):
         if self.prevTime is None:
-            self.prevTime = currTime - self.sleepTime
+            return 0.001
 
         deltaT = currTime - self.prevTime
         self.prevTime = currTime

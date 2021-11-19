@@ -20,6 +20,8 @@ class Communication:
         for communication in self.allCommunications:
             if communication in self.activeCommunications and not communication.started:
                 communication.start()
+            else:
+                communication.stop()
 
     def setActiveCommunications(self):
         if self.boat.controlMode == 0:                          # Controller

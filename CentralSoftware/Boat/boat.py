@@ -23,12 +23,11 @@ Control Loop flow:
 class Boat:
     def __init__(self):
         self.controlMode = 3                                # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
-        self.controlSleep = 5                               # The sleep time which sets in after each control loop
         self.communication = Communication(self)            # Communication handler
         self.data = SensorData()                            # Data object in which every datapoint is stored
         self.route = Route(self.data)                       # Object in which the route information is stored
         self.course = Course(self.data)                     # Object in which the course is calculated and stored
-        self.rudderHelper = RudderHelper(self.controlSleep) # Contains methods to determine best angle for rudder
+        self.rudderHelper = RudderHelper()                  # Contains methods to determine best angle for rudder
         self.sailHelper = SailHelper()                      # Contains methods to determine best sail angle
 
     def start(self):
@@ -56,11 +55,8 @@ class Boat:
                     self.course.forgetCloseHauledCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
-                if self.course.isOffTrack():
-                    rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
-                    self.communication.sendRudderAngle(rudderAngle)
-                else:
-                    self.rudderHelper.pid.reset()
+                rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
+                self.communication.sendRudderAngle(rudderAngle)
 
                 if self.data.checkChangesInWind():
                     sailAngle = self.sailHelper.getNewBestAngle(self.data.compass.angle, self.data.wind.angle)
@@ -70,5 +66,3 @@ class Boat:
 
             else:
                 print("CONTROL - Not enough data to sail -")
-
-            time.sleep(self.controlSleep)
