@@ -5,6 +5,7 @@ from Helpers.angleHelper import AngleHelper
 
 class Course:
     def __init__(self, sensorData: SensorData):
+        self.shouldUpdate = True
         self.data = sensorData
         self.angleHelper = AngleHelper()
         self.wantedAngle = None

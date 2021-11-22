@@ -65,9 +65,7 @@ class Communication:
             }
 
         data = ["update", update]
-
-        print(data)
-        #self.send(data, [self.socket, self.http])
+        self.send(json.dumps(data), [self.socket, self.http])
 
     def shouldGiveUpdate(self) -> bool:
         currTime = time.time()

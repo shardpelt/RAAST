@@ -29,7 +29,7 @@ class SocketIO(BaseIO):
             try:
                 message = json.loads(self.simulationSocket.recv(1048).decode("utf-8"))
                 print(f"COMMUNICATION - Received from simulation: {message}")
-                self.updateBoatData(message)
+                self.processIncommingMsg(message)
             except socket.error:
                 self.resetSocket()
 

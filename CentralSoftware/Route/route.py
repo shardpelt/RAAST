@@ -5,12 +5,16 @@ from SensorData.Entities.sonar import Sonar
 
 class Route:
     def __init__(self, sensorData: SensorData):
-        # TODO: JSON coördinaten moeten via een verbinding aanpasbaar zijn
+        self.shouldUpdate = True
         self.data = sensorData
         self.finish = JsonHelper.setupFinish("Recources/finish.json")
         self.waypoints = JsonHelper.setupWaypoints("Recources/waypoints.json")
         self.boarders = JsonHelper.setupBoarders("Recources/boarders.json")
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
+
+    def addWaypoint(self, waypoint: Coordinate):
+        # TODO: Func to add a waypoint as next one
+        pass
 
     def getDict(self):
         d = self.__dict__
