@@ -1,4 +1,5 @@
 import json
+import time
 from Communication.socket_io import SocketIO
 from Communication.can_io import CanIO
 from Communication.http_io import HttpIO
@@ -11,7 +12,8 @@ class Communication:
         self.socket = SocketIO(boat)
         self.allCommunications = [self.socket]
         self.activeCommunications = None
-        self.messageInterval = 1
+        self.msgInterval = 1
+        self.prevMsgUpdateTime = -1
 
     def configure(self):
         print("COMMUNICATION - Configuring communication")
@@ -30,7 +32,7 @@ class Communication:
             self.activeCommunications = [self.can, self.http]
         elif self.boat.controlMode == 2:                        # Full-autonomous
             self.activeCommunications = [self.can, self.http]
-            self.messageInterval = 60 * 60 * 6
+            self.msgInterval = 60 * 60 * 6
         elif self.boat.controlMode == 3:                        # Simulation
             self.activeCommunications = [self.socket]
 
@@ -51,6 +53,28 @@ class Communication:
         data = ["waypoints", [wp.__dict__ for wp in self.boat.route.waypoints]]
         self.send(json.dumps(data), [self.socket])
 
-    def sendAllBoatData(self):
-        data = ["allBoatData", self.boat]
-        self.send(data, [self.socket, self.http])
+    def sendUpdate(self):
+        update = {"boat":
+                {
+                    "controlMode": self.boat.controlMode,
+                    "communication": {"activeCommunications": [type(c).__name__ for c in self.activeCommunications], "msgInterval": self.msgInterval},
+                    "sensorData": self.boat.data.getDict(),
+                    "route": self.boat.route.getDict(),
+                    "course": self.boat.course.getDict()
+                }
+            }
+
+        data = ["update", update]
+
+        print(data)
+        #self.send(data, [self.socket, self.http])
+
+    def shouldGiveUpdate(self) -> bool:
+        currTime = time.time()
+
+        update = False
+        if self.prevMsgUpdateTime == -1 or self.prevMsgUpdateTime + self.msgInterval > currTime:
+            update = True
+        self.prevMsgUpdateTime = currTime
+
+        return update

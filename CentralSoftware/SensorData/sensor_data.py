@@ -20,6 +20,18 @@ class SensorData:
         self.ais = None
         self.image = SensorDataImage()      # Storing important last used data for calculations
 
+    def getDict(self):
+        d = self.__dict__
+        del d["angleHelper"]
+
+        for k, v in d.items():
+            try:
+                d[k] = v.__dict__
+            except:
+                pass
+
+        return d
+
     def makeImage(self) -> None:
         self.image.wind = copy.deepcopy(self.wind)
 

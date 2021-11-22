@@ -14,6 +14,14 @@ class Course:
         self.tackingAngleMarge = 5
         self.boarderMarge = 0.005
 
+    def getDict(self):
+        d = self.__dict__
+
+        del d["data"]
+        del d["angleHelper"]
+
+        return d
+
     def isOffTrack(self):
         return not self.angleHelper.angleIsBetweenAngles(self.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
 

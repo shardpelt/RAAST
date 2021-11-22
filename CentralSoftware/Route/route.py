@@ -12,6 +12,23 @@ class Route:
         self.boarders = JsonHelper.setupBoarders("Recources/boarders.json")
         self.waypointMargin = 0.0003 # 11 meter per 0.0001
 
+    def getDict(self):
+        d = self.__dict__
+        del d["data"]
+
+        for k, v in d.items():
+            if k == "waypoints":
+                d[k] = [wp.__dict__ for wp in v]
+            elif k == "finish":
+                x = v.__dict__
+                for k2, v2 in x.items():
+                    x[k2] = v2.__dict__
+                d[k] = x
+            elif k == "boarders":
+                d[k] = v.__dict__
+
+        return d
+
     @property
     def currentWaypoint(self) -> Coordinate:
         return self.waypoints[0]

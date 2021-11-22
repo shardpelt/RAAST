@@ -66,3 +66,8 @@ class Boat:
 
             else:
                 print("CONTROL - Not enough data to sail -")
+
+            if self.communication.shouldGiveUpdate():
+                self.communication.sendUpdate()
+
+            time.sleep(500)
