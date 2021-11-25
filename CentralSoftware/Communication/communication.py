@@ -12,8 +12,8 @@ class Communication:
         self.socket = SocketIO(boat)
         self.allCommunications = [self.socket]
         self.activeCommunications = None
-        self.msgInterval = 1
-        self.prevMsgUpdateTime = -1
+        self.msgInterval = 10
+        self.prevUpdateTime = -1
 
     def configure(self):
         print("COMMUNICATION - Configuring communication")
@@ -50,7 +50,7 @@ class Communication:
         self.send(json.dumps(data), [self.can, self.socket])
 
     def sendWaypoints(self):
-        data = ["waypoints", [wp.__dict__ for wp in self.boat.route.waypoints]]
+        data = ["waypoints", [vars(wp) for wp in self.boat.route.waypoints]]
         self.send(json.dumps(data), [self.socket])
 
     def sendUpdate(self):
@@ -71,8 +71,8 @@ class Communication:
         currTime = time.time()
 
         update = False
-        if self.prevMsgUpdateTime == -1 or self.prevMsgUpdateTime + self.msgInterval > currTime:
+        if self.prevUpdateTime == -1 or (currTime - self.prevUpdateTime) > self.msgInterval:
             update = True
-        self.prevMsgUpdateTime = currTime
+            self.prevUpdateTime = currTime
 
         return update

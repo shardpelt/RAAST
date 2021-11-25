@@ -1,7 +1,7 @@
+from copy import copy
 from SensorData.sensor_data import SensorData
 from Route.coordinate import Coordinate
 from Helpers.jsonHelper import JsonHelper
-from SensorData.Entities.sonar import Sonar
 
 class Route:
     def __init__(self, sensorData: SensorData):
@@ -17,19 +17,19 @@ class Route:
         pass
 
     def getDict(self):
-        d = self.__dict__
+        d = vars(copy(self))
         del d["data"]
 
         for k, v in d.items():
             if k == "waypoints":
-                d[k] = [wp.__dict__ for wp in v]
+                d[k] = [vars(wp) for wp in v]
             elif k == "finish":
-                x = v.__dict__
+                x = vars(copy(v))
                 for k2, v2 in x.items():
-                    x[k2] = v2.__dict__
+                    x[k2] = vars(v2)
                 d[k] = x
             elif k == "boarders":
-                d[k] = v.__dict__
+                d[k] = vars(v)
 
         return d
 

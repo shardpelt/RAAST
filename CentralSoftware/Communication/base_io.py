@@ -5,10 +5,14 @@ class BaseIO:
         self.boat = boat
         self.ipAddress = '127.0.0.1'
         self.portNumber = 5678
+        self.sensorMap = {1: self.setWind, 2: self.setGps, 3: self.setCompass}
         self.instructionMap = {1: self.setSailRudder, 2: self.setCourse, 3: self.setWaypoint, 4: self.setControlMode, 5: self.setControlParameters}
 
     def processIncommingMsg(self, msg):
-        self.instructionMap[msg["instructionId"]](msg["body"])
+        if msg["type"] == "instruction":
+            self.instructionMap[msg["id"]](msg["body"])
+        elif msg["type"] == "sensor":
+            self.sensorMap[msg["id"]](msg["body"])
 
     def setSailRudder(self, body):
         try:
@@ -43,11 +47,21 @@ class BaseIO:
         #TODO: define which control parameters should be adjustable from wall
         pass
 
-    def updateBoatData(self, message: dict):
-        if message["sensor"] == "wind":
-            self.boat.data.wind.angle = int(message["value"])
-        elif message["sensor"] == "gps":
-            self.boat.data.currentCoordinate.latitude = float(message["latitude"])
-            self.boat.data.currentCoordinate.longitude = float(message["longitude"])
-        elif message["sensor"] == "compass":
-            self.boat.data.compass.angle = int(message["value"])
+    def setWind(self, body):
+        try:
+            self.boat.data.wind.angle = body["value"]
+        except Exception as e:
+            return e
+
+    def setGps(self, body):
+        try:
+            self.boat.data.currentCoordinate.latitude = body["value"][0]
+            self.boat.data.currentCoordinate.longitude = body["value"][1]
+        except Exception as e:
+            return e
+
+    def setCompass(self, body):
+        try:
+            self.boat.data.compass.angle = body["value"]
+        except Exception as e:
+            return e

@@ -1,3 +1,4 @@
+from copy import copy
 from Route.boarders import Boarders
 from Route.coordinate import Coordinate
 from SensorData.sensor_data import SensorData
@@ -16,7 +17,7 @@ class Course:
         self.boarderMarge = 0.005
 
     def getDict(self):
-        d = self.__dict__
+        d = vars(copy(self))
 
         del d["data"]
         del d["angleHelper"]

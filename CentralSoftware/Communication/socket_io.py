@@ -51,4 +51,5 @@ class SocketIO(BaseIO):
         self.started = False
 
     def resetSocket(self):
+        print(f"COMMUNICATION - Lost connection with simulation")
         self.simulationSocket, self.simulationAddress = None, None

@@ -1,7 +1,6 @@
 import time
 import threading
 from Communication.communication import Communication
-from Helpers.angleHelper import AngleHelper
 from Helpers.sailHelper import SailHelper
 from Route.route import Route
 from SensorData.sensor_data import SensorData
@@ -10,9 +9,9 @@ from Course.course import Course
 
 """
 The boat can only sail when 
-    - Required data from the sensors is available (gyroscope, gps, wind, compass)
-    - Next waypoint is known
-Control Loop flow:
+    - Required data from the sensors is available (gyroscope, gps, wind, compass) 
+    - Next waypoint is known 
+Control Loop flow: 
     - Possible threat detection from sensors and checking if waypoint is reached
     - If there is not yet an wantedCourseAngle or the route has been changed, we set up an fresh course
     - If there is already an course, but the boat is not sailing at right angle, we adjust the rudder through PID control
@@ -42,23 +41,25 @@ class Boat:
             if self.data.hasRequiredData() and self.route.hasNextWaypoint():
 
                 routeChanged = False
-                if self.route.checkThreatDetection():
-                    self.route.findWayAroundObstacles()
-                    routeChanged = True
-                elif self.route.checkWaypointReached():
-                    self.route.updateToNextWaypoint()
-                    routeChanged = True
+                if self.route.shouldUpdate:
+                    if self.route.checkThreatDetection():
+                        self.route.findWayAroundObstacles()
+                        routeChanged = True
+                    elif self.route.checkWaypointReached():
+                        self.route.updateToNextWaypoint()
+                        routeChanged = True
 
-                if self.course.wantedAngle is None or routeChanged:
+                if self.course.shouldUpdate and (self.course.wantedAngle is None or routeChanged):
                     self.communication.sendWaypoints() # ONLY FOR SIMULATION
                     self.data.makeImage()
                     self.course.forgetCloseHauledCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
-                rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
-                self.communication.sendRudderAngle(rudderAngle)
+                if self.rudderHelper.shouldUpdate:
+                    rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
+                    self.communication.sendRudderAngle(rudderAngle)
 
-                if self.data.checkChangesInWind():
+                if self.sailHelper.shouldUpdate and self.data.checkChangesInWind():
                     sailAngle = self.sailHelper.getNewBestAngle(self.data.compass.angle, self.data.wind.angle)
                     self.communication.sendSailAngle(sailAngle)
 
@@ -68,6 +69,7 @@ class Boat:
                 print("CONTROL - Not enough data to sail -")
 
             if self.communication.shouldGiveUpdate():
+                print("sends update")
                 self.communication.sendUpdate()
 
-            time.sleep(500)
+            time.sleep(2)

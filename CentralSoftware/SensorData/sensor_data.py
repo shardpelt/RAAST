@@ -1,4 +1,4 @@
-import copy
+from copy import copy
 from SensorData.sensor_data_image import SensorDataImage
 from SensorData.Entities.compass import Compass
 from SensorData.Entities.gyroscope import Gyroscope
@@ -21,19 +21,20 @@ class SensorData:
         self.image = SensorDataImage()      # Storing important last used data for calculations
 
     def getDict(self):
-        d = self.__dict__
+        d = vars(copy(self))
         del d["angleHelper"]
+        del d["image"]
 
         for k, v in d.items():
             try:
-                d[k] = v.__dict__
+                d[k] = vars(v)
             except:
                 pass
 
         return d
 
     def makeImage(self) -> None:
-        self.image.wind = copy.deepcopy(self.wind)
+        self.image.wind = copy(self.wind)
 
     def hasRequiredData(self) -> bool:
         #self.gyroscope.isUpRight()
