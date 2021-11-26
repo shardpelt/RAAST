@@ -107,9 +107,13 @@ class Sailboat (sp.Module):
 
     def sweep(self):
 
-        windAngle = int(sp.world.wind.wind_direction)
-        windAngle = self.makeBoatAngleNormal(windAngle)
+        relativeWindAngle = (sp.world.wind.wind.wind_direction - 360) * -1
+        relativeWindAngle = makeBoatAngleNormal(relativeWindAngle)
+        relativeWindAngle = int(sp.world.wind.wind_direction)
+        
         compassAngle = int(self.sailboat_rotation)
+        compassAngle = makeBoatAngleNormal(compassAngle)
+
         x = float(self.position_x)
         y = float(self.position_y)
 
@@ -117,10 +121,8 @@ class Sailboat (sp.Module):
         sp.worl.socketIO.socket.sendCoordinates(x,y)
         sp.worl.socketIO.socket.sendCompassAngle(compassAngle)
 
-        self.local_sail_angle.set(#TODO)
-
-        self.gimbal_rudder_angle.set(#TODO)
-
+        self.local_sail_angle.set(sp.world.socketIO.relativeSailAngle)
+        self.gimbal_rudder_angle.set(sp.world.socketIO.relativeRudderAngle)
         self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
 
         # Calculate forward force in N based on the angle between the sail and the wind

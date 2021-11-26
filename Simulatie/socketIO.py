@@ -8,6 +8,8 @@ class SocketIO():
         self.Address = '127.0.0.1'
         self.port = '4444'
         self.socket = None
+        self.relativeWindAngle = 0
+        self.relativeRudderAngle = 0
 
     def socketSetup(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,7 +17,7 @@ class SocketIO():
     def receive(self):
         while True:
             try:
-                message = json.loads(self.socket.recv(1048).decode("utf-8"))
+                message = json.loads(self.socket.recv(8192).decode("utf-8"))
                 self.updateData(message)
             except socket.error:
                 print(error)
