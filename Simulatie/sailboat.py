@@ -8,7 +8,7 @@
 # voorwaards = loodrecht * cos (beta)
 # beta = 90 - hoek van het zeil met de boot
 
-from pid import *
+from communication import *
 import simpylc as sp
 
 
@@ -115,7 +115,24 @@ class Sailboat (sp.Module):
         self.passed_first_waypoint = sp.Register(False)
 
 
+    def makeBoatAngleNormal(boatAngle):
+        angle = boatAngle+90
+        if angle < 0:
+            angle = angle * -1
+        if angle > 360:
+            angle = angle - 360
+
     def sweep(self):
+
+        windAngle = int(sp.world.wind.wind_direction)
+        windAngle = self.makeBoatAngleNormal(windAngle)
+        compassAngle = int(self.sailboat_rotation)
+        x = float(self.position_x)
+        y = float(self.position_y)
+
+        sp.worl.socketIO.socket.sendWindAngle(windAngle)
+        sp.worl.socketIO.socket.sendCoordinates(x,y)
+        sp.worl.socketIO.socket.sendCompassAngle(compassAngle)
 
         self.local_sail_angle.set(#TODO)
         self.global_sail_angle.set(#TODO)

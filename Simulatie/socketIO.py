@@ -27,6 +27,17 @@ class SocketIO():
         except socket.error as error:
             print(error)
 
+    def sendWindAngle(angle):
+        angle = int(angle)
+        socket.send(bytes(json.dumps({"type": "sensor", "id": 1, "body": {"value": angle}}), "utf-8"))
+
+    def sendCoordinates(x,y):
+        socket.send(bytes(json.dumps({"type": "sensor", "id": 2, "body": {"value": (y, x)}}), "utf-8"))
+
+    def sendCompassAngle(angle):
+        angle = int(angle)
+        socket.send(bytes(json.dumps({"type": "sensor", "id": 3, "body": {"value": angle}}), "utf-8")) 
+
     def updateData(message):
         print(f"received message: {message}")
         #TODO read what data it is, and call:
