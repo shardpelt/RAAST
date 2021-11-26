@@ -51,23 +51,6 @@ def distance_between_angles(alpha, beta):
     distance = (180 - phi) % 360 if phi > 90 else phi
     return distance
 
-
-def optimal_sailing_angle(sailboat_rotation,
-                          wind_direction):
-    distance = distance_between_angles((sailboat_rotation + 180) % 360, wind_direction)
-
-    if distance > 180:
-        distance = (360 - distance) % 360
-
-    # If wind blows from starboard
-    if is_between_angles((sailboat_rotation - 180) % 360,
-                         sailboat_rotation,
-                         sp.world.wind.wind_direction):
-        distance = -distance
-
-    return distance / 2
-
-
 def angle_to_waypoint(delta_x, delta_y):
     return sp.tan(delta_x / delta_y) * 1000
 
@@ -135,9 +118,10 @@ class Sailboat (sp.Module):
         sp.worl.socketIO.socket.sendCompassAngle(compassAngle)
 
         self.local_sail_angle.set(#TODO)
-        self.global_sail_angle.set(#TODO)
 
         self.gimbal_rudder_angle.set(#TODO)
+
+        self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
 
         # Calculate forward force in N based on the angle between the sail and the wind
         self.sail_alpha.set(distance_between_angles(sp.world.wind.wind_direction, self.global_sail_angle))
