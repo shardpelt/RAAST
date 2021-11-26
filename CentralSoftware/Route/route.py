@@ -55,8 +55,11 @@ class Route:
     def updateToNextWaypoint(self) -> None:
         self.waypoints.pop(0)
 
-    def findWayAroundObstacles(self) -> None:
-        scanAnalysis = self.data.sonar.getScanAnalysis()
+    def circumnavigateSonar(self) -> None:
+        pass
+
+    def circumnavigateAis(self) -> None:
+        pass
 
     def checkThreatDetection(self) -> bool:
         return self.data.sonar.checkThreat() and self.data.ais.checkThreat()
