@@ -1,4 +1,5 @@
 from copy import copy
+from SensorData.Entities.ais import Ais
 from SensorData.sensor_data_image import SensorDataImage
 from SensorData.Entities.compass import Compass
 from SensorData.Entities.gyroscope import Gyroscope
@@ -17,7 +18,7 @@ class SensorData:
         self.compass = Compass()
         self.wind = Wind()
         self.sonar = Sonar()
-        self.ais = None
+        self.ais = Ais()
         self.image = SensorDataImage()      # Storing important last used data for calculations
 
     def getDict(self):
@@ -60,7 +61,6 @@ class SensorData:
     def set_wind(self, speed, angle):
         self.wind.speed = speed
         self.wind.angle = angle % 360
-        # TODO: - Vanuit welke hoek krijgen we de direction?
 
     def set_rudderAngle(self, angle: float):
         self.rudderAngle = angle % 360
@@ -75,6 +75,5 @@ class SensorData:
         self.currentCoordinate.latitude = latitude
         self.currentCoordinate.longitude = longitude
 
-    def set_powerStateAis(self, ais):
+    def set_ais(self, ais):
         self.ais = ais
-
