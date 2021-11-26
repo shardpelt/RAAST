@@ -56,10 +56,10 @@ class Route:
         self.waypoints.pop(0)
 
     def circumnavigateSonar(self) -> None:
-        pass
+        """
+            Creates an new waypoint which course to sail at lays out of object's field
+        """
+
 
     def circumnavigateAis(self) -> None:
         pass
-
-    def checkThreatDetection(self) -> bool:
-        return self.data.sonar.checkThreat() and self.data.ais.checkThreat()

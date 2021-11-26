@@ -42,8 +42,11 @@ class Boat:
 
                 routeChanged = False
                 if self.route.shouldUpdate:
-                    if self.route.checkThreatDetection():
+                    if self.data.sonar.checkThreat():
                         self.route.circumnavigateSonar()
+                        routeChanged = True
+                    elif self.data.ais.checkThreat():
+                        self.route.circumnavigateAis()
                         routeChanged = True
                     elif self.route.checkWaypointReached():
                         self.route.updateToNextWaypoint()
