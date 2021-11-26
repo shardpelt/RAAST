@@ -59,4 +59,4 @@ class Route:
         scanAnalysis = self.data.sonar.getScanAnalysis()
 
     def checkThreatDetection(self) -> bool:
-        return self.data.sonar.hasData()
+        return self.data.sonar.checkThreat() and self.data.ais.checkThreat()

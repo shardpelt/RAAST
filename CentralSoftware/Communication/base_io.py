@@ -49,7 +49,7 @@ class BaseIO:
 
     def setWind(self, body):
         try:
-            self.boat.data.wind.angle = body["value"]
+            self.boat.data.setWindAngle(body["value"])
         except Exception as e:
             return e
 
