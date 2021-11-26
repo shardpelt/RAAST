@@ -43,7 +43,7 @@ class Boat:
                 routeChanged = False
                 if self.route.shouldUpdate:
                     if self.route.checkThreatDetection():
-                        self.route.findWayAroundObstacles()
+                        self.route.circumnavigateSonar()
                         routeChanged = True
                     elif self.route.checkWaypointReached():
                         self.route.updateToNextWaypoint()

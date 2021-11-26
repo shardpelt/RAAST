@@ -31,5 +31,5 @@ class SailHelper(HelperBase):
                     return Interpolator.getSail(windSail, windToSail[i + 1], relativeWindAngle)
                 return windSail["sail"]
 
-# sh = SailHelper()
-# print(sh.getNewBestAngle(0, 350))
+sh = SailHelper()
+print(sh.getNewBestAngle(0, 90))

@@ -1,7 +1,6 @@
 class Wind:
-	# TODO: Define whether this wind angle is relative to north or to axis of boat
 	def __init__(self):
-		self.angle = None
+		self.angle = None # Relative wind angle according to the boat
 		self.speed = None
 
 	def hasData(self):
