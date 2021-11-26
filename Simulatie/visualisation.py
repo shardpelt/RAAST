@@ -76,6 +76,7 @@ class Visualisation (Scene):
 
         self.floor()
 
+        #display all waypoints in the waypoint list
         count=0
         for way in world.waypoint._waywaypointypointy:
             world.waypoint.setWay(count)
@@ -84,6 +85,7 @@ class Visualisation (Scene):
                     )
             count = count+1
 
+        #display all obstacles  in the obstacle list
         count=0
         for obst in world.obstacle._obstaclesList:
             world.obstacle.setObstacle(count)
