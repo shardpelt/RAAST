@@ -39,11 +39,12 @@ class Boat:
     def run(self):
         while True:
             if self.data.hasRequiredData() and self.route.hasNextWaypoint():
-
+                # TODO: Moet je door de control lus nog de waardes updaten? of aan het begin vastzetten en de buffer vullen?
                 routeChanged = False
                 if self.route.shouldUpdate:
                     if self.data.sonar.checkThreat():
                         self.route.circumnavigateSonar()
+                        self.data.sonar.objectDetected = False
                         routeChanged = True
                     elif self.data.ais.checkThreat():
                         self.route.circumnavigateAis()

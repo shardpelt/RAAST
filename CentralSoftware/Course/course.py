@@ -1,4 +1,3 @@
-from copy import copy
 from Route.boarders import Boarders
 from Route.coordinate import Coordinate
 from SensorData.sensor_data import SensorData
@@ -15,14 +14,6 @@ class Course:
         self.closeHauled = {"flag":False, "chosenSide":"", "forbiddenSide":""}
         self.tackingAngleMarge = 5
         self.boarderMarge = 0.005
-
-    def getDict(self):
-        d = vars(copy(self))
-
-        del d["data"]
-        del d["angleHelper"]
-
-        return d
 
     def isOffTrack(self):
         return not self.angleHelper.angleIsBetweenAngles(self.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)

@@ -3,6 +3,7 @@ import time
 from Communication.socket_io import SocketIO
 from Communication.can_io import CanIO
 from Communication.http_io import HttpIO
+from Helpers.objectToDictHelper import ObjectToDictHelper
 
 class Communication:
     def __init__(self, boat):
@@ -58,8 +59,8 @@ class Communication:
                 {
                     "controlMode": self.boat.controlMode,
                     "communication": {"activeCommunications": [type(c).__name__ for c in self.activeCommunications], "msgInterval": self.msgInterval},
-                    "sensorData": self.boat.data.getDict(),
-                    "route": self.boat.route.getDict(),
+                    "sensorData": ObjectToDictHelper.data(self.boat.data),
+                    "route": ObjectToDictHelper.route(self.boat.route),
                     "course": self.boat.course.getDict()
                 }
             }

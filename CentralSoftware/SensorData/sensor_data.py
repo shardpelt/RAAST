@@ -21,19 +21,6 @@ class SensorData:
         self.ais = Ais()
         self.image = SensorDataImage()      # Storing important last used data for calculations
 
-    def getDict(self):
-        d = vars(copy(self))
-        del d["angleHelper"]
-        del d["image"]
-
-        for k, v in d.items():
-            try:
-                d[k] = vars(v)
-            except:
-                pass
-
-        return d
-
     def makeImage(self) -> None:
         self.image.wind = copy(self.wind)
 
@@ -58,9 +45,9 @@ class SensorData:
         # TODO: - Welke data krijgen we van de gyroscoop sensor?
         #		- Krijgen we data bij omslag of constant?
 
-    def set_wind(self, speed, angle):
-        self.wind.speed = speed
+    def set_wind(self, angle, speed):
         self.wind.angle = angle % 360
+        self.wind.speed = speed
 
     def set_rudderAngle(self, angle: float):
         self.rudderAngle = angle % 360

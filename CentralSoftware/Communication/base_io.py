@@ -20,7 +20,7 @@ class BaseIO:
             self.boat.communication.sendRudderAngle(body["rudderAngle"])
             self.boat.communication.sendSailAngle(body["sailAngle"])
         except Exception as e:
-            return e
+            print(e)
 
     def setCourse(self, body):
         try:
@@ -28,20 +28,20 @@ class BaseIO:
             self.boat.course.shouldUpdate = False
             self.boat.course.wantedAngle = body["courseAngle"]
         except Exception as e:
-            return e
+            print(e)
 
     def setWaypoint(self, body):
         try:
             self.boat.sailHelper.shouldUpdate = self.boat.rudderHelper.shouldUpdate = self.boat.course.shouldUpdate = True
             self.boat.route.addWaypoint(Coordinate(body["latitude"], body["longitude"]))
         except Exception as e:
-            return e
+            print(e)
 
     def setControlMode(self, body):
         try:
             self.boat.controlMode = body["controlMode"]
         except Exception as e:
-            return e
+            print(e)
 
     def setControlParameters(self, body):
         #TODO: define which control parameters should be adjustable from wall
@@ -49,19 +49,19 @@ class BaseIO:
 
     def setWind(self, body):
         try:
-            self.boat.data.setWindAngle(body["value"])
+            self.boat.data.set_wind(body["value"], None)
         except Exception as e:
-            return e
+            print(e)
 
     def setGps(self, body):
         try:
             self.boat.data.currentCoordinate.latitude = body["value"][0]
             self.boat.data.currentCoordinate.longitude = body["value"][1]
         except Exception as e:
-            return e
+            print(e)
 
     def setCompass(self, body):
         try:
             self.boat.data.compass.angle = body["value"]
         except Exception as e:
-            return e
+            print(e)

@@ -1,4 +1,5 @@
-from copy import copy
+import math
+from Helpers.angleHelper import AngleHelper
 from SensorData.sensor_data import SensorData
 from Route.coordinate import Coordinate
 from Helpers.jsonHelper import JsonHelper
@@ -10,32 +11,17 @@ class Route:
         self.finish = JsonHelper.setupFinish("Recources/finish.json")
         self.waypoints = JsonHelper.setupWaypoints("Recources/waypoints.json")
         self.boarders = JsonHelper.setupBoarders("Recources/boarders.json")
-        self.waypointMargin = 0.0003 # 11 meter per 0.0001
-
-    def addWaypoint(self, waypoint: Coordinate):
-        # TODO: Func to add a waypoint as next one
-        pass
-
-    def getDict(self):
-        d = vars(copy(self))
-        del d["data"]
-
-        for k, v in d.items():
-            if k == "waypoints":
-                d[k] = [vars(wp) for wp in v]
-            elif k == "finish":
-                x = vars(copy(v))
-                for k2, v2 in x.items():
-                    x[k2] = vars(v2)
-                d[k] = x
-            elif k == "boarders":
-                d[k] = vars(v)
-
-        return d
+        self.radiusOfTheEarth = 6378.1
+        self.waypointMargin = 0.0003 # 11 meter
+        self.obstacleMarginKm = 2
 
     @property
     def currentWaypoint(self) -> Coordinate:
         return self.waypoints[0]
+
+    def addWaypoint(self, waypoint: Coordinate):
+        # TODO: Func to add a waypoint as next one
+        pass
 
     def hasNextWaypoint(self) -> bool:
         return self.currentWaypoint is not None
@@ -57,9 +43,25 @@ class Route:
 
     def circumnavigateSonar(self) -> None:
         """
+            # TODO: Testing
             Creates an new waypoint which course to sail at lays out of object's field
         """
+        bearing = AngleHelper.toRadians(self.data.compass.angle)
+
+        currLat = AngleHelper.toRadians(self.data.currentCoordinate.latitude)
+        currLong = AngleHelper.toRadians(self.data.currentCoordinate.longitude)
+
+        waypointLat = math.asin(math.sin(currLat) * math.cos(self.obstacleMarginKm / self.radiusOfTheEarth) +
+                         math.cos(currLat) * math.sin(self.obstacleMarginKm / self.radiusOfTheEarth) * math.cos(bearing))
+
+        waypointLong = currLong + math.atan2(math.sin(bearing) * math.sin(self.obstacleMarginKm / self.radiusOfTheEarth) * math.cos(currLat),
+                                 math.cos(self.obstacleMarginKm / self.radiusOfTheEarth) - math.sin(currLat) * math.sin(waypointLat))
+
+        self.addWaypoint(Coordinate(AngleHelper.toDegrees(waypointLat), AngleHelper.toDegrees(waypointLong)))
 
 
     def circumnavigateAis(self) -> None:
         pass
+
+# r = Route(SensorData())
+# r.circumnavigateSonar()
