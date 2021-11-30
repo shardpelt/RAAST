@@ -44,17 +44,18 @@ class Route:
     def circumnavigateSonar(self) -> None:
         """
             # TODO: Testing
-            Creates an new waypoint which course to sail at lays out of object's field
+            Creates an new waypoint which course to sail that lays out of object's field
         """
-        bearing = AngleHelper.toRadians(self.data.compass.angle)
+        newBearing = (self.data.compass.angle - 90) % 360 if 0 <= self.data.wind.angle <= 180 else (self.data.compass.angle + 90) % 360
+        newBearing = AngleHelper.toRadians(newBearing)
 
         currLat = AngleHelper.toRadians(self.data.currentCoordinate.latitude)
         currLong = AngleHelper.toRadians(self.data.currentCoordinate.longitude)
 
         waypointLat = math.asin(math.sin(currLat) * math.cos(self.obstacleMarginKm / self.radiusOfTheEarth) +
-                         math.cos(currLat) * math.sin(self.obstacleMarginKm / self.radiusOfTheEarth) * math.cos(bearing))
+                         math.cos(currLat) * math.sin(self.obstacleMarginKm / self.radiusOfTheEarth) * math.cos(newBearing))
 
-        waypointLong = currLong + math.atan2(math.sin(bearing) * math.sin(self.obstacleMarginKm / self.radiusOfTheEarth) * math.cos(currLat),
+        waypointLong = currLong + math.atan2(math.sin(newBearing) * math.sin(self.obstacleMarginKm / self.radiusOfTheEarth) * math.cos(currLat),
                                  math.cos(self.obstacleMarginKm / self.radiusOfTheEarth) - math.sin(currLat) * math.sin(waypointLat))
 
         self.addWaypoint(Coordinate(AngleHelper.toDegrees(waypointLat), AngleHelper.toDegrees(waypointLong)))
@@ -62,6 +63,7 @@ class Route:
 
     def circumnavigateAis(self) -> None:
         pass
+
 
 # r = Route(SensorData())
 # r.circumnavigateSonar()
