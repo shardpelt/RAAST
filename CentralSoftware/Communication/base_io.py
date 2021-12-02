@@ -9,6 +9,7 @@ class BaseIO:
         self.instructionMap = {1: self.setSailRudder, 2: self.setCourse, 3: self.setWaypoint, 4: self.setControlMode, 5: self.setControlParameters}
 
     def processIncommingMsg(self, msg):
+        print(f"Msg from simulation: {msg}")
         if msg["type"] == "instruction":
             self.instructionMap[msg["id"]](msg["body"])
         elif msg["type"] == "sensor":

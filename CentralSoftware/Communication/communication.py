@@ -61,7 +61,7 @@ class Communication:
                     "communication": {"activeCommunications": [type(c).__name__ for c in self.activeCommunications], "msgInterval": self.msgInterval},
                     "sensorData": ObjectToDictHelper.data(self.boat.data),
                     "route": ObjectToDictHelper.route(self.boat.route),
-                    "course": self.boat.course.getDict()
+                    "course": ObjectToDictHelper.course(self.boat.course)
                 }
             }
 

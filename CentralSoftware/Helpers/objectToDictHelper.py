@@ -9,7 +9,7 @@ class ObjectToDictHelper:
     @staticmethod
     def route(route):
         d = vars(copy(route))
-        del d["data"]
+        del d["boat"]
 
         for k, v in d.items():
             if k == "waypoints":
