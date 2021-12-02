@@ -8,7 +8,7 @@
 # voorwaards = loodrecht * cos (beta)
 # beta = 90 - hoek van het zeil met de boot
 
-from communication import *
+from socketIO import *
 import simpylc as sp
 
 
@@ -98,7 +98,7 @@ class Sailboat (sp.Module):
         self.passed_first_waypoint = sp.Register(False)
 
 
-    def makeBoatAngleNormal(boatAngle):
+    def makeBoatAngleNormal(self, boatAngle):
         angle = boatAngle+90
         if angle < 0:
             angle = angle * -1
@@ -107,22 +107,22 @@ class Sailboat (sp.Module):
 
     def sweep(self):
 
-        relativeWindAngle = (sp.world.wind.wind.wind_direction - 360) * -1
-        relativeWindAngle = makeBoatAngleNormal(relativeWindAngle)
-        relativeWindAngle = int(sp.world.wind.wind_direction)
+        relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
+        relativeWindAngle = self.makeBoatAngleNormal(relativeWindAngle)
+        relativeWindAngle = sp.world.wind.wind_direction
         
-        compassAngle = int(self.sailboat_rotation)
-        compassAngle = makeBoatAngleNormal(compassAngle)
+        compassAngle = self.sailboat_rotation
+        compassAngle = self.makeBoatAngleNormal(compassAngle)
 
-        x = float(self.position_x)
-        y = float(self.position_y)
+        x = self.position_x
+        y = self.position_y
 
-        sp.worl.socketIO.socket.sendWindAngle(windAngle)
-        sp.worl.socketIO.socket.sendCoordinates(x,y)
-        sp.worl.socketIO.socket.sendCompassAngle(compassAngle)
+        sp.world.socketIO._socket.sendWindAngle(windAngle)
+        sp.world.socketIO._socket.sendCoordinates(x,y)
+        sp.world.socketIO._socket.sendCompassAngle(compassAngle)
 
-        self.local_sail_angle.set(sp.world.socketIO.relativeSailAngle)
-        self.gimbal_rudder_angle.set(sp.world.socketIO.relativeRudderAngle)
+        self.local_sail_angle.set(sp.world.socketIO._relativeSailAngle)
+        self.gimbal_rudder_angle.set(sp.world.socketIO._relativeRudderAngle)
         self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
 
         # Calculate forward force in N based on the angle between the sail and the wind
