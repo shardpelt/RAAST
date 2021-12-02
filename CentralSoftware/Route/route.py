@@ -18,9 +18,9 @@ class Route:
     def currentWaypoint(self) -> Coordinate:
         return self.waypoints[0]
 
+
     def addWaypoint(self, waypoint: Coordinate):
-        # TODO: Func to add a waypoint as next one
-        pass
+        self.waypoints.insert(0, waypoint)
 
     def calculateCoordinateAtDistance(self, currCoordinate, angle, distance):
         """

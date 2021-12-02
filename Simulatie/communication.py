@@ -22,7 +22,7 @@ class SocketIO():
                 #break
 
     def send(self, data):
-        tru:
+        try:
             self.socket.send(bytes(json.dumps(data). "utf-8"))
         except socket.error as error:
             print(error)
