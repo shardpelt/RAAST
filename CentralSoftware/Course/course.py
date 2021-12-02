@@ -11,7 +11,8 @@ class Course:
         self.wantedAngle = None
         self.wantedAngleMarge = 5 # TODO: beste marge op de koers/zeil nader te bepalen
         self.wantedSailMarge = 5
-        self.closeHauled = {"flag":False, "chosenSide":"", "forbiddenSide":""}
+        self.toTheWind = None       # "left" or "right"
+        self.cantChooseSide = None  # "left" or "right"
         self.tackingAngleMarge = 5
         self.boarderMarge = 0.005
 
@@ -24,10 +25,10 @@ class Course:
             :arg boarders: The absolute boarders in which the boat should stay during the trip
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
-        optimalAngle = self.angleHelper.calcRhumbLine(self.data.currentCoordinate, waypoint)
+        optimalAngle = self.angleHelper.calcAngleBetweenCoordinates(self.data.currentCoordinate, waypoint)
 
         if self.boatAtBoarders(self.data.currentCoordinate, boarders):
-            self.forgetCloseHauledCourse()
+            self.forgetToTheWindCourse()
 
         if self.angleHelper.windFromDeadzone(optimalAngle, self.data.wind.angle):
             self.wantedAngle = self.calcBestAngleWindFromDeadzone(optimalAngle, self.data.wind.angle)
@@ -40,32 +41,28 @@ class Course:
         angleRightToDeadzone = windAngle + 45
         deltaAngles = self.angleHelper.getDeltaLeftAndRightToAngle(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
 
-        # If already sailing closeHauled try to continue direction chosen or perform tacking maneuvre
-        if self.closeHauled["flag"]:
+        # If already sailing to the wind try to continue direction chosen or perform tacking maneuvre
+        if self.toTheWind:
 
             # Check if angle to waypoint is 90 degrees -> perform tack maneuvre
-            if deltaAngles["L"] <= self.tackingAngleMarge:
-                self.closeHauled["flag"] = True
-                self.closeHauled["chosenSide"] = "left"
+            if deltaAngles["left"] <= self.tackingAngleMarge:
+                self.toTheWind = "left"
                 return angleLeftToDeadzone
-            elif deltaAngles["R"] <= self.tackingAngleMarge:
-                self.closeHauled["flag"] = True
-                self.closeHauled["chosenSide"] = "right"
+            elif deltaAngles["right"] <= self.tackingAngleMarge:
+                self.toTheWind = "right"
                 return angleRightToDeadzone
             else:
-                if self.closeHauled["chosenSide"] == "left":
+                if self.toTheWind == "left":
                     return angleLeftToDeadzone
                 return angleRightToDeadzone
 
-        # If not already sailing closeHauled, check which angle from deadzone is best to sail at.
+        # If not already sailing to the wind, check which angle from deadzone is best to sail at.
         else:
-            if deltaAngles["L"] <= deltaAngles["R"]:
-                self.closeHauled["flag"] = True
-                self.closeHauled["chosenSide"] = "left"
+            if deltaAngles["left"] <= deltaAngles["right"]:
+                self.toTheWind = "left"
                 return angleLeftToDeadzone
 
-            self.closeHauled["flag"] = True
-            self.closeHauled["chosenSide"] = "right"
+            self.toTheWind = "right"
             return angleRightToDeadzone
 
     def boatAtBoarders(self, currCoordinate: Coordinate, boarders: Boarders):
@@ -80,6 +77,6 @@ class Course:
 
         return False
 
-    def forgetCloseHauledCourse(self):
-        self.closeHauled["flag"] = True
-        self.closeHauled["chosenSide"] = ""
+    def forgetToTheWindCourse(self):
+        self.toTheWind = None
+        self.cantChooseSide = None

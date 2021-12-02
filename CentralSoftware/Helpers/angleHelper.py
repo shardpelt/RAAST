@@ -24,10 +24,11 @@ class AngleHelper(HelperBase):
         else:
             deltaR = abs(mainAngle - rightAngle)
 
-        return {"L": deltaL, "R": deltaR}
+        return {"left": deltaL, "right": deltaR}
 
-    def calcRhumbLine(self, current: Coordinate, waypoint: Coordinate):
+    def calcAngleBetweenCoordinates(self, current: Coordinate, waypoint: Coordinate):
         """
+            TODO: Check if correct
             :arg current: Current coordinate of the boat
             :arg waypoint: Current waypoint of the boat
             :returns: The angle to the next waypoint, in accordance to the 'loxodroom' formula
@@ -35,18 +36,15 @@ class AngleHelper(HelperBase):
         deltaWidth = m.log(m.tan(self.toRadians(waypoint.latitude/2) + m.pi/4)/m.tan(self.toRadians(current.latitude/2) + m.pi/4))
         k = self.toDegrees(m.atan2(self.toRadians(waypoint.longitude) - self.toRadians(current.longitude), deltaWidth))
 
-        if k < 0:
-            k += 360
-
-        return k
+        return k % 360
 
     def hypotenuseAngleToWaypoint(self, current: Coordinate, waypoint: Coordinate):
         """
-            USE CALCRHUMBLINE INSTEAD
+            USE calcAngleBetweenCoordinates INSTEAD
         """
         xDelta = waypoint.longitude - current.longitude
         yDelta = waypoint.latitude - current.latitude
         return m.atan2(yDelta, xDelta)
 
 # h = AngleHelper()
-# print(h.calcRhumbLine(Coordinate(0, 0), Coordinate(1, 5)))
+# print(h.calcAngleBetweenCoordinates(Coordinate(0, 0), Coordinate(1, 5)))

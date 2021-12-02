@@ -24,7 +24,7 @@ class Boat:
         self.controlMode = 3                                # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
         self.communication = Communication(self)            # Communication handler
         self.data = SensorData()                            # Data object in which every datapoint is stored
-        self.route = Route(self.data)                       # Object in which the route information is stored
+        self.route = Route(self)                            # Object in which the route information is stored
         self.course = Course(self.data)                     # Object in which the course is calculated and stored
         self.rudderHelper = RudderHelper()                  # Contains methods to determine best angle for rudder
         self.sailHelper = SailHelper()                      # Contains methods to determine best sail angle
@@ -56,7 +56,7 @@ class Boat:
                 if self.course.shouldUpdate and (self.course.wantedAngle is None or routeChanged):
                     self.communication.sendWaypoints() # ONLY FOR SIMULATION
                     self.data.makeImage()
-                    self.course.forgetCloseHauledCourse()
+                    self.course.forgetToTheWindCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
                 if self.rudderHelper.shouldUpdate:
