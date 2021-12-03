@@ -38,6 +38,11 @@ class Boat:
 
     def run(self):
         while True:
+            ### Input
+            self.communication.receive()
+            ###
+
+            ### Sweep
             if self.data.hasRequiredData() and self.route.hasNextWaypoint():
                 # TODO: Moet je door de control lus nog de waardes updaten? of aan het begin vastzetten en de buffer vullen?
                 routeChanged = False
@@ -58,7 +63,9 @@ class Boat:
                     self.data.makeImage()
                     self.course.forgetToTheWindCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
+                ###
 
+                ### Output
                 if self.rudderHelper.shouldUpdate:
                     rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
                     self.communication.sendRudderAngle(rudderAngle)
@@ -67,13 +74,5 @@ class Boat:
                     sailAngle = self.sailHelper.getNewBestAngle(self.data.compass.angle, self.data.wind.angle)
                     self.communication.sendSailAngle(sailAngle)
 
-                print("CONTROL - Control loop executed -")
-
-            else:
-                print("CONTROL - Not enough data to sail -")
-
-            if self.communication.shouldGiveUpdate():
-                print("sends update")
-                self.communication.sendUpdate()
-
-            time.sleep(2)
+            self.communication.sendUpdate()
+            ###

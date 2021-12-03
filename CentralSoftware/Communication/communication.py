@@ -37,6 +37,11 @@ class Communication:
         elif self.boat.controlMode == 3:                        # Simulation
             self.activeCommunications = [self.socket]
 
+    def receive(self):
+        for medium in self.activeCommunications:
+            if medium.alive:
+                medium.receive()
+
     def send(self, data, mediums):
         for medium in mediums:
             if medium in self.activeCommunications and medium.alive:
@@ -65,7 +70,7 @@ class Communication:
                 }
             }
 
-        data = ["update", update]
+        data = {"update": update}
         self.send(json.dumps(data), [self.socket, self.http])
 
     def shouldGiveUpdate(self) -> bool:

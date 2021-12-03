@@ -1,10 +1,9 @@
 from Route.coordinate import Coordinate
+import socket as sc
 
 class BaseIO:
     def __init__(self, boat):
         self.boat = boat
-        self.ipAddress = '127.0.0.1'
-        self.portNumber = 5678
         self.sensorMap = {1: self.setWind, 2: self.setGps, 3: self.setCompass}
         self.instructionMap = {1: self.setSailRudder, 2: self.setCourse, 3: self.setWaypoint, 4: self.setControlMode, 5: self.setControlParameters}
 

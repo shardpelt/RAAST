@@ -21,7 +21,6 @@ class Route:
     def currentWaypoint(self) -> co.Coordinate:
         return self.waypoints[0]
 
-
     def addWaypoint(self, waypoint: co.Coordinate):
         self.waypoints.insert(0, waypoint)
 
@@ -78,6 +77,8 @@ class Route:
 
     def circumnavigateAis(self) -> None:
         # TODO
+        # Vaart een schip door onze koerslijn heen? -> Vaar naar coordinaten van dat schip +/- marge
+        # Ligt een schip stil
 
         helper = ah.AngleHelper()
 
@@ -85,9 +86,3 @@ class Route:
 
             distance = math.sqrt((ship["latitude"] - self.boat.data.currentCoordinate.latitude)**2 + (ship["longitude"] - self.boat.data.currentCoordinate.longitude)**2)
             angle = helper.calcAngleBetweenCoordinates(self.boat.data.currentCoordinate, co.Coordinate(ship["latitude"], ship["longitude"]))
-
-
-
-
-# r = Route(SensorData())
-# r.circumnavigateSonar()
