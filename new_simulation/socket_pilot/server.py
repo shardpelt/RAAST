@@ -56,4 +56,37 @@ class Server:
                         sp.world.physics.steeringAngle.set (actuators ['steeringAngle'])
                         sp.world.physics.targetVelocity.set (actuators ['targetVelocity'])
 
-    
+
+    def sendData(self,relativeWindAngle,compassAngle,x,y):
+        sensorData = {'sensorData': 
+                {{"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
+                {"type": "sensor", "id": 2, "body": {"value": (y, x)}},
+                {"type": "sensor", "id": 3, "body": {"value": compassAngle}}
+                }
+        return sensordata
+
+
+    def updateWaypoints(self,waypointsDict):
+        #reset waypoints list in self.
+        sp.world.sailboat._waypoints = []
+
+        #make a list out of each waypoints coordinates and append to
+        #waypoints list in self.
+        for waypDict in waypointsDict:
+            xCoordinate = waypDict['longitude']
+            yCoordinate = waypDict['latitude']
+            wayp = [xCoordinate,yCoordinate,0]
+            sp.world.sailboat._waypoints.append(wayp)
+
+    def updateSensorData(self,sensorDataDict):
+        sp.world.sailboat._relativeRudderAngle = sensorDataDict['rudderAngle']
+        sp.world.sailboat._relativeSailAngle = sensorDataDict['sailAngle']
+
+    def updateData(self, message):
+        dataDict = message[1]
+        sensorDataDict = dataDict['boat']['sensorData']
+        self.updateSensorData(sensorDataDict)
+
+        #update self._wayPoints.
+        waypointsDict = dataDict['boat']['route']['waypoints']
+        self.updateWaypoints(waypointsDict)

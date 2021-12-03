@@ -73,6 +73,8 @@ class Sailboat (sp.Module):
         self.mass = sp.Register(20)
 
         self._waypoints = []
+        self._relativeRudderAngle = 0
+        self._relativeSailAngle = 0
 
         self.group('velocity')
         self.drag = sp.Register()
@@ -94,7 +96,7 @@ class Sailboat (sp.Module):
         self.gimbal_rudder_angle = sp.Register(0)
         self.rotation_speed = sp.Register()
         self.passed_first_waypoint = sp.Register(False)
-        
+
     def makeBoatAngleNormal(self, boatAngle):
         angle = boatAngle+90
         if angle < 0:
@@ -103,26 +105,24 @@ class Sailboat (sp.Module):
             angle = angle - 360
 
     def sweep(self):
+        #calculate all updated values, send them over socket.
         relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
         relativeWindAngle = self.makeBoatAngleNormal(relativeWindAngle)
-        relativeWindAngle = sp.world.wind.wind_direction
         
         compassAngle = self.sailboat_rotation
-        compassAngle = self.makeBoatAngleNormal(compassAngle)
+        compassAngle = self.makeBoatAngleNormal(self._compassAngle)
 
         x = self.position_x
         y = self.position_y
 
-        '''
-        sp.world.socketIO._socket.sendWindAngle(windAngle)
-        sp.world.socketIO._socket.sendCoordinates(x,y)
-        sp.world.socketIO._socket.sendCompassAngle(compassAngle)
+        sp.world.server.sendData(int(relativeWindAngle),int(compassAngle),x,y)
 
-        self.local_sail_angle.set(sp.world.socketIO._relativeSailAngle)
-        self.gimbal_rudder_angle.set(sp.world.socketIO._relativeRudderAngle)
+        #update variables being used in simualtion to most recently received ones.
+        self.local_sail_angle.set(self._relativeSailAngle)
+        self.gimbal_rudder_angle.set(self._relativeRudderAngle)
+        sp.world.waypoints._waywaypointypointy = self._wayPoints
+        
         self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
-        sp.world.waypoints._waywaypointypointy = sp.worl.socketIO._wayPoints
-        '''
 
         # Calculate forward force in N based on the angle between the sail and the wind
         self.sail_alpha.set(distance_between_angles(sp.world.wind.wind_direction, self.global_sail_angle))
