@@ -5,4 +5,4 @@ from waypoint import *
 from obstacle import *
 from socketIO import *
 
-World(Sailboat, Wind, Visualisation, Waypoint, Obstacle, SocketIO)
+World(SocketIO, Sailboat, Wind, Visualisation, Waypoint, Obstacle)

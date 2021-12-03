@@ -2,22 +2,15 @@
 import simpylc as sp
 import json
 import socket
+import time
 
-class SocketIO (sp.Module):
+class SocketIO:
     def __init__(self):
-        sp.Module.__init__(self)
-
-        self.page('socketIO')
-        self.group('fields', True)
-
         self._address = '127.0.0.1'
         self._port = 5678
         self._socket = None
-        self._relativeWindAngle = 0
+        self._relativeSailAngle = 0
         self._relativeRudderAngle = 0
-        self.socketSetup()
-        self._rudderAngle = None
-        self._sailAngle = None
         self._wayPoints = []
 
     def socketSetup(self):
@@ -27,6 +20,7 @@ class SocketIO (sp.Module):
 
     def receive(self):
         while True:
+            time.sleep(0.5)
             try:
                 print("waiting for message")
                 message = json.loads(self._socket.recv(8192).decode("utf-8"))
@@ -36,11 +30,11 @@ class SocketIO (sp.Module):
                 #break
 
     def send(self, data):
-        while True:
-            try:
-                self._socket.send(bytes(json.dumps(data), "utf-8"))
-            except socket.error as error:
-                print(error)
+        try:
+            self._socket.send(bytes(json.dumps(data), "utf-8"))
+            print(f'sent: {json.dumps(data)}')
+        except socket.error as error:
+            print(error)
 
     def updateWaypoints(self,waypointsDict):
         #reset waypoints list in self.
@@ -58,10 +52,10 @@ class SocketIO (sp.Module):
         print()
 
     def updateSensorData(self,sensorDataDict):
-        self._rudderAngle = sensorDataDict['rudderAngle']
-        self._sailAngle = sensorDataDict['sailAngle']
+        self._relativeRudderAngle = sensorDataDict['rudderAngle']
+        self._relativeSailAngle = sensorDataDict['sailAngle']
 
-        print(f'self._rudderAngle = {self._rudderAngle}, self._sailAngle = {self._sailAngle}')
+        print(f'self._rudderAngle = {self._relativeRudderAngle}, self._sailAngle = {self._relativeSailAngle}')
 
     def updateData(self, message):
         print(f"received message: {message}")
