@@ -1,7 +1,10 @@
+import sys
+sys.path.append("..")
+
 import json
-from Route.boarders import Boarders
-from Route.finish import Finish
-from Route.coordinate import Coordinate
+import Route.boarders as bo
+import Route.finish as fi
+import Route.coordinate as co
 
 class JsonHelper:
 
@@ -16,7 +19,7 @@ class JsonHelper:
             topCoor = finishObject["topCoordinate"]
             bottomCoor = finishObject["bottomCoordinate"]
 
-            return Finish(Coordinate(topCoor["latitude"], topCoor["longitude"]), Coordinate(bottomCoor["latitude"], bottomCoor["longitude"]))
+            return fi.Finish(co.Coordinate(topCoor["latitude"], topCoor["longitude"]), co.Coordinate(bottomCoor["latitude"], bottomCoor["longitude"]))
 
     @staticmethod
     def setupWaypoints(file):
@@ -29,7 +32,7 @@ class JsonHelper:
             waypointsObject = json.load(waypointsJson)
 
             for waypoint in waypointsObject:
-                waypoints.append(Coordinate(waypoint["latitude"], waypoint["longitude"]))
+                waypoints.append(co.Coordinate(waypoint["latitude"], waypoint["longitude"]))
 
         return waypoints
 
@@ -38,4 +41,4 @@ class JsonHelper:
         with open(file) as boardersJson:
             boarders = json.load(boardersJson)
 
-        return Boarders(boarders["top"], boarders["down"], boarders["left"], boarders["right"])
+        return bo.Boarders(boarders["top"], boarders["down"], boarders["left"], boarders["right"])

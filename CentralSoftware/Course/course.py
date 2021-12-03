@@ -1,13 +1,16 @@
-from Route.boarders import Boarders
-from Route.coordinate import Coordinate
-from SensorData.sensor_data import SensorData
-from Helpers.angleHelper import AngleHelper
+import sys
+sys.path.append("..")
+
+import Route.boarders as bo
+import Route.coordinate as co
+import SensorData.sensor_data as sd
+import Helpers.angleHelper as ah
 
 class Course:
-    def __init__(self, sensorData: SensorData):
+    def __init__(self, sensorData: sd.SensorData):
         self.shouldUpdate = True
         self.data = sensorData
-        self.angleHelper = AngleHelper()
+        self.angleHelper = ah.AngleHelper()
         self.wantedAngle = None
         self.wantedAngleMarge = 5 # TODO: beste marge op de koers/zeil nader te bepalen
         self.wantedSailMarge = 5
@@ -19,7 +22,7 @@ class Course:
     def isOffTrack(self):
         return not self.angleHelper.angleIsBetweenAngles(self.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
 
-    def updateWantedAngle(self, waypoint: Coordinate, boarders: Boarders):
+    def updateWantedAngle(self, waypoint: co.Coordinate, boarders: bo.Boarders):
         """
             :arg waypoint: Coordinate of the current waypoint
             :arg boarders: The absolute boarders in which the boat should stay during the trip
@@ -65,7 +68,7 @@ class Course:
             self.toTheWind = "right"
             return angleRightToDeadzone
 
-    def boatAtBoarders(self, currCoordinate: Coordinate, boarders: Boarders):
+    def boatAtBoarders(self, currCoordinate: co.Coordinate, boarders: bo.Boarders):
         if currCoordinate.latitude <= (boarders.down + self.boarderMarge):
             return True
         elif currCoordinate.latitude >= (boarders.top - self.boarderMarge):

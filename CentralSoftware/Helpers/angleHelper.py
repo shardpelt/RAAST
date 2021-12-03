@@ -1,8 +1,11 @@
-import math as m
-from Helpers.helperBase import HelperBase
-from Route.coordinate import Coordinate
+import sys
+sys.path.append("..")
 
-class AngleHelper(HelperBase):
+import math as m
+import Helpers.helperBase as hb
+import Route.coordinate as co
+
+class AngleHelper(hb.HelperBase):
     def __init__(self):
         super().__init__()
 
@@ -26,7 +29,7 @@ class AngleHelper(HelperBase):
 
         return {"left": deltaL, "right": deltaR}
 
-    def calcAngleBetweenCoordinates(self, current: Coordinate, waypoint: Coordinate):
+    def calcAngleBetweenCoordinates(self, current: co.Coordinate, waypoint: co.Coordinate):
         """
             TODO: Check if correct
             :arg current: Current coordinate of the boat
@@ -38,7 +41,7 @@ class AngleHelper(HelperBase):
 
         return k % 360
 
-    def hypotenuseAngleToWaypoint(self, current: Coordinate, waypoint: Coordinate):
+    def hypotenuseAngleToWaypoint(self, current: co.Coordinate, waypoint: co.Coordinate):
         """
             USE calcAngleBetweenCoordinates INSTEAD
         """

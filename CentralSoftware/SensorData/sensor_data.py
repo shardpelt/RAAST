@@ -1,25 +1,28 @@
+import sys
+sys.path.append("..")
+
 from copy import copy
-from SensorData.Entities.ais import Ais
-from SensorData.sensor_data_image import SensorDataImage
-from SensorData.Entities.compass import Compass
-from SensorData.Entities.gyroscope import Gyroscope
-from SensorData.Entities.sonar import Sonar
-from SensorData.Entities.wind import Wind
-from Route.coordinate import Coordinate
-from Helpers.angleHelper import AngleHelper
+import SensorData.Entities.ais as ai
+import SensorData.sensor_data_image as di
+import SensorData.Entities.compass as cm
+import SensorData.Entities.gyroscope as gy
+import SensorData.Entities.sonar as so
+import SensorData.Entities.wind as wi
+import Route.coordinate as co
+import Helpers.angleHelper as ah
 
 class SensorData:
     def __init__(self):
-        self.angleHelper = AngleHelper()
+        self.angleHelper = ah.AngleHelper()
         self.rudderAngle = None
         self.sailAngle = None
-        self.gyroscope = Gyroscope()
-        self.currentCoordinate = Coordinate()
-        self.compass = Compass()
-        self.wind = Wind()
-        self.sonar = Sonar()
-        self.ais = Ais()
-        self.image = SensorDataImage()      # Storing important last used data for calculations
+        self.gyroscope = gy.Gyroscope()
+        self.currentCoordinate = co.Coordinate()
+        self.compass = cm.Compass()
+        self.wind = wi.Wind()
+        self.sonar = so.Sonar()
+        self.ais = ai.Ais()
+        self.image = di.SensorDataImage()      # Storing important last used data for calculations
 
     def makeImage(self) -> None:
         self.image.wind = copy(self.wind)

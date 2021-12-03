@@ -1,4 +1,7 @@
-from Route.coordinate import Coordinate
+import sys
+sys.path.append("..")
+
+import Route.coordinate as co
 
 """
     Ais gives us a list of nearby ships
