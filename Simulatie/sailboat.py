@@ -97,6 +97,7 @@ class Sailboat (sp.Module):
         self.rotation_speed = sp.Register()
         self.passed_first_waypoint = sp.Register(False)
 
+        #sp.world.socketIO._socket.socketSetup()
 
     def makeBoatAngleNormal(self, boatAngle):
         angle = boatAngle+90
