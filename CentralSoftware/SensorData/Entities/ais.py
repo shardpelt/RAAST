@@ -1,3 +1,4 @@
+import math
 import sys
 sys.path.append("..")
 
@@ -10,12 +11,14 @@ import Route.coordinate as co
 
 class Ais:
     def __init__(self):
-        self.nearbyShips = [{"latitude": 10, "longitude": 90, }]
+        self.reach = 30
+        self.nearbyShips = [{"latitude": 10, "longitude": 40, "angle": 90}, {"latitude": 10, "longitude": 20, "angle": 90}]
 
-    def checkThreat(self):
-        # TODO: implement Ais check ->
-        #  0.5 km marge aan een schip
-        #  Angle is 511 als het schip niet vaart
-        #  Uitwijken aan kant waar schip vandaan komt als die vaart + marge
+    def getAisOrderedByDistance(self, currentCoordinate: co.Coordinate):
+        for ship in self.nearbyShips:
+            ship["distance"] = int(math.sqrt((ship["latitude"] - currentCoordinate.latitude)**2 + (ship["longitude"] - currentCoordinate.longitude)**2))
 
-        angleToShips = [ship for ship in self.nearbyShips]
+        return sorted([list(ship.values()) for ship in self.nearbyShips], key=lambda s: s[3])
+
+# ais = Ais()
+# print(ais.getAisOrderedByDistance(co.Coordinate(10, 15)))

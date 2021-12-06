@@ -71,18 +71,43 @@ class Route:
             traversedCourseAngle = (self.boat.data.compass.angle + 90) % 360
             self.boat.course.cantChooseSide = "left"
 
-        newCoordinate = self.calculateCoordinateAtDistance(self.boat.data.currentCoordinate, ah.AngleHelper.toRadians(traversedCourseAngle), self.obstacleMarginKm)
+        newWaypoint = self.calculateCoordinateAtDistance(self.boat.data.currentCoordinate, ah.AngleHelper.toRadians(traversedCourseAngle), self.obstacleMarginKm)
 
-        self.addWaypoint(newCoordinate)
+        self.addWaypoint(newWaypoint)
 
     def circumnavigateAis(self) -> None:
-        # TODO
+        # Vaart een schip van je af -> doe niks
         # Vaart een schip door onze koerslijn heen? -> Vaar naar coordinaten van dat schip +/- marge
-        # Ligt een schip stil
+        # angle = helper.calcAngleBetweenCoordinates(self.boat.data.currentCoordinate, co.Coordinate(ship["latitude"], ship["longitude"]))
 
-        helper = ah.AngleHelper()
+        distanceOrderedAis = self.boat.data.ais.getAisOrderedByDistance(self.boat.data.currentCoordinate)
 
-        for ship in self.boat.data.ais.nearbyShips:
+        traversedWaypoints = []
+        for ship in distanceOrderedAis:
+            if ship[2] != 511:
+                a = self.boat.data.currentCoordinate if len(traversedWaypoints) == 0 else traversedWaypoints[0]
+                b = self.currentWaypoint
+                c = co.Coordinate(ship[0], ship[1])
+                d = self.calculateCoordinateAtDistance(c, ah.AngleHelper.toRadians(ship[2]), self.boat.data.ais.reach)
+                if self.intersect(a, b, c, d):
+                    # TODO: Maak een nieuw coordinaat aan op ship coordinates +/- marge
+                    pass
+            else:
+                # TODO: Check of het schip in onze koers ligt, anders boeie!
+                pass
 
-            distance = math.sqrt((ship["latitude"] - self.boat.data.currentCoordinate.latitude)**2 + (ship["longitude"] - self.boat.data.currentCoordinate.longitude)**2)
-            angle = helper.calcAngleBetweenCoordinates(self.boat.data.currentCoordinate, co.Coordinate(ship["latitude"], ship["longitude"]))
+    # Return true if line segments AB and CD intersect
+    def intersect(self, A, B, C, D) -> bool:
+        """
+        :param A: Current coordinate of boat
+        :param B: Headed coordinate of boat
+        :param C: Current coordinate of ais ship
+        :param D: Headed coordinate of ais ship
+        :return: bool -> Whether the two route lines of the boat and the ais ship collide
+        """
+        return self.ccw(A, C, D) != self.ccw(B, C, D) and self.ccw(A, B, C) != self.ccw(A, B, D)
+
+    def ccw(self, A, B, C) -> bool:
+        return (C.latitude - A.latitude) * (B.longitude - A.longitude) > (B.latitude - A.latitude) * (C.longitude - A.longitude)
+
+
