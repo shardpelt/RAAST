@@ -1,5 +1,4 @@
 class Finish:
-    def __init__(self, top, bottom):
-        self.top = top
-        self.bottom = bottom
-
+    def __init__(self, coordinateOne, coordinateTwo):
+        self.coordinateOne = coordinateOne
+        self.coordinateTwo = coordinateTwo

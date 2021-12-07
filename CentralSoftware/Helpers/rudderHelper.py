@@ -20,7 +20,3 @@ class RudderHelper(hb.HelperBase):
             newRudderAngle = -self.maxWantedAngle
 
         return newRudderAngle
-
-
-# h = RudderHelper(5)
-# h.getNewBestAngle(179, 0)

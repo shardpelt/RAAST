@@ -11,21 +11,31 @@ class Route:
         self.shouldUpdate = True
         self.boat = boat
         self.angleHelper = ah.AngleHelper()
-        self.finish = jh.JsonHelper.setupFinish("Recources/finish.json")
-        self.waypoints = jh.JsonHelper.setupWaypoints("Recources/waypoints.json")
-        self.boarders = jh.JsonHelper.setupBoarders("Recources/boarders.json")
+        self.waypoints, self.finish, self.boarders = jh.JsonHelper.setupRoute("Recources/route.json")
         self.radiusOfTheEarth = 6378.1
-        self.waypointMargin = 0.0003 # 11 meter
+        self.waypointMargin = 0.0005 # 55 meter
         self.obstacleMarginKm = 2
 
     @property
     def currentWaypoint(self) -> co.Coordinate:
-        return self.waypoints[0]
+        if not self.waypoints:
+            return self.finish.getWaypoint()
+        else:
+            return self.waypoints[0]
 
     def addWaypoint(self, waypoint: co.Coordinate):
         self.waypoints.insert(0, waypoint)
 
-    def calculateCoordinateAtDistance(self, currCoordinate, angle, distance):
+    def getBestWaypointOnFinishLine(self):
+        """
+            Calculates the best waypoint to sail at between te finish line according to the boat's angle and wind angle
+        """
+        angleToCoorOne = self.angleHelper.calcAngleBetweenCoordinates(self.boat.data.currentCoordinate, self.finish.coordinateOne)
+        angleToCoorTwo = self.angleHelper.calcAngleBetweenCoordinates(self.boat.data.currentCoordinate, self.finish.coordinateTwo)
+
+
+
+    def calculateCoordinateAtDistance(self, currCoordinate, angle, distance) -> co.Coordinate:
         """
             :arg currCoordinate: The starting coordinates
             :arg angle: The angle at which the new coordinate is calculated
@@ -62,7 +72,7 @@ class Route:
 
     def circumnavigateSonar(self) -> None:
         """
-            # TODO: Testing
+            TODO: Testing
             Creates an new waypoint which course to sail lays out of object's field
         """
         if 0 <= self.boat.data.wind.angle <= 180: # Boat traverses left from object so can't choose an course to the right side.
@@ -78,6 +88,7 @@ class Route:
 
     def circumnavigateAis(self) -> None:
         """
+            TODO: Testing
             This function is called when there is any new information from the AIS module in the boat
             It goes through an ordered (by distance) list of the scanned ships and checks if an traverse is needed
             If the ship has course code 511 it does not move, in that case we check if that ship is in our way

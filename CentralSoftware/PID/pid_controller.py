@@ -51,12 +51,3 @@ class PidController:
         self.yI = None
         self.errorOld = None
         self.prevTime = None
-
-
-# pid = PidController(0.5, 0.02, 0.0005, 5)
-#
-# print(pid.calcNewAngle(AngleHelper.toRadians(5), AngleHelper.toRadians(355)))
-#
-
-# # err = pid.calcError(AngleHelper.toRadians(5), AngleHelper.toRadians(355))
-# # print(AngleHelper.toDegrees(err))
