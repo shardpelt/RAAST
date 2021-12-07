@@ -16,14 +16,14 @@ class HelperBase:
         """
         return tuple(angle % 360 for angle in angles)
 
-    def angleIsBetweenAngles(self, n, left, right):
+    def angleIsBetweenAngles(self, angle, left, right):
         """
             Checks for a given angle (n) if it is between an angle of its left and right sight.
         """
-        n, left, right = self.reduceAngles(n, left, right)
+        angle, left, right = self.reduceAngles(angle, left, right)
         if left < right:
-            return left <= n <= right
-        return n >= left or n <= right
+            return left <= angle <= right
+        return angle >= left or angle <= right
 
     def windFromDeadzone(self, optimal, wind):
         if self.angleIsBetweenAngles(optimal, wind - 45, wind + 45):

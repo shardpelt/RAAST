@@ -10,6 +10,7 @@ class ObjectToDictHelper:
     def route(route):
         d = vars(copy(route))
         del d["boat"]
+        del d["angleHelper"]
 
         for k, v in d.items():
             if k == "waypoints":
