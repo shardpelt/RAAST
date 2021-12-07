@@ -31,12 +31,12 @@ class AngleHelper(hb.HelperBase):
 
     def calcAngleBetweenCoordinates(self, current: co.Coordinate, waypoint: co.Coordinate):
         """
-            TODO: Check if correct
+            Note: Delta of latitude and longitude can max be 90
             :arg current: Current coordinate of the boat
             :arg waypoint: Current waypoint of the boat
             :returns: The angle to the next waypoint, in accordance to the 'loxodroom' formula
         """
-        deltaWidth = m.log(m.tan(self.toRadians(waypoint.latitude/2) + m.pi/4)/m.tan(self.toRadians(current.latitude/2) + m.pi/4))
+        deltaWidth = m.log(m.tan(self.toRadians(waypoint.latitude)/2 + m.pi/4)/m.tan(self.toRadians(current.latitude)/2 + m.pi/4))
         k = self.toDegrees(m.atan2(self.toRadians(waypoint.longitude) - self.toRadians(current.longitude), deltaWidth))
 
         return k % 360
@@ -48,6 +48,3 @@ class AngleHelper(hb.HelperBase):
         xDelta = waypoint.longitude - current.longitude
         yDelta = waypoint.latitude - current.latitude
         return m.atan2(yDelta, xDelta)
-
-# h = AngleHelper()
-# print(h.calcAngleBetweenCoordinates(Coordinate(0, 0), Coordinate(1, 5)))
