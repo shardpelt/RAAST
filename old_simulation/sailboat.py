@@ -8,9 +8,9 @@
 # voorwaards = loodrecht * cos (beta)
 # beta = 90 - hoek van het zeil met de boot
 
-from pid import *
+from socketIO import *
 import simpylc as sp
-
+import threading
 
 def is_sailing_against_wind(min_threshold,
                             max_threshold,
@@ -50,23 +50,6 @@ def distance_between_angles(alpha, beta):
     phi = abs(beta - alpha) % 360
     distance = (180 - phi) % 360 if phi > 90 else phi
     return distance
-
-
-def optimal_sailing_angle(sailboat_rotation,
-                          wind_direction):
-    distance = distance_between_angles((sailboat_rotation + 180) % 360, wind_direction)
-
-    if distance > 180:
-        distance = (360 - distance) % 360
-
-    # If wind blows from starboard
-    if is_between_angles((sailboat_rotation - 180) % 360,
-                         sailboat_rotation,
-                         sp.world.wind.wind_direction):
-        distance = -distance
-
-    return distance / 2
-
 
 def angle_to_waypoint(delta_x, delta_y):
     return sp.tan(delta_x / delta_y) * 1000
@@ -113,14 +96,35 @@ class Sailboat (sp.Module):
         self.gimbal_rudder_angle = sp.Register(0)
         self.rotation_speed = sp.Register()
         self.passed_first_waypoint = sp.Register(False)
-
+        
+    def makeBoatAngleNormal(self, boatAngle):
+        angle = boatAngle+90
+        if angle < 0:
+            angle = angle * -1
+        if angle > 360:
+            angle = angle - 360
 
     def sweep(self):
+        relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
+        relativeWindAngle = self.makeBoatAngleNormal(relativeWindAngle)
+        relativeWindAngle = sp.world.wind.wind_direction
+        
+        compassAngle = self.sailboat_rotation
+        compassAngle = self.makeBoatAngleNormal(compassAngle)
 
-        self.local_sail_angle.set(#TODO)
-        self.global_sail_angle.set(#TODO)
+        x = self.position_x
+        y = self.position_y
 
-        self.gimbal_rudder_angle.set(#TODO)
+        '''
+        sp.world.socketIO._socket.sendWindAngle(windAngle)
+        sp.world.socketIO._socket.sendCoordinates(x,y)
+        sp.world.socketIO._socket.sendCompassAngle(compassAngle)
+
+        self.local_sail_angle.set(sp.world.socketIO._relativeSailAngle)
+        self.gimbal_rudder_angle.set(sp.world.socketIO._relativeRudderAngle)
+        self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
+        sp.world.waypoints._waywaypointypointy = sp.worl.socketIO._wayPoints
+        '''
 
         # Calculate forward force in N based on the angle between the sail and the wind
         self.sail_alpha.set(distance_between_angles(sp.world.wind.wind_direction, self.global_sail_angle))
