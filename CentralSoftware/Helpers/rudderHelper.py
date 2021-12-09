@@ -9,7 +9,7 @@ class RudderHelper(hb.HelperBase):
         super().__init__()
         self.shouldUpdate = True
         self.pid = pc.PidController(0.5, 0.02, 0.0005)
-        self.maxWantedAngle = 45
+        self.maxWantedAngle = 35
 
     def getNewBestAngle(self, currentAngle, wantedAngle):
         newRudderAngle = self.pid.calcNewAngle(currentAngle, wantedAngle)
