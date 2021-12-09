@@ -13,7 +13,7 @@ class SailHelper(HelperBase):
             Needs the boatAngle to calculate the absolute angle of the wind
             The difference of the boatAngle according to the absolute wind angle is divided by 2 to find the ideal sail angle
         """
-        relativeWindAngle = self.reduceAngles(relativeWindAngle)
+        relativeWindAngle = self.reduceAngles(relativeWindAngle)[0]
 
         sailAngle = relativeWindAngle / 2
         if relativeWindAngle <= 180:
