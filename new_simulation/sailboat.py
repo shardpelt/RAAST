@@ -110,7 +110,7 @@ class Sailboat (sp.Module):
         relativeWindAngle = self.makeBoatAngleNormal(relativeWindAngle)
         
         compassAngle = self.sailboat_rotation
-        compassAngle = self.makeBoatAngleNormal(self._compassAngle)
+        compassAngle = self.makeBoatAngleNormal(compassAngle)
 
         x = self.position_x
         y = self.position_y

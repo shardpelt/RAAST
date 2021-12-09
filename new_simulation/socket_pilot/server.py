@@ -61,9 +61,9 @@ class Server:
         sensorData = {'sensorData': 
                 {{"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
                 {"type": "sensor", "id": 2, "body": {"value": (y, x)}},
-                {"type": "sensor", "id": 3, "body": {"value": compassAngle}}
+                {"type": "sensor", "id": 3, "body": {"value": compassAngle}}}
                 }
-        return sensordata
+        return sensorData
 
 
     def updateWaypoints(self,waypointsDict):
