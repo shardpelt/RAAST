@@ -28,7 +28,7 @@ Removing this header ends your license.
 import socket as sc
 import json as js
 
-address = 'localhost', 50012
+address = 'localhost', 5678
 socketType = sc.AF_INET, sc.SOCK_STREAM
 maxNrOfConnectionRequests = 5
 maxMessageLength = 1024

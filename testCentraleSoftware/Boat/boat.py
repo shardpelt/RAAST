@@ -38,6 +38,7 @@ class Boat:
 
     def run(self):
         while True:
+            time.sleep(0.02)
             ### Input
             self.communication.receive()
             ###

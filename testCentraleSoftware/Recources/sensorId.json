@@ -1,0 +1,9 @@
+{
+  "sonar": 0,
+  "gyroscope": 1,
+  "wind": 2,
+  "compass": 3,
+  "gps": 4,
+  "rudderPos": 5,
+  "sailPos": 6
+}

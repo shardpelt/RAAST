@@ -73,8 +73,12 @@ class Sailboat (sp.Module):
         self.mass = sp.Register(20)
 
         self._waypoints = []
-        self._relativeRudderAngle = 0
-        self._relativeSailAngle = 0
+        self._relativeRudderAngle = 0.0
+        self._relativeSailAngle = 0.0
+        self._relativeWindAngle = 0.0
+        self._compassAngle = 0.0
+        self._x = 0.0
+        self._y = 0.0
 
         self.group('velocity')
         self.drag = sp.Register()
@@ -105,22 +109,22 @@ class Sailboat (sp.Module):
             angle = angle - 360
 
     def sweep(self):
-        #calculate all updated values, send them over socket.
-        relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
-        relativeWindAngle = self.makeBoatAngleNormal(relativeWindAngle)
+        #calculate all updated values.
+        self._relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
+        self._relativeWindAngle = sp.evaluate(self.makeBoatAngleNormal(self._relativeWindAngle))
         
-        compassAngle = self.sailboat_rotation
-        compassAngle = self.makeBoatAngleNormal(compassAngle)
+        self._compassAngle = self.sailboat_rotation
+        self._compassAngle = sp.evaluate(self.makeBoatAngleNormal(self._compassAngle))
 
-        x = self.position_x
-        y = self.position_y
+        self._x = sp.evaluate(self.position_x)
+        self._y = sp.evaluate(self.position_y)
 
-        sp.world.server.sendData(int(relativeWindAngle),int(compassAngle),x,y)
+        #sp.world.server.sendData(int(relativeWindAngle),int(compassAngle),x,y)
 
         #update variables being used in simualtion to most recently received ones.
         self.local_sail_angle.set(self._relativeSailAngle)
         self.gimbal_rudder_angle.set(self._relativeRudderAngle)
-        sp.world.waypoints._waywaypointypointy = self._wayPoints
+        #sp.world.waypoints._waywaypointypointy = self._wayPoints
         
         self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
 

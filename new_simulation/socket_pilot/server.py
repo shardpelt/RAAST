@@ -43,27 +43,38 @@ class Server:
 
                 with self.clientSocket:
                     while True:
-                        sensors = {
-                            'lidarDistances': sp.world.visualisation.lidar.distances,
-                            'lidarHalfApertureAngle': sp.world.visualisation.lidar.halfApertureAngle
-                        }
+                        windAngle = sp.world.sailboat._relativeWindAngle
+                        compassAngle = sp.world.sailboat._compassAngle
+                        x = sp.world.sailboat._x
+                        y = sp.world.sailboat._y
+                        
+                        sensors = self.getData(windAngle, compassAngle, x, y)
 
                         self.socketWrapper.send (sensors)
 
                         tm.sleep (0.02)
 
-                        actuators = self.socketWrapper.recv ()
-                        sp.world.physics.steeringAngle.set (actuators ['steeringAngle'])
-                        sp.world.physics.targetVelocity.set (actuators ['targetVelocity'])
+                        message = self.socketWrapper.recv ()
+                        #sp.world.physics.steeringAngle.set (actuators ['steeringAngle'])
+                        print(message)
 
+    def getData(self,relativeWindAngle,compassAngle,x,y):
+        sensorData = {
+                1: {"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
+                2: {"type": "sensor", "id": 2, "body": {"value": (y, x)}},
+                3: {"type": "sensor", "id": 3, "body": {"value": compassAngle}}
+                }
+        return sensorData
 
-    def sendData(self,relativeWindAngle,compassAngle,x,y):
-        sensorData = {'sensorData': 
-                {{"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
+    '''
+    def getData(self,relativeWindAngle,compassAngle,x,y):
+        sensorData = {'sensorData':{ 
+                {"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
                 {"type": "sensor", "id": 2, "body": {"value": (y, x)}},
                 {"type": "sensor", "id": 3, "body": {"value": compassAngle}}}
                 }
         return sensorData
+    '''
 
 
     def updateWaypoints(self,waypointsDict):
