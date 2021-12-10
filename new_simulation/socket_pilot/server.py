@@ -43,8 +43,8 @@ class Server:
 
                 with self.clientSocket:
                     while True:
-                        windAngle = sp.world.sailboat._relativeWindAngle
-                        compassAngle = sp.world.sailboat._compassAngle
+                        windAngle = sp.evaluate(sp.world.sailboat._relativeWindAngle)
+                        compassAngle = sp.evaluate(sp.world.sailboat._compassAngle)
                         x = sp.world.sailboat._x
                         y = sp.world.sailboat._y
                         

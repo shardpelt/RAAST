@@ -31,7 +31,7 @@ import json as js
 address = 'localhost', 5678
 socketType = sc.AF_INET, sc.SOCK_STREAM
 maxNrOfConnectionRequests = 5
-maxMessageLength = 1024
+maxMessageLength = 5000
 
 class SocketWrapper:
     def __init__ (self, clientSocket):

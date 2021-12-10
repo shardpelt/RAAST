@@ -9,10 +9,12 @@ class BaseIO:
 
     def processIncommingMsg(self, msg):
         print(f"Msg from simulation: {msg}")
-        if msg["type"] == "instruction":
-            self.instructionMap[msg["id"]](msg["body"])
-        elif msg["type"] == "sensor":
-            self.sensorMap[msg["id"]](msg["body"])
+        for i in msg:
+            print(f"item: {i}")
+            if msg[i]["type"] == "instruction":
+                self.instructionMap[msg[i]["id"]](msg[i]["body"])
+            elif msg[i]["type"] == "sensor":
+                self.sensorMap[msg[i]["id"]](msg[i]["body"])
 
     def setSailRudder(self, body):
         try:

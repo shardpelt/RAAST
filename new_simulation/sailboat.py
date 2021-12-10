@@ -73,12 +73,12 @@ class Sailboat (sp.Module):
         self.mass = sp.Register(20)
 
         self._waypoints = []
-        self._relativeRudderAngle = 0.0
-        self._relativeSailAngle = 0.0
-        self._relativeWindAngle = 0.0
-        self._compassAngle = 0.0
-        self._x = 0.0
-        self._y = 0.0
+        self._relativeRudderAngle = 1.0
+        self._relativeSailAngle = 1.0
+        self._relativeWindAngle = 0.1
+        self._compassAngle = 0.1
+        self._x = 0.1
+        self._y = 0.1
 
         self.group('velocity')
         self.drag = sp.Register()
@@ -102,19 +102,20 @@ class Sailboat (sp.Module):
         self.passed_first_waypoint = sp.Register(False)
 
     def makeBoatAngleNormal(self, boatAngle):
-        angle = boatAngle+90
+        angle = boatAngle + 90
         if angle < 0:
             angle = angle * -1
         if angle > 360:
             angle = angle - 360
+        return angle
 
     def sweep(self):
         #calculate all updated values.
         self._relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
-        self._relativeWindAngle = sp.evaluate(self.makeBoatAngleNormal(self._relativeWindAngle))
-        
+        self._relativeWindAngle = (self.makeBoatAngleNormal(self._relativeWindAngle))
+
         self._compassAngle = self.sailboat_rotation
-        self._compassAngle = sp.evaluate(self.makeBoatAngleNormal(self._compassAngle))
+        self._compassAngle = self.makeBoatAngleNormal(self._compassAngle)
 
         self._x = sp.evaluate(self.position_x)
         self._y = sp.evaluate(self.position_y)

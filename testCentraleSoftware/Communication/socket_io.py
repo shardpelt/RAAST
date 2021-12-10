@@ -38,7 +38,7 @@ class SocketIO(BaseIO):
 class SocketWrapper:
     def __init__(self, clientSocket):
         self.clientSocket = clientSocket
-        self.maxMessageLength = 1024
+        self.maxMessageLength = 5000
 
     def send(self, anObject):
         buffer = bytes(f'{anObject:<{self.maxMessageLength}}', 'ascii')
