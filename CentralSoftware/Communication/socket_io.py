@@ -29,7 +29,7 @@ class SocketIO(bs.BaseIO):
             try:
                 self.simuSocket.connect(self.simuAddress)
             except sc.error:
-                print("COMMUNICATION - Could not connect to simulation")
+                print("COMMUNICATION - Tried to connect to simulation...")
                 tm.sleep(3)
                 continue
             break
