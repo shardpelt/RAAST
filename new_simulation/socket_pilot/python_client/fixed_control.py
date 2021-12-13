@@ -25,16 +25,12 @@ It is meant for training purposes only.
 Removing this header ends your license.
 '''
 
+import sys
+sys.path.append("..")
+import socket_pilot.socket_wrapper as sw
+
 import time as tm
-import traceback as tb
-import math as mt
-import sys as ss
-import os
 import socket as sc
-
-ss.path +=  [os.path.abspath (relPath) for relPath in  ('..',)] 
-
-import socket_wrapper as sw
 
 finity = 1e20
 

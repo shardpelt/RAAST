@@ -29,7 +29,7 @@ import socket as sc
 import time as tm
 
 import simpylc as sp
-import socket_wrapper as sw
+import socket_pilot.socket_wrapper as sw
 
 class Server:
     def __init__ (self):

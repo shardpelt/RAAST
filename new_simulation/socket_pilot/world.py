@@ -25,14 +25,12 @@ It is meant for training purposes only.
 Removing this header ends your license.
 '''
 
-import os
-import sys as ss
-
-ss.path +=  [os.path.abspath (relPath) for relPath in  ('../../..', '..')]   # If you want to store your simulations somewhere else, put SimPyLC in your PYTHONPATH environment variable
+import sys
+sys.path.append("..")
+sys.path.append("python_client")
 
 import simpylc as sp
-
-import server as sv
+import socket_pilot.server as sv
 import sailboat as sb
 import wind as wn
 import waypoint as wp

@@ -1,6 +1,5 @@
-from copy import copy
-from Route.coordinate import Coordinate
-import socket as sc
+import copy as cp
+import Route.coordinate as co
 
 class BaseIO:
     def __init__(self, boat):
@@ -9,7 +8,7 @@ class BaseIO:
         self.instructionMap = {1: self.setSailRudder, 2: self.setCourse, 3: self.setWaypoint, 4: self.setControlMode, 5: self.setControlParameters}
 
     def getDict(self):
-        return type(copy(self)).__name__
+        return type(self).__name__
 
     def processIncommingMsg(self, msg):
         print(f"Msg from simulation: {msg}")
@@ -40,7 +39,7 @@ class BaseIO:
     def setWaypoint(self, body):
         try:
             self.boat.sailHelper.shouldUpdate = self.boat.rudderHelper.shouldUpdate = self.boat.course.shouldUpdate = True
-            self.boat.route.addWaypoint(Coordinate(body["latitude"], body["longitude"]))
+            self.boat.route.addWaypoint(co.Coordinate(body["latitude"], body["longitude"]))
         except Exception as e:
             print(e)
 
