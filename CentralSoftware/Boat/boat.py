@@ -1,11 +1,12 @@
-import time
-import threading
-from Communication.communication import Communication
-from Helpers.sailHelper import SailHelper
-from Route.route import Route
-from SensorData.sensor_data import SensorData
-from Helpers.rudderHelper import RudderHelper
-from Course.course import Course
+import threading as th
+import time as tm
+import Communication.communication as co
+import Helpers.objectToDictHelper as ds
+import Helpers.sailHelper as sh
+import Route.route as rt
+import SensorData.sensor_data as sd
+import Helpers.rudderHelper as rh
+import Course.course as cs
 
 """
 The boat can only sail when 
@@ -19,19 +20,20 @@ Control Loop flow:
     - After each loop we wait for an chosen amount of time
 """
 
-class Boat:
+class Boat(ds.DictSerializer):
     def __init__(self):
-        self.controlMode = 3                                # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
-        self.communication = Communication(self)            # Communication handler
-        self.data = SensorData()                            # Data object in which every datapoint is stored
-        self.route = Route(self)                            # Object in which the route information is stored
-        self.course = Course(self.data)                     # Object in which the course is calculated and stored
-        self.rudderHelper = RudderHelper()                  # Contains methods to determine best angle for rudder
-        self.sailHelper = SailHelper()                      # Contains methods to determine best sail angle
+        self.controlMode = 3                                   # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
+        self.route = rt.Route(self)                            # Object in which the route information is stored
+        self.communication = co.Communication(self)            # Communication handler
+        self.data = sd.SensorData()                            # Data object in which every datapoint is stored
+        self.course = cs.Course(self)                          # Object in which the course is calculated and stored
+        self.rudderHelper = rh.RudderHelper()                  # Contains methods to determine best angle for rudder
+        self.sailHelper = sh.SailHelper()                      # Contains methods to determine best sail angle
 
     def start(self):
-        communicationThread = threading.Thread(target=self.communication.configure)
-        controlLoopThread = threading.Thread(target=self.run)
+        communicationThread = th.Thread(target=self.communication.configure)
+        tm.sleep(1)
+        controlLoopThread = th.Thread(target=self.run)
 
         communicationThread.start()
         controlLoopThread.start()
@@ -44,7 +46,6 @@ class Boat:
 
             ### Sweep
             if self.data.hasRequiredData() and self.route.hasNextWaypoint():
-                # TODO: Moet je door de control lus nog de waardes updaten? of aan het begin vastzetten en de buffer vullen?
                 routeChanged = False
                 if self.route.shouldUpdate:
                     if self.data.sonar.checkThreat():
@@ -71,7 +72,7 @@ class Boat:
                     self.communication.sendRudderAngle(rudderAngle)
 
                 if self.sailHelper.shouldUpdate and self.data.checkChangesInWind():
-                    sailAngle = self.sailHelper.getNewBestAngle(self.data.compass.angle, self.data.wind.angle)
+                    sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.angle)
                     self.communication.sendSailAngle(sailAngle)
 
             self.communication.sendUpdate()

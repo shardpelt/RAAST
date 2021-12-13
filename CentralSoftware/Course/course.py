@@ -2,15 +2,16 @@ import sys
 sys.path.append("..")
 
 import Route.boarders as bo
+import Helpers.objectToDictHelper as ds
 import Route.coordinate as co
-import SensorData.sensor_data as sd
+import Route.waypoint as wp
 import Helpers.angleHelper as ah
 
-class Course:
-    def __init__(self, sensorData: sd.SensorData):
+class Course(ds.DictSerializer):
+    def __init__(self, boat):
         self.shouldUpdate = True
-        self.data = sensorData
-        self.angleHelper = ah.AngleHelper()
+        self._boat = boat
+        self._angleHelper = ah.AngleHelper()
         self.wantedAngle = None
         self.wantedAngleMarge = 5 # TODO: beste marge op de koers/zeil nader te bepalen
         self.wantedSailMarge = 5
@@ -20,29 +21,29 @@ class Course:
         self.boarderMarge = 0.005
 
     def isOffTrack(self):
-        return not self.angleHelper.angleIsBetweenAngles(self.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
+        return not self._angleHelper.angleIsBetweenAngles(self._boat.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
 
-    def updateWantedAngle(self, waypoint: co.Coordinate, boarders: bo.Boarders):
+    def updateWantedAngle(self, waypoint: wp.Waypoint, boarders: bo.Boarders):
         """
-            :arg waypoint: Coordinate of the current waypoint
-            :arg boarders: The absolute boarders in which the boat should stay during the trip
+            :arg waypoint: The current waypoint
+            :arg boarders: The absolute boarders in which the _boat should stay during the trip
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
-        optimalAngle = self.angleHelper.calcAngleBetweenCoordinates(self.data.currentCoordinate, waypoint)
+        optimalAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, waypoint.coordinate)
 
-        if self.boatAtBoarders(self.data.currentCoordinate, boarders):
+        if self._boatAtBoarders(self._boat.data.currentCoordinate, boarders):
             self.forgetToTheWindCourse()
 
-        if self.angleHelper.windFromDeadzone(optimalAngle, self.data.wind.angle):
-            self.wantedAngle = self.calcBestAngleWindFromDeadzone(optimalAngle, self.data.wind.angle)
+        if self._angleHelper.windFromDeadzone(optimalAngle, self._boat.data.wind.angle):
+            self.wantedAngle = self.calcBestAngleWindFromDeadzone(optimalAngle, self._boat.data.wind.angle)
         else:
-        #elif self.angleHelper.windFromBehind(optimalAngle, self.data.wind.angle):
+        #elif self._angleHelper.windFromBehind(optimalAngle, self._boat.data.wind.angle):
             self.wantedAngle = optimalAngle
 
     def calcBestAngleWindFromDeadzone(self, optimalAngle, windAngle):
         angleLeftToDeadzone = windAngle - 45
         angleRightToDeadzone = windAngle + 45
-        deltaAngles = self.angleHelper.getDeltaLeftAndRightToAngle(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
+        deltaAngles = self._angleHelper.getDeltaLeftAndRightToAngle(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
 
         # If already sailing to the wind try to continue direction chosen or perform tacking maneuvre
         if self.toTheWind:
@@ -68,7 +69,7 @@ class Course:
             self.toTheWind = "right"
             return angleRightToDeadzone
 
-    def boatAtBoarders(self, currCoordinate: co.Coordinate, boarders: bo.Boarders):
+    def _boatAtBoarders(self, currCoordinate: co.Coordinate, boarders: bo.Boarders):
         if currCoordinate.latitude <= (boarders.down + self.boarderMarge):
             return True
         elif currCoordinate.latitude >= (boarders.top - self.boarderMarge):

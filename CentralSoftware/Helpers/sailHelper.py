@@ -1,7 +1,11 @@
-from Helpers.helperBase import HelperBase
-from Helpers.interpolator import Interpolator
+import sys
+sys.path.append("..")
 
-class SailHelper(HelperBase):
+import Helpers.helperBase as hb
+import Helpers.objectToDictHelper as ds
+import Helpers.interpolator as ip
+
+class SailHelper(hb.HelperBase, ds.DictSerializer):
     def __init__(self):
         super().__init__()
         self.shouldUpdate = True
@@ -27,5 +31,5 @@ class SailHelper(HelperBase):
         for i, windSail in enumerate(windToSail):
             if windSail["wind"] <= relativeWindAngle <= windToSail[i + 1]["wind"]:
                 if windSail["interpolate"]:
-                    return Interpolator.getSail(windSail, windToSail[i + 1], relativeWindAngle)
+                    return ip.Interpolator.getSail(windSail, windToSail[i + 1], relativeWindAngle)
                 return windSail["sail"]

@@ -1,7 +1,7 @@
-import json
-from Communication.base_io import BaseIO
+import json as js
+import Communication.base_io as bs
 
-class CanIO(BaseIO):
+class CanIO(bs.BaseIO):
     # TODO: asyncio
     def __init__(self, boat):
         super().__init__(boat)
@@ -12,7 +12,7 @@ class CanIO(BaseIO):
 
     def loadModuleIds(self, fileName):
         with open(fileName) as moduleIdJson:
-            self.moduleId = json.load(moduleIdJson)
+            self.moduleId = js.load(moduleIdJson)
 
     def start(self):
         if self.boat.controlMode == 3:

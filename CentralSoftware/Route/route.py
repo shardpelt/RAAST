@@ -1,38 +1,42 @@
 import sys
+import math
 sys.path.append("..")
 
-import math
 import Helpers.angleHelper as ah
+import Helpers.objectToDictHelper as ds
 import Route.coordinate as co
+import Route.waypoint as wp
 import Helpers.jsonHelper as jh
 
-class Route:
+class Route(ds.DictSerializer):
     def __init__(self, boat):
         self.shouldUpdate = True
-        self.boat = boat
-        self.angleHelper = ah.AngleHelper()
+        self._boat = boat
+        self._angleHelper = ah.AngleHelper()
         self.waypoints, self.finish, self.boarders = jh.JsonHelper.setupRoute("Recources/route.json")
-        self.radiusOfTheEarth = 6378.1
+        self._radiusOfTheEarth = 6378.1
         self.waypointMargin = 0.0005 # 55 meter
         self.obstacleMarginKm = 2
 
     @property
-    def currentWaypoint(self) -> co.Coordinate:
+    def currentWaypoint(self) -> wp.Waypoint:
         if not self.waypoints:
-            return self.finish.getWaypoint()
+            return self.getBestWaypointOnFinishLine()
         else:
             return self.waypoints[0]
 
-    def addWaypoint(self, waypoint: co.Coordinate):
+    def addWaypoint(self, waypoint: wp.Waypoint):
         self.waypoints.insert(0, waypoint)
 
-    def getBestWaypointOnFinishLine(self):
+    def getBestWaypointOnFinishLine(self) -> wp.Waypoint:
         """
-            Calculates the best waypoint to sail at between te finish line according to the boat's angle and wind angle
+            TODO
+            Calculates the best waypoint to sail at between te finish line according to the _boat's angle and wind angle
         """
-        angleToCoorOne = self.angleHelper.calcAngleBetweenCoordinates(self.boat.data.currentCoordinate, self.finish.coordinateOne)
-        angleToCoorTwo = self.angleHelper.calcAngleBetweenCoordinates(self.boat.data.currentCoordinate, self.finish.coordinateTwo)
+        angleToCoorOne = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, self.finish.coordinateOne)
+        angleToCoorTwo = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, self.finish.coordinateTwo)
 
+        return wp.Waypoint()
 
 
     def calculateCoordinateAtDistance(self, currCoordinate, angle, distance) -> co.Coordinate:
@@ -41,28 +45,28 @@ class Route:
             :arg angle: The angle at which the new coordinate is calculated
             :arg distance: The distance in Kilometers from the currCoordinate at which the new Coordinate is calculated
         """
-        currLat = self.angleHelper.toRadians(currCoordinate.latitude)
-        currLong = self.angleHelper.toRadians(currCoordinate.longitude)
+        currLat = self._angleHelper.toRadians(currCoordinate.latitude)
+        currLong = self._angleHelper.toRadians(currCoordinate.longitude)
 
-        waypointLat = math.asin(math.sin(currLat) * math.cos(distance / self.radiusOfTheEarth) +
-                                math.cos(currLat) * math.sin(distance / self.radiusOfTheEarth) * math.cos(angle))
+        waypointLat = math.asin(math.sin(currLat) * math.cos(distance / self._radiusOfTheEarth) +
+                                math.cos(currLat) * math.sin(distance / self._radiusOfTheEarth) * math.cos(angle))
 
-        waypointLong = currLong + math.atan2(math.sin(angle) * math.sin(distance / self.radiusOfTheEarth) * math.cos(currLat),
-                                             math.cos(distance / self.radiusOfTheEarth) - math.sin(currLat) * math.sin(waypointLat))
+        waypointLong = currLong + math.atan2(math.sin(angle) * math.sin(distance / self._radiusOfTheEarth) * math.cos(currLat),
+                                             math.cos(distance / self._radiusOfTheEarth) - math.sin(currLat) * math.sin(waypointLat))
 
-        return co.Coordinate(self.angleHelper.toDegrees(waypointLat), self.angleHelper.toDegrees(waypointLong))
+        return co.Coordinate(self._angleHelper.toDegrees(waypointLat), self._angleHelper.toDegrees(waypointLong))
 
     def hasNextWaypoint(self) -> bool:
         return self.currentWaypoint is not None
 
     def checkWaypointReached(self) -> bool:
         """
-            Whether the boat's current coordinate is within the next waypoint's coordinate +/- margin
-            :returns: True if boat has reached the current waypoint zone, False if not
+            Whether the _boat's current coordinate is within the next waypoint's coordinate +/- margin
+            :returns: True if _boat has reached the current waypoint zone, False if not
         """
-        if self.boat.data.currentCoordinate is not None:
-            if (self.currentWaypoint.latitude - self.waypointMargin) <= self.boat.data.currentCoordinate.latitude <= (self.currentWaypoint.latitude + self.waypointMargin) \
-                    and (self.currentWaypoint.longitude - self.waypointMargin) <= self.boat.data.currentCoordinate.longitude <= (self.currentWaypoint.longitude + self.waypointMargin):
+        if self._boat.data.currentCoordinate is not None:
+            if (self.currentWaypoint.coordinate.latitude - self.waypointMargin) <= self._boat.data.currentCoordinate.latitude <= (self.currentWaypoint.coordinate.latitude + self.waypointMargin) \
+                    and (self.currentWaypoint.coordinate.longitude - self.waypointMargin) <= self._boat.data.currentCoordinate.longitude <= (self.currentWaypoint.coordinate.longitude + self.waypointMargin):
                 return True
 
         return False
@@ -75,57 +79,57 @@ class Route:
             TODO: Testing
             Creates an new waypoint which course to sail lays out of object's field
         """
-        if 0 <= self.boat.data.wind.angle <= 180: # Boat traverses left from object so can't choose an course to the right side.
-            traversedCourseAngle = (self.boat.data.compass.angle - 90) % 360
-            self.boat.course.cantChooseSide = "right"
+        if 0 <= self._boat.data.wind.angle <= 180: # _Boat traverses left from object so can't choose an course to the right side.
+            traversedCourseAngle = (self._boat.data.compass.angle - 90) % 360
+            self._boat.course.cantChooseSide = "right"
         else:
-            traversedCourseAngle = (self.boat.data.compass.angle + 90) % 360
-            self.boat.course.cantChooseSide = "left"
+            traversedCourseAngle = (self._boat.data.compass.angle + 90) % 360
+            self._boat.course.cantChooseSide = "left"
 
-        newWaypoint = self.calculateCoordinateAtDistance(self.boat.data.currentCoordinate, self.angleHelper.toRadians(traversedCourseAngle), self.obstacleMarginKm)
-
+        coordinate = self.calculateCoordinateAtDistance(self._boat.data.currentCoordinate, self._angleHelper.toRadians(traversedCourseAngle), self.obstacleMarginKm)
+        newWaypoint = wp.Waypoint(coordinate, wp.WpType.SonarAvoidance)
         self.addWaypoint(newWaypoint)
 
     def circumnavigateAis(self) -> None:
         """
             TODO: Testing
-            This function is called when there is any new information from the AIS module in the boat
+            This function is called when there is any new information from the AIS module in the _boat
             It goes through an ordered (by distance) list of the scanned ships and checks if an traverse is needed
             If the ship has course code 511 it does not move, in that case we check if that ship is in our way
             If the ship has an active heading(course) we check if it's path has any intersection with ours
             If one of these cases is applicable, we make a new waypoint at the ships coordinate according to a marge
         """
-        distanceOrderedAis = self.boat.data.ais.getAisOrderedByDistance(self.boat.data.currentCoordinate)
+        distanceOrderedAis = self._boat.data.ais.getAisOrderedByDistance(self._boat.data.currentCoordinate)
 
-        traversedWaypoints = []
+        traversedCoordinates = []
         for ship in distanceOrderedAis:
             shipCoordinate = co.Coordinate(ship[0], ship[1])
-            currCr = self.boat.data.currentCoordinate if len(traversedWaypoints) == 0 else traversedWaypoints[0]
+            currCr = self._boat.data.currentCoordinate if len(traversedCoordinates) == 0 else traversedCoordinates[0]
             if ship[2] != 511:
                 currWp = self.currentWaypoint
-                ds = self.calculateCoordinateAtDistance(shipCoordinate, self.angleHelper.toRadians(ship[2]), self.boat.data.ais.reach)
-                if self.intersect(currCr, currWp, shipCoordinate, ds):
+                ds = self.calculateCoordinateAtDistance(shipCoordinate, self._angleHelper.toRadians(ship[2]), self._boat.data.ais.reach)
+                if self.intersect(currCr, currWp.coordinate, shipCoordinate, ds):
                     reversedShipsCourse = (ship[2] - 180) % 360
-                    traversedWaypoint = self.calculateCoordinateAtDistance(currCr, reversedShipsCourse, self.obstacleMarginKm)
-                    traversedWaypoints.append(traversedWaypoint)
+                    traversedCoordinate = self.calculateCoordinateAtDistance(currCr, reversedShipsCourse, self.obstacleMarginKm)
+                    traversedCoordinates.append(traversedCoordinate)
             else:
-                shipToWaypointAngle = self.angleHelper.calcAngleBetweenCoordinates(shipCoordinate, self.currentWaypoint)
-                boatToWaypointAngle = self.angleHelper.calcAngleBetweenCoordinates(currCr, self.currentWaypoint)
-                if self.angleHelper.angleIsBetweenAngles(boatToWaypointAngle, shipToWaypointAngle - 5, shipToWaypointAngle + 5):
-                    traversedWaypoint = self.calculateCoordinateAtDistance(shipCoordinate, 90, self.obstacleMarginKm)
-                    traversedWaypoints.append(traversedWaypoint)
+                shipToWaypointAngle = self._angleHelper.calcAngleBetweenCoordinates(shipCoordinate, self.currentWaypoint.coordinate)
+                _boatToWaypointAngle = self._angleHelper.calcAngleBetweenCoordinates(currCr, self.currentWaypoint.coordinate)
+                if self._angleHelper.angleIsBetweenAngles(_boatToWaypointAngle, shipToWaypointAngle - 5, shipToWaypointAngle + 5):
+                    traversedCoordinate = self.calculateCoordinateAtDistance(shipCoordinate, 90, self.obstacleMarginKm)
+                    traversedCoordinates.append(traversedCoordinate)
 
-        for waypoint in traversedWaypoints:
-            self.addWaypoint(waypoint)
+        for coordinate in traversedCoordinates:
+            self.addWaypoint(wp.Waypoint(coordinate, wp.WpType.AisAvoidance))
 
 
     def intersect(self, A, B, C, D) -> bool:
         """
-        :param A: Current coordinate of boat
-        :param B: Headed coordinate of boat
+        :param A: Current coordinate of _boat
+        :param B: Headed coordinate of _boat
         :param C: Current coordinate of ais ship
         :param D: Headed coordinate of ais ship
-        :return: bool -> Whether the two route lines of the boat and the ais ship collide
+        :return: bool -> Whether the two route lines of the _boat and the ais ship collide
         """
         return self.ccw(A, C, D) != self.ccw(B, C, D) and self.ccw(A, B, C) != self.ccw(A, B, D)
 

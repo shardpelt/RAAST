@@ -1,3 +1,4 @@
+from copy import copy
 from Route.coordinate import Coordinate
 import socket as sc
 
@@ -6,6 +7,9 @@ class BaseIO:
         self.boat = boat
         self.sensorMap = {1: self.setWind, 2: self.setGps, 3: self.setCompass}
         self.instructionMap = {1: self.setSailRudder, 2: self.setCourse, 3: self.setWaypoint, 4: self.setControlMode, 5: self.setControlParameters}
+
+    def getDict(self):
+        return type(copy(self)).__name__
 
     def processIncommingMsg(self, msg):
         print(f"Msg from simulation: {msg}")

@@ -1,49 +1,29 @@
 from copy import copy
 
 """
-    This class contains methods which converts objects to dictionaries. 
-    Conversion is needed to convert them to JSON and send them with our communication protocols.
+    Recursively converts Python objects to JSON objects
+    JSON objects are required to send clean data over the internet
+    Private methods (starting with '_') are not included in the conversion
 """
 
-class ObjectToDictHelper:
-    @staticmethod
-    def route(route):
-        d = vars(copy(route))
-        del d["boat"]
-        del d["angleHelper"]
+class DictSerializer:
+    def getDict(self):
+        objCopy = copy(self)
+        objDict = vars(objCopy)
 
-        for k, v in d.items():
-            if k == "waypoints":
-                d[k] = [vars(wp) for wp in v]
-            elif k == "finish":
-                x = vars(copy(v))
-                for k2, v2 in x.items():
-                    x[k2] = vars(v2)
-                d[k] = x
-            elif k == "boarders":
-                d[k] = vars(v)
+        for key in list(objDict.keys()):
+            if key.startswith('_'):
+                del objDict[key]
 
-        return d
-
-    @staticmethod
-    def data(data):
-        d = vars(copy(data))
-        del d["angleHelper"]
-        del d["image"]
-
-        for k, v in d.items():
+        for key, value in objDict.items():
             try:
-                d[k] = vars(v)
-            except:
+                if isinstance(value, list):
+                    listCopy = copy(value)
+                    for index, listValue in enumerate(listCopy):
+                        listCopy[index] = listValue.getDict()
+                    objDict[key] = listCopy
+                else:
+                    objDict[key] = value.getDict()
+            except AttributeError:
                 pass
-
-        return d
-
-    @staticmethod
-    def course(course):
-        d = vars(copy(course))
-
-        del d["data"]
-        del d["angleHelper"]
-
-        return d
+        return objDict

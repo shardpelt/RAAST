@@ -5,6 +5,7 @@ import json
 import Route.boarders as bo
 import Route.finish as fi
 import Route.coordinate as co
+import Route.waypoint as wp
 
 class JsonHelper:
 
@@ -16,7 +17,8 @@ class JsonHelper:
 
             # Loading waypoints
             for waypoint in routeFileObj["waypoints"]:
-                waypoints.append(co.Coordinate(waypoint["latitude"], waypoint["longitude"]))
+                coordinate = co.Coordinate(waypoint["latitude"], waypoint["longitude"])
+                waypoints.append(wp.Waypoint(coordinate, wp.WpType.Predefined))
 
             # Loading finish
             coordinateOne = routeFileObj["finish"]["coordinateOne"]

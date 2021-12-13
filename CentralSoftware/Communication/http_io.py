@@ -1,6 +1,6 @@
-from Communication.base_io import BaseIO
+import Communication.base_io as bs
 
-class HttpIO(BaseIO):
+class HttpIO(bs.BaseIO):
     def __init__(self, boat):
         super().__init__(boat)
         self.boat = boat

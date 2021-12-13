@@ -1,8 +1,9 @@
-from Communication.base_io import BaseIO
+import Communication.base_io as bs
 import socket as sc
 import json as js
+import time as tm
 
-class SocketIO(BaseIO):
+class SocketIO(bs.BaseIO):
     def __init__(self, boat):
         super().__init__(boat)
         self.started = False
@@ -23,17 +24,21 @@ class SocketIO(BaseIO):
 
     def start(self):
         self.simuSocket = sc.socket(*self.socketType)
-        self.simuSocket.settimeout(50)
-        self.simuSocket.connect(self.simuAddress)
+
+        while True:
+            try:
+                self.simuSocket.connect(self.simuAddress)
+            except sc.error:
+                print("COMMUNICATION - Could not connect to simulation")
+                tm.sleep(3)
+                continue
+            break
+
         self.socketWrapper = SocketWrapper(self.simuSocket)
         self.alive = True
 
     def stop(self):
         self.started = False
-
-    def resetSocket(self):
-        print(f"COMMUNICATION - Lost connection with simulation")
-        #self.simulationSocket, self.simulationAddress = None, None
 
 class SocketWrapper:
     def __init__(self, clientSocket):

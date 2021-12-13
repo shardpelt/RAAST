@@ -1,6 +1,11 @@
-import time
+import sys
+sys.path.append("..")
 
-class PidController:
+import time
+import Helpers.objectToDictHelper as ds
+
+
+class PidController(ds.DictSerializer):
     def __init__(self, p, i, d):
         self.p = p
         self.i = i

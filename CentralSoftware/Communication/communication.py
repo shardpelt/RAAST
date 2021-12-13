@@ -1,17 +1,17 @@
 import json
 import time
-from Communication.socket_io import SocketIO
-from Communication.can_io import CanIO
-from Communication.http_io import HttpIO
-from Helpers.objectToDictHelper import ObjectToDictHelper
+import Communication.socket_io as so
+import Communication.can_io as ca
+import Communication.http_io as ht
+import Helpers.objectToDictHelper as ds
 
-class Communication:
+class Communication(ds.DictSerializer):
     def __init__(self, boat):
-        self.boat = boat
-        self.can = CanIO(boat)
-        self.http = HttpIO(boat)
-        self.socket = SocketIO(boat)
-        self.allCommunications = [self.socket]
+        self._boat = boat
+        self._can = ca.CanIO(boat)
+        self._http = ht.HttpIO(boat)
+        self._socket = so.SocketIO(boat)
+        self.allCommunications = [self._socket]
         self.activeCommunications = None
         self.msgInterval = 10
         self.prevUpdateTime = -1
@@ -27,15 +27,15 @@ class Communication:
                 communication.stop()
 
     def setActiveCommunications(self):
-        if self.boat.controlMode == 0:                          # Controller
+        if self._boat.controlMode == 0:                          # Controller
             self.activeCommunications = []
-        elif self.boat.controlMode == 1:                        # Semi-autonomous
-            self.activeCommunications = [self.can, self.http]
-        elif self.boat.controlMode == 2:                        # Full-autonomous
-            self.activeCommunications = [self.can, self.http]
+        elif self._boat.controlMode == 1:                        # Semi-autonomous
+            self.activeCommunications = [self._can, self._http]
+        elif self._boat.controlMode == 2:                        # Full-autonomous
+            self.activeCommunications = [self._can, self._http]
             self.msgInterval = 60 * 60 * 6
-        elif self.boat.controlMode == 3:                        # Simulation
-            self.activeCommunications = [self.socket]
+        elif self._boat.controlMode == 3:                        # Simulation
+            self.activeCommunications = [self._socket]
 
     def receive(self):
         for medium in self.activeCommunications:
@@ -49,29 +49,20 @@ class Communication:
 
     def sendRudderAngle(self, angle: int):
         data = ["rudderAngle", angle]
-        self.send(json.dumps(data), [self.can, self.socket])
+        self.send(json.dumps(data), [self._can, self._socket])
 
     def sendSailAngle(self, angle: int):
         data = ["sailAngle", angle]
-        self.send(json.dumps(data), [self.can, self.socket])
+        self.send(json.dumps(data), [self._can, self._socket])
 
     def sendWaypoints(self):
-        data = ["waypoints", [vars(wp) for wp in self.boat.route.waypoints]]
-        self.send(json.dumps(data), [self.socket])
+        data = ["waypoints", [vars(wp) for wp in self._boat.route.waypoints]]
+        self.send(json.dumps(data), [self._socket])
 
     def sendUpdate(self):
-        update = {"boat":
-                {
-                    "controlMode": self.boat.controlMode,
-                    "communication": {"activeCommunications": [type(c).__name__ for c in self.activeCommunications], "msgInterval": self.msgInterval},
-                    "sensorData": ObjectToDictHelper.data(self.boat.data),
-                    "route": ObjectToDictHelper.route(self.boat.route),
-                    "course": ObjectToDictHelper.course(self.boat.course)
-                }
-            }
-
-        data = {"update": update}
-        self.send(json.dumps(data), [self.socket, self.http])
+        boatDict = self._boat.getDict()
+        data = {"update": boatDict}
+        self.send(json.dumps(data), [self._socket, self._http])
 
     def shouldGiveUpdate(self) -> bool:
         currTime = time.time()

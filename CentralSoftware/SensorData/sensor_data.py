@@ -3,6 +3,7 @@ sys.path.append("..")
 
 from copy import copy
 import SensorData.Entities.ais as ai
+import Helpers.objectToDictHelper as ds
 import SensorData.sensor_data_image as di
 import SensorData.Entities.compass as cm
 import SensorData.Entities.gyroscope as gy
@@ -11,9 +12,9 @@ import SensorData.Entities.wind as wi
 import Route.coordinate as co
 import Helpers.angleHelper as ah
 
-class SensorData:
+class SensorData(ds.DictSerializer):
     def __init__(self):
-        self.angleHelper = ah.AngleHelper()
+        self._angleHelper = ah.AngleHelper()
         self.rudderAngle = None
         self.sailAngle = None
         self.gyroscope = gy.Gyroscope()
@@ -22,10 +23,10 @@ class SensorData:
         self.wind = wi.Wind()
         self.sonar = so.Sonar()
         self.ais = ai.Ais()
-        self.image = di.SensorDataImage()      # Storing important last used data for calculations
+        self._image = di.SensorDataImage()      # Storing important last used data for calculations
 
     def makeImage(self) -> None:
-        self.image.wind = copy(self.wind)
+        self._image.wind = copy(self.wind)
 
     def hasRequiredData(self) -> bool:
         #self.gyroscope.isUpRight()
@@ -34,8 +35,8 @@ class SensorData:
     def checkChangesInWind(self) -> bool:
         maxWindDeviation = 10
 
-        if self.image.wind is not None:
-            return self.angleHelper.angleIsBetweenAngles(self.image.wind.angle, self.wind.angle - maxWindDeviation, self.wind.angle + maxWindDeviation)
+        if self._image.wind is not None:
+            return self._angleHelper.angleIsBetweenAngles(self._image.wind.angle, self.wind.angle - maxWindDeviation, self.wind.angle + maxWindDeviation)
         return False
 
     def set_movementOnSonar(self, sonar: list):

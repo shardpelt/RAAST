@@ -2,6 +2,7 @@ import math
 import sys
 sys.path.append("..")
 
+import Helpers.objectToDictHelper as ds
 import Route.coordinate as co
 
 """
@@ -9,7 +10,7 @@ import Route.coordinate as co
     A ship is an tuple object with it's coordinate and course angle
 """
 
-class Ais:
+class Ais(ds.DictSerializer):
     def __init__(self):
         self.reach = 30
         self.nearbyShips = [{"latitude": 10, "longitude": 40, "angle": 90}, {"latitude": 10, "longitude": 20, "angle": 90}]
