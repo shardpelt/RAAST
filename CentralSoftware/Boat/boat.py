@@ -60,7 +60,6 @@ class Boat(ds.DictSerializer):
                         routeChanged = True
 
                 if self.course.shouldUpdate and (self.course.wantedAngle is None or routeChanged):
-                    self.communication.sendWaypoints() # ONLY FOR SIMULATION
                     self.data.makeImage()
                     self.course.forgetToTheWindCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
@@ -68,12 +67,12 @@ class Boat(ds.DictSerializer):
 
                 ### Output
                 if self.rudderHelper.shouldUpdate:
-                    rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
-                    self.communication.sendRudderAngle(rudderAngle)
+                    self.data.rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
+                    self.communication.sendRudderAngle(self.data.rudderAngle)
 
                 if self.sailHelper.shouldUpdate and self.data.checkChangesInWind():
-                    sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.angle)
-                    self.communication.sendSailAngle(sailAngle)
+                    self.data.sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.angle)
+                    self.communication.sendSailAngle(self.data.sailAngle)
 
             self.communication.sendUpdate()
             ###

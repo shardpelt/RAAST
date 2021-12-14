@@ -49,15 +49,15 @@ class Communication(ds.DictSerializer):
 
     def sendRudderAngle(self, angle: int):
         data = ["rudderAngle", angle]
-        self.send(json.dumps(data), [self._can, self._socket])
+        self.send(json.dumps(data), [self._can])
 
     def sendSailAngle(self, angle: int):
         data = ["sailAngle", angle]
-        self.send(json.dumps(data), [self._can, self._socket])
+        self.send(json.dumps(data), [self._can])
 
     def sendWaypoints(self):
         data = ["waypoints", [vars(wp) for wp in self._boat.route.waypoints]]
-        self.send(json.dumps(data), [self._socket])
+        self.send(json.dumps(data), [])
 
     def sendUpdate(self):
         boatDict = self._boat.getDict()

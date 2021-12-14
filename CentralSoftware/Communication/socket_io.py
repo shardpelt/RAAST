@@ -15,27 +15,43 @@ class SocketIO(bs.BaseIO):
 
     def receive(self):
         if self.alive:
-            message = self.socketWrapper.recv()
-            self.processIncommingMsg(message)
+            try:
+                message = self.socketWrapper.recv()
+                self.processIncommingMsg(message)
+            except sc.error as error:
+                print(f"COMMUNICATION - Lost connection to simulation")
+                print(f"ERROR - {error}")
+                self.reset()
 
     def send(self, jsonData):
         if self.alive:
-            self.socketWrapper.send(jsonData)
+            try:
+                self.socketWrapper.send(jsonData)
+            except sc.error as error:
+                print(f"COMMUNICATION - Lost connection to simulation")
+                print(f"ERROR - {error}")
+                self.reset()
 
     def start(self):
         self.simuSocket = sc.socket(*self.socketType)
 
+        print("COMMUNICATION - Trying to start session with simulation")
         while True:
             try:
                 self.simuSocket.connect(self.simuAddress)
             except sc.error:
-                print("COMMUNICATION - Tried to connect to simulation...")
+                print("COMMUNICATION - Tried to connect...")
                 tm.sleep(3)
                 continue
             break
 
         self.socketWrapper = SocketWrapper(self.simuSocket)
         self.alive = True
+        self.started = True
+
+    def reset(self):
+        self.alive = False
+        self.start()
 
     def stop(self):
         self.started = False

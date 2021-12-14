@@ -13,7 +13,10 @@ import Route.coordinate as co
 class Ais(ds.DictSerializer):
     def __init__(self):
         self.reach = 30
-        self.nearbyShips = [{"latitude": 10, "longitude": 40, "angle": 90}, {"latitude": 10, "longitude": 20, "angle": 90}]
+        self.nearbyShips = None #[{"latitude": 10, "longitude": 40, "angle": 90}, {"latitude": 10, "longitude": 20, "angle": 90}]
+
+    def checkThreat(self):
+        return True if self.nearbyShips else False
 
     def getAisOrderedByDistance(self, currentCoordinate: co.Coordinate):
         for ship in self.nearbyShips:

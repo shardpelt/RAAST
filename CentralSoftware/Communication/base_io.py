@@ -11,10 +11,9 @@ class BaseIO:
         return type(self).__name__
 
     def processIncommingMsg(self, msg):
-        print(f"Msg from simulation: {msg}")
+        print(f"COMMUNICATION - Received from simulation -> {msg}")
 
         for i in msg:
-            print(f"item: {i}")
             if msg[i]["type"] == "instruction":
                 self.instructionMap[msg[i]["id"]](msg[i]["body"])
             elif msg[i]["type"] == "sensor":
