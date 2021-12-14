@@ -76,12 +76,11 @@ class Server:
     '''
 
 
-    def updateWaypoints(self,waypointsDict):
+    def updateWaypoints(self, waypointsDict):
         #reset waypoints list in self.
         sp.world.sailboat._waypoints = []
 
-        #make a list out of each waypoints coordinates and append to
-        #waypoints list in self.
+        #make a list out of each waypoints coordinates and append to waypoints list in self
         for waypDict in waypointsDict:
             xCoordinate = waypDict['coordinate']['longitude']
             yCoordinate = waypDict['coordinate']['latitude']
@@ -89,8 +88,10 @@ class Server:
             sp.world.sailboat._waypoints.append(wayp)
 
     def updateSensorData(self,sensorDataDict):
-        sp.world.sailboat._relativeRudderAngle = sensorDataDict['rudderAngle']
-        sp.world.sailboat._relativeSailAngle = sensorDataDict['sailAngle']
+        if sensorDataDict['rudderAngle'] is not None:
+            sp.world.sailboat._relativeRudderAngle = sensorDataDict['rudderAngle']
+        if sensorDataDict['sailAngle'] is not None:
+            sp.world.sailboat._relativeSailAngle = sensorDataDict['sailAngle']
 
     def updateData(self, message):
         dataDict = message['update']

@@ -2,7 +2,6 @@ import sys
 sys.path.append("..")
 
 import Route.coordinate as co
-import Helpers.objectToDictHelper as ds
 import enum as en
 
 class WpType(en.Enum):
@@ -11,10 +10,10 @@ class WpType(en.Enum):
     AisAvoidance = 3
     SonarAvoidance = 4
 
-    def getDict(self):
-        return self._name_
+    # def getDict(self):
+    #     return self._name_
 
-class Waypoint(ds.DictSerializer):
+class Waypoint:
     def __init__(self, coordinate: co.Coordinate, origin: WpType):
         self.coordinate = coordinate
         self.origin = origin

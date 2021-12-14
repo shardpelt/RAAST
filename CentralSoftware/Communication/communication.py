@@ -1,11 +1,14 @@
+import sys
+sys.path.append("..")
+
 import json
 import time
 import Communication.socket_io as so
 import Communication.can_io as ca
 import Communication.http_io as ht
-import Helpers.objectToDictHelper as ds
+import Helpers.objectToDictHelper as od
 
-class Communication(ds.DictSerializer):
+class Communication:
     def __init__(self, boat):
         self._boat = boat
         self._can = ca.CanIO(boat)
@@ -60,9 +63,9 @@ class Communication(ds.DictSerializer):
         self.send(json.dumps(data), [])
 
     def sendUpdate(self):
-        boatDict = self._boat.getDict()
-        data = {"update": boatDict}
-        self.send(json.dumps(data), [self._socket, self._http])
+        boatDict = od.DictSerializer.getDict(self._boat)
+        data = json.dumps({"update": boatDict})
+        self.send(data, [self._socket, self._http])
 
     def shouldGiveUpdate(self) -> bool:
         currTime = time.time()

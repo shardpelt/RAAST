@@ -1,7 +1,6 @@
 import threading as th
 import time as tm
 import Communication.communication as co
-import Helpers.objectToDictHelper as ds
 import Helpers.sailHelper as sh
 import Route.route as rt
 import SensorData.sensor_data as sd
@@ -20,7 +19,7 @@ Control Loop flow:
     - After each loop we wait for an chosen amount of time
 """
 
-class Boat(ds.DictSerializer):
+class Boat:
     def __init__(self):
         self.controlMode = 3                                   # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
         self.route = rt.Route(self)                            # Object in which the route information is stored
@@ -40,6 +39,8 @@ class Boat(ds.DictSerializer):
 
     def run(self):
         while True:
+            tm.sleep(0.2)
+
             ### Input
             self.communication.receive()
             ###
@@ -75,4 +76,5 @@ class Boat(ds.DictSerializer):
                     self.communication.sendSailAngle(self.data.sailAngle)
 
             self.communication.sendUpdate()
+            print(f"Coordinate: {self.data.currentCoordinate.latitude, self.data.currentCoordinate.longitude}, Compass: {self.data.compass.angle}, Wind: {self.data.wind.angle}")
             ###

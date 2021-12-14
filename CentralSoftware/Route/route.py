@@ -3,12 +3,11 @@ import math
 sys.path.append("..")
 
 import Helpers.angleHelper as ah
-import Helpers.objectToDictHelper as ds
 import Route.coordinate as co
 import Route.waypoint as wp
 import Helpers.jsonHelper as jh
 
-class Route(ds.DictSerializer):
+class Route:
     def __init__(self, boat):
         self.shouldUpdate = True
         self._boat = boat

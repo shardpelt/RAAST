@@ -2,10 +2,9 @@ import sys
 sys.path.append("..")
 
 import Helpers.helperBase as hb
-import Helpers.objectToDictHelper as ds
 import Helpers.interpolator as ip
 
-class SailHelper(hb.HelperBase, ds.DictSerializer):
+class SailHelper(hb.HelperBase):
     def __init__(self):
         super().__init__()
         self.shouldUpdate = True

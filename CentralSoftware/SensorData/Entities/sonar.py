@@ -1,9 +1,7 @@
 import sys
 sys.path.append("..")
 
-import Helpers.objectToDictHelper as ds
-
-class Sonar(ds.DictSerializer):
+class Sonar:
     def __init__(self):
         self.objectDetected = False
         self.totalScanAngle = 30

@@ -3,7 +3,6 @@ sys.path.append("..")
 
 from copy import copy
 import SensorData.Entities.ais as ai
-import Helpers.objectToDictHelper as ds
 import SensorData.sensor_data_image as di
 import SensorData.Entities.compass as cm
 import SensorData.Entities.gyroscope as gy
@@ -12,7 +11,7 @@ import SensorData.Entities.wind as wi
 import Route.coordinate as co
 import Helpers.angleHelper as ah
 
-class SensorData(ds.DictSerializer):
+class SensorData:
     def __init__(self):
         self._angleHelper = ah.AngleHelper()
         self.rudderAngle = None

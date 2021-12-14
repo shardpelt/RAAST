@@ -2,10 +2,9 @@ import sys
 sys.path.append("../PID")
 
 import Helpers.helperBase as hb
-import Helpers.objectToDictHelper as ds
 import PID.pid_controller as pc
 
-class RudderHelper(hb.HelperBase, ds.DictSerializer):
+class RudderHelper(hb.HelperBase):
     def __init__(self):
         super().__init__()
         self.shouldUpdate = True

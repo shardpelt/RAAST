@@ -1,9 +1,7 @@
 import sys
 sys.path.append("..")
 
-import Helpers.objectToDictHelper as ds
-
-class Gyroscope(ds.DictSerializer):
+class Gyroscope:
     def __init__(self):
         self.xPos = None
         self.yPos = None

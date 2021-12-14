@@ -2,12 +2,11 @@ import sys
 sys.path.append("..")
 
 import Route.boarders as bo
-import Helpers.objectToDictHelper as ds
 import Route.coordinate as co
 import Route.waypoint as wp
 import Helpers.angleHelper as ah
 
-class Course(ds.DictSerializer):
+class Course:
     def __init__(self, boat):
         self.shouldUpdate = True
         self._boat = boat

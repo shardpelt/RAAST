@@ -1,4 +1,9 @@
-from copy import copy
+import sys
+sys.path.append("..")
+
+import copy as cp
+import enum as en
+import Communication.base_io as ba
 
 """
     Recursively converts Python objects to JSON objects
@@ -7,23 +12,33 @@ from copy import copy
 """
 
 class DictSerializer:
-    def getDict(self):
-        objCopy = copy(self)
-        objDict = vars(objCopy)
+    @staticmethod
+    def getDict(objIn):
+        objCopy = cp.copy(objIn)
 
-        for key in list(objDict.keys()):
-            if key.startswith('_'):
-                del objDict[key]
+        if isinstance(objCopy, (list, tuple)):
+            for index, listValue in enumerate(objCopy):
+                objCopy[index] = DictSerializer.getDict(listValue)
+            return objCopy
 
-        for key, value in objDict.items():
+        elif isinstance(objCopy, en.Enum):
+            return objCopy.name
+
+        elif isinstance(objCopy, ba.BaseIO):
+            return type(objCopy).__name__
+
+        else:
             try:
-                if isinstance(value, list):
-                    listCopy = copy(value)
-                    for index, listValue in enumerate(listCopy):
-                        listCopy[index] = listValue.getDict()
-                    objDict[key] = listCopy
-                else:
-                    objDict[key] = value.getDict()
-            except AttributeError:
-                pass
-        return objDict
+                objDict = vars(objCopy)
+
+                for key in list(objDict.keys()):
+                    if key.startswith('_'):
+                        del objDict[key]
+
+                for key, value in objDict.items():
+                    objDict[key] = DictSerializer.getDict(value)
+
+                return objDict
+
+            except TypeError:
+                return objIn

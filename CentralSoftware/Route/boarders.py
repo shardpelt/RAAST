@@ -1,9 +1,7 @@
 import sys
 sys.path.append("..")
 
-import Helpers.objectToDictHelper as ds
-
-class Boarders(ds.DictSerializer):
+class Boarders:
     def __init__(self, top, down, left, right):
         self.top = top
         self.down = down
