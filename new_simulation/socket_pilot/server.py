@@ -55,8 +55,7 @@ class Server:
                         tm.sleep (0.02)
 
                         message = self.socketWrapper.recv ()
-                        #sp.world.physics.steeringAngle.set (actuators ['steeringAngle'])
-                        print(message)
+                        self.updateData(message)
 
     def getData(self,relativeWindAngle,compassAngle,x,y):
         sensorData = {
@@ -84,8 +83,8 @@ class Server:
         #make a list out of each waypoints coordinates and append to
         #waypoints list in self.
         for waypDict in waypointsDict:
-            xCoordinate = waypDict['longitude']
-            yCoordinate = waypDict['latitude']
+            xCoordinate = waypDict['coordinate']['longitude']
+            yCoordinate = waypDict['coordinate']['latitude']
             wayp = [xCoordinate,yCoordinate,0]
             sp.world.sailboat._waypoints.append(wayp)
 
@@ -94,10 +93,15 @@ class Server:
         sp.world.sailboat._relativeSailAngle = sensorDataDict['sailAngle']
 
     def updateData(self, message):
-        dataDict = message[1]
-        sensorDataDict = dataDict['boat']['sensorData']
+        dataDict = message['update']
+        sensorDataDict = dataDict['data']
         self.updateSensorData(sensorDataDict)
 
         #update self._wayPoints.
-        waypointsDict = dataDict['boat']['route']['waypoints']
+        waypointsDict = dataDict['route']['waypoints']
         self.updateWaypoints(waypointsDict)
+
+
+    '''
+    {"update": {"controlMode": 3, "route": {"shouldUpdate": true, "waypoints": [{"coordinate": {"latitude": 55.0, "longitude": -14.0}, "origin": "Predefined"}, {"coordinate": {"latitude": 54.0, "longitude": -12.0}, "origin": "Predefined"}, {"coordinate": {"latitude": 53.0, "longitude": -10.0}, "origin": "Predefined"}], "finish": {"coordinateOne": {"latitude": 55.0, "longitude": -16.0}, "coordinateTwo": {"latitude": 55.0, "longitude": -16.0}}, "boarders": {"top": 55.0, "down": -16.0, "left": 51.0, "right": -16.0}, "waypointMargin": 0.0005, "obstacleMarginKm": 2}, "communication": {"allCommunications": ["SocketIO"], "activeCommunications": ["SocketIO"], "msgInterval": 10, "prevUpdateTime": -1}, "data": {"rudderAngle": null, "sailAngle": null, "gyroscope": {"xPos": null, "yPos": null, "zPos": null}, "currentCoordinate": {"latitude": null, "longitude": null}, "compass": {"angle": null}, "wind": {"angle": null, "speed": null}, "sonar": {"objectDetected": false, "totalScanAngle": 30}, "ais": {"reach": 30, "nearbyShips": null}}, "course": {"shouldUpdate": true, "wantedAngle": null, "wantedAngleMarge": 5, "wantedSailMarge": 5, "toTheWind": null, "cantChooseSide": null, "tackingAngleMarge": 5, "boarderMarge": 0.005}, "rudderHelper": {"shouldUpdate": true, "pid": {"p": 0.5, "i": 0.02, "d": 0.0005, "yI": 0, "errorOld": 0, "prevTime": null}, "maxWantedAngle": 35}, "sailHelper": {"shouldUpdate": true, "windRightToSail": [{"wind": 0, "sail": -10, "interpolate": false}, {"wind": 90, "sail": -10, "interpolate": true}, {"wind": 135, "sail": -45, "interpolate": true}, {"wind": 180, "sail": -90, "interpolate": null}], "windLeftToSail": [{"wind": 180, "sail": 90, "interpolate": true}, {"wind": 225, "sail": 45, "interpolate": true}, {"wind": 270, "sail": 10, "interpolate": false}, {"wind": 360, "sail": 10, "interpolate": null}]}}}
+    '''
