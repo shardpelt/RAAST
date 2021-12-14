@@ -20,7 +20,7 @@ class Communication:
         self.prevUpdateTime = -1
 
     def configure(self):
-        print("COMMUNICATION - Configuring communication")
+        print("\nCOMMUNICATION - Configuring communication")
         self.setActiveCommunications()
 
         for communication in self.allCommunications:
@@ -50,22 +50,21 @@ class Communication:
             if medium in self.activeCommunications and medium.alive:
                 medium.send(data)
 
+    def makePackage(self, header, payload):
+        i = json.dumps({header: od.DictSerializer.getDict(payload)})
+        return i
+
     def sendRudderAngle(self, angle: int):
-        data = ["rudderAngle", angle]
-        self.send(json.dumps(data), [self._can])
+        self.send(self.makePackage("rudderAngle", angle), [self._can])
 
     def sendSailAngle(self, angle: int):
-        data = ["sailAngle", angle]
-        self.send(json.dumps(data), [self._can])
+        self.send(self.makePackage("sailAngle", angle), [self._can])
 
     def sendWaypoints(self):
-        data = ["waypoints", [vars(wp) for wp in self._boat.route.waypoints]]
-        self.send(json.dumps(data), [])
+        self.send(self.makePackage("waypoints", self._boat.route.waypoints), [])
 
     def sendUpdate(self):
-        boatDict = od.DictSerializer.getDict(self._boat)
-        data = json.dumps({"update": boatDict})
-        self.send(data, [self._socket, self._http])
+        self.send(self.makePackage("update", self._boat), [self._socket])
 
     def shouldGiveUpdate(self) -> bool:
         currTime = time.time()

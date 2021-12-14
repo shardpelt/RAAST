@@ -30,12 +30,16 @@ class Boat:
         self.sailHelper = sh.SailHelper()                      # Contains methods to determine best sail angle
 
     def start(self):
-        communicationThread = th.Thread(target=self.communication.configure)
-        tm.sleep(1)
-        controlLoopThread = th.Thread(target=self.run)
+        if self.controlMode == 3: # If simulation mode -> cancel out threading
+            self.communication.configure()
+            self.run()
+        else:
+            communicationThread = th.Thread(target=self.communication.configure)
+            tm.sleep(1)
+            controlLoopThread = th.Thread(target=self.run)
 
-        communicationThread.start()
-        controlLoopThread.start()
+            communicationThread.start()
+            controlLoopThread.start()
 
     def run(self):
         while True:
@@ -76,5 +80,5 @@ class Boat:
                     self.communication.sendSailAngle(self.data.sailAngle)
 
             self.communication.sendUpdate()
-            print(f"Coordinate: {self.data.currentCoordinate.latitude, self.data.currentCoordinate.longitude}, Compass: {self.data.compass.angle}, Wind: {self.data.wind.angle}")
+            print(f"LOG: Coordinate: {self.data.currentCoordinate.latitude, self.data.currentCoordinate.longitude}, Compass: {self.data.compass.angle}, Wind: {self.data.wind.angle}")
             ###

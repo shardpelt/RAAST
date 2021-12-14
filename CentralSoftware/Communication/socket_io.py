@@ -19,8 +19,7 @@ class SocketIO(bs.BaseIO):
                 message = self.socketWrapper.recv()
                 self.processIncommingMsg(message)
             except sc.error as error:
-                print(f"COMMUNICATION - Lost connection to simulation")
-                print(f"ERROR - {error}")
+                print(f"COMMUNICATION - {error}")
                 self.reset()
 
     def send(self, jsonData):
@@ -28,8 +27,7 @@ class SocketIO(bs.BaseIO):
             try:
                 self.socketWrapper.send(jsonData)
             except sc.error as error:
-                print(f"COMMUNICATION - Lost connection to simulation")
-                print(f"ERROR - {error}")
+                print(f"COMMUNICATION - {error}")
                 self.reset()
 
     def start(self):
@@ -40,9 +38,9 @@ class SocketIO(bs.BaseIO):
             try:
                 self.simuSocket.connect(self.simuAddress)
             except sc.error:
-                print("COMMUNICATION - Tried to connect...")
                 tm.sleep(3)
                 continue
+            print(f"COMMUNICATION - Connection established with simulation {self.simuSocket}")
             break
 
         self.socketWrapper = SocketWrapper(self.simuSocket)
