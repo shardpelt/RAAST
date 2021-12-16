@@ -45,8 +45,8 @@ class Server:
                     while True:
                         windAngle = sp.evaluate(sp.world.sailboat._relativeWindAngle)
                         compassAngle = sp.evaluate(sp.world.sailboat._compassAngle)
-                        x = sp.world.sailboat._x * -1
-                        y = sp.world.sailboat._y * -1
+                        x = sp.world.sailboat._x 
+                        y = sp.world.sailboat._y 
                         
                         sensors = self.getData(windAngle, compassAngle, x, y)
 
@@ -84,7 +84,7 @@ class Server:
         for waypDict in waypointsDict:
             xCoordinate = waypDict['coordinate']['longitude']
             yCoordinate = waypDict['coordinate']['latitude']
-            wayp = [xCoordinate * -1,yCoordinate * -1,0]
+            wayp = [xCoordinate,yCoordinate,0]
             sp.world.sailboat._waypoints.append(wayp)
 
     def updateSensorData(self,sensorDataDict):

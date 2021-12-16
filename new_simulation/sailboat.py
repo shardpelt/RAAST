@@ -125,7 +125,7 @@ class Sailboat (sp.Module):
         #update variables being used in simualtion to most recently received ones.
         self.local_sail_angle.set(self._relativeSailAngle)
         self.gimbal_rudder_angle.set(self._relativeRudderAngle)
-        #sp.world.waypoints._waywaypointypointy = self._wayPoints
+        sp.world.waypoint._waywaypointypointy = self._waypoints
         
         self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
 
