@@ -109,6 +109,12 @@ class Sailboat (sp.Module):
             angle = angle - 360
         return angle
 
+    def makeWindAngleRelative(self, absoluteWindAngle, compassAngle):
+        if compassAngle == 0:
+            return absoluteWindAngle
+        else:
+            return (absoluteWindAngle - compassAngle) % 360
+
     def sweep(self):
         #calculate all updated values.
         self._relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
@@ -117,6 +123,8 @@ class Sailboat (sp.Module):
         self._compassAngle = self.sailboat_rotation
         self._compassAngle = self.makeBoatAngleNormal(self._compassAngle)
 
+        self._relativeWindAngle = self.makeWindAngleRelative(self._relativeWindAngle, self._compassAngle)
+        
         self._x = sp.evaluate(self.position_x)
         self._y = sp.evaluate(self.position_y)
 
