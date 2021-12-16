@@ -75,10 +75,15 @@ class Boat:
                     self.data.rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
                     self.communication.sendRudderAngle(self.data.rudderAngle)
 
-                if self.sailHelper.shouldUpdate and self.data.checkChangesInWind():
+                if self.sailHelper.shouldUpdate: #and self.data.checkChangesInWind():
                     self.data.sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.angle)
                     self.communication.sendSailAngle(self.data.sailAngle)
 
             self.communication.sendUpdate()
-            print(f"LOG: Coordinate: {self.data.currentCoordinate.latitude, self.data.currentCoordinate.longitude}, Compass: {self.data.compass.angle}, Wind: {self.data.wind.angle}")
+
+            coor = (round(self.data.currentCoordinate.latitude, 1), round(self.data.currentCoordinate.longitude, 1))
+            waypoint = (round(self.route.currentWaypoint.coordinate.latitude, 1), round(self.route.currentWaypoint.coordinate.longitude, 1))
+            angle = round(self.data.compass.angle)
+
+            print(f"Coor:{coor}, Angle:{angle}, Wind:{self.data.wind.angle}, waypoint: {waypoint}, Sail:{self.data.sailAngle}")
             ###
