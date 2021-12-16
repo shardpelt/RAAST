@@ -48,7 +48,7 @@ class Server:
                         x = sp.world.sailboat._x 
                         y = sp.world.sailboat._y 
                         
-                        sensors = self.getData(windAngle, compassAngle, x, y)
+                        sensors = self.getData(windAngle, compassAngle, x*-1, y*-1)
 
                         self.socketWrapper.send (sensors)
 
