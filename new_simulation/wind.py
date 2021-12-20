@@ -1,16 +1,19 @@
-from simpylc import *
+import simpylc as sp
 
-
-class Wind (Module):
+class Wind (sp.Module):
     def __init__(self):
-        Module.__init__(self)
+        sp.Module.__init__(self)
 
         self.page('wind physics')
 
         self.group('wind direction', True)
-        self.wind_direction = Register(270)
-        self.wind_scalar = Register(15)
+        self.wind_direction = sp.Register(310)
+        self.relative_direction = sp.Register(0)
+        self.wind_scalar = sp.Register(15)
         
     def sweep(self):
-        #self.wind_direction.set(self.wind_direction + random.uniform(-1, 1))
         self.wind_direction.set(self.wind_direction % 360)
+        self.setRelativeWindAngle()
+
+    def setRelativeWindAngle(self):
+        self.relative_direction.set((sp.world.sailboat.sailboat_rotation - self.wind_direction) % 360)

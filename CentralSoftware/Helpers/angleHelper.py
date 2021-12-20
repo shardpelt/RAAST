@@ -36,8 +36,10 @@ class AngleHelper(hb.HelperBase):
             :arg headed: Headed coordinate
             :returns: The angle to the next waypoint, in accordance to the 'loxodroom' formula
         """
+        cLong = current.longitude * -1
+        hLong = headed.longitude * -1
         deltaWidth = m.log(m.tan(self.toRadians(headed.latitude)/2 + m.pi/4)/m.tan(self.toRadians(current.latitude)/2 + m.pi/4))
-        k = self.toDegrees(m.atan2(self.toRadians(headed.longitude) - self.toRadians(current.longitude), deltaWidth))
+        k = self.toDegrees(m.atan2(self.toRadians(hLong) - self.toRadians(cLong), deltaWidth))
 
         return k % 360
 

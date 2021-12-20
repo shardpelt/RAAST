@@ -63,87 +63,54 @@ class Sailboat (sp.Module):
 
         self.page('sailboat')
 
-        self.group('transform', True)
-        self.position_x = sp.Register()
-        self.position_y = sp.Register()
+        self.group('Simulation boat', True)
+        self.position_x = sp.Register() # x waarde stijgt in hoogte de + in, dus -> latitude
+        self.position_y = sp.Register() # y waarde stijg naar links de + in, dus -> longitude
+        self.sailboat_rotation = sp.Register(90)
+        self.gimbal_rudder_angle = sp.Register(0.1)
+        self.local_sail_angle = sp.Register(0.1)
+
+        # Private variables which are updated from the transat.
+        self._rudderAngle = 0.0
+        self._sailAngle = 0.0
+        #self._waypoints = []
+
+        self.group('Transat boat')
+        self.compassAngle = sp.Register()
+        self.latitude = sp.Register()
+        self.longitude = sp.Register()
+
+        self.group('Overig')
         self.position_z = sp.Register()
-        self.sailboat_rotation = sp.Register()
-
-        self.group('body')
         self.mass = sp.Register(20)
-
-        self._waypoints = []
-        self._relativeRudderAngle = 1.0
-        self._relativeSailAngle = 1.0
-        self._relativeWindAngle = 0.1
-        self._compassAngle = 0.1
-        self._x = 0.1
-        self._y = 0.1
-
-        self.group('velocity')
         self.drag = sp.Register()
         self.acceleration = sp.Register()
         self.forward_velocity = sp.Register()
         self.horizontal_velocity = sp.Register()
         self.vertical_velocity = sp.Register()
-
-        self.group('sail')
         self.target_sail_angle = sp.Register()
-        self.local_sail_angle = sp.Register()
         self.global_sail_angle = sp.Register()
         self.sail_alpha = sp.Register()
         self.perpendicular_sail_force = sp.Register()
         self.forward_sail_force = sp.Register()
-        
-        self.group('rudder')
         self.target_gimbal_rudder_angle = sp.Register(0)
-        self.gimbal_rudder_angle = sp.Register(0)
         self.rotation_speed = sp.Register()
         self.passed_first_waypoint = sp.Register(False)
 
-    def makeBoatAngleNormal(self, boatAngle):
-        angle = boatAngle + 90
-        if angle < 0:
-            angle = angle * -1
-        if angle > 360:
-            angle = angle - 360
-        return angle
 
-    def makeCompassAngleNormal(self, compassAngle):
-        angle = compassAngle - 90
-        if angle < 0:
-            angle = angle * -1
-        if angle > 360:
-            angle = angle - 360
-        return angle
-    
-    def makeWindAngleRelative(self, absoluteWindAngle, compassAngle):
-        if compassAngle == 0:
-            return absoluteWindAngle
-        else:
-            return (absoluteWindAngle - compassAngle) % 360
+    def getCompassAngle(self):
+        boatAngle = 360 - ((self.sailboat_rotation - 90) % 360)
+        return 0 if boatAngle == 360 else boatAngle
 
     def sweep(self):
-        #calculate all updated values.
-        self._relativeWindAngle = (sp.world.wind.wind_direction - 360) * -1
-        self._relativeWindAngle = (self.makeBoatAngleNormal(self._relativeWindAngle))
+        # Update rudder and sail and waypoints to values received from transat boat.
+        self.local_sail_angle.set(self._sailAngle)
+        self.gimbal_rudder_angle.set(self._rudderAngle)
+        #sp.world.waypoint._waywaypointypointy = self._waypoints
 
-        self._compassAngle = self.sailboat_rotation
-        self._compassAngle = self.makeCompassAngleNormal(self._compassAngle)
-
-        self._relativeWindAngle = self.makeWindAngleRelative(self._relativeWindAngle, self._compassAngle)
-        
-        self._x = sp.evaluate(self.position_x)
-        self._y = sp.evaluate(self.position_y)
-
-        #sp.world.server.sendData(int(relativeWindAngle),int(compassAngle),x,y)
-
-        #update variables being used in simualtion to most recently received ones.
-        self.local_sail_angle.set(self._relativeSailAngle)
-        self.gimbal_rudder_angle.set(self._relativeRudderAngle)
-        sp.world.waypoint._waywaypointypointy = self._waypoints
-        
+        # Update other used variables
         self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
+        self.compassAngle.set(self.getCompassAngle())
 
         # Calculate forward force in N based on the angle between the sail and the wind
         self.sail_alpha.set(distance_between_angles(sp.world.wind.wind_direction, self.global_sail_angle))

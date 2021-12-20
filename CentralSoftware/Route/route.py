@@ -14,7 +14,7 @@ class Route:
         self._angleHelper = ah.AngleHelper()
         self.waypoints, self.finish, self.boarders = jh.JsonHelper.setupRoute("Recources/route.json")
         self._radiusOfTheEarth = 6378.1
-        self.waypointMargin = 0.0005 # 55 meter
+        self.waypointMargin = 0.5 # 55 meter TODO: adjust to 55 meters
         self.obstacleMarginKm = 2
 
     @property

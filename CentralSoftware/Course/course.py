@@ -33,15 +33,16 @@ class Course:
         if self._boatAtBoarders(self._boat.data.currentCoordinate, boarders):
             self.forgetToTheWindCourse()
 
-        if self._angleHelper.windFromDeadzone(optimalAngle, self._boat.data.wind.angle):
+        if self._angleHelper.windFromDeadzone(self._boat.data.wind.angle):
             self.wantedAngle = self.calcBestAngleWindFromDeadzone(optimalAngle, self._boat.data.wind.angle)
         else:
         #elif self._angleHelper.windFromBehind(optimalAngle, self._boat.data.wind.angle):
             self.wantedAngle = optimalAngle
 
     def calcBestAngleWindFromDeadzone(self, optimalAngle, windAngle):
-        angleLeftToDeadzone = windAngle - 45
-        angleRightToDeadzone = windAngle + 45
+        angleLeftToDeadzone = ((windAngle - 45) % 360 + self._boat.data.compass.angle) % 360
+        angleRightToDeadzone = ((windAngle + 45) % 360 + self._boat.data.compass.angle) % 360
+
         deltaAngles = self._angleHelper.getDeltaLeftAndRightToAngle(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
 
         # If already sailing to the wind try to continue direction chosen or perform tacking maneuvre

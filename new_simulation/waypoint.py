@@ -13,10 +13,9 @@ class Waypoint (Module):
         self.waypointY = Register(0)
         self.waypointZ = Register(0)
 
-        self._waywaypointypointy = [[2,-2,0],[3,-3,0],[4,-4,0]]
+        self._waypoints = [[10, 10], [11, 11]] # Must contain one, otherwise weird error..
 
-    def setWay(self,index):
-        self.waypointX = Register(self._waywaypointypointy[index][0])
-        self.waypointY = Register(self._waywaypointypointy[index][1])
-        self.waypointZ = Register(self._waywaypointypointy[index][2])
+    def setWaypoint(self, index):
+        self.waypointX.set(self._waypoints[index][0])
+        self.waypointY.set(self._waypoints[index][1])
 

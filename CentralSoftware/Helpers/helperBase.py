@@ -25,10 +25,8 @@ class HelperBase:
             return left <= angle <= right
         return angle >= left or angle <= right
 
-    def windFromDeadzone(self, optimal, wind):
-        if self.angleIsBetweenAngles(optimal, wind - 45, wind + 45):
-            return True
-        return False
+    def windFromDeadzone(self, wind):
+        return 0 <= wind <= 45 or 315 <= wind <= 360
 
     def windFromBehind(self, optimal, wind):
         backOfBoatAngle = optimal - 180

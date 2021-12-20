@@ -43,12 +43,11 @@ class Server:
 
                 with self.clientSocket:
                     while True:
-                        windAngle = sp.evaluate(sp.world.sailboat._relativeWindAngle)
-                        compassAngle = sp.evaluate(sp.world.sailboat._compassAngle)
-                        x = sp.world.sailboat._x 
-                        y = sp.world.sailboat._y 
-                        
-                        sensors = self.getData(windAngle, compassAngle, x*-1, y*-1)
+                        relativeWindAngle = sp.evaluate(sp.world.wind.relative_direction)
+                        compassAngle = sp.evaluate(sp.world.sailboat.compassAngle)
+                        latitude = sp.evaluate(sp.world.sailboat.position_x)
+                        longitude = sp.evaluate(sp.world.sailboat.position_y)
+                        sensors = self.toDataPackage(relativeWindAngle, compassAngle, latitude, longitude)
 
                         self.socketWrapper.send (sensors)
 
@@ -57,50 +56,45 @@ class Server:
                         message = self.socketWrapper.recv ()
                         self.updateData(message)
 
-    def getData(self,relativeWindAngle,compassAngle,x,y):
-        sensorData = {
-                1: {"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
-                2: {"type": "sensor", "id": 2, "body": {"value": (y, x)}},
-                3: {"type": "sensor", "id": 3, "body": {"value": compassAngle}}
-                }
-        return sensorData
-
-    '''
-    def getData(self,relativeWindAngle,compassAngle,x,y):
-        sensorData = {'sensorData':{ 
+    def toDataPackage(self, relativeWindAngle, compassAngle, latitude, longitude):
+        sensorData = [
                 {"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
-                {"type": "sensor", "id": 2, "body": {"value": (y, x)}},
-                {"type": "sensor", "id": 3, "body": {"value": compassAngle}}}
-                }
+                {"type": "sensor", "id": 2, "body": {"value": (latitude, longitude)}},
+                {"type": "sensor", "id": 3, "body": {"value": compassAngle}}
+                ]
+
         return sensorData
-    '''
-
-
-    def updateWaypoints(self, waypointsDict):
-        #reset waypoints list in self.
-        sp.world.sailboat._waypoints = []
-
-        #make a list out of each waypoints coordinates and append to waypoints list in self
-        for waypDict in waypointsDict:
-            xCoordinate = waypDict['coordinate']['longitude']
-            yCoordinate = waypDict['coordinate']['latitude']
-            wayp = [xCoordinate,yCoordinate,0]
-            sp.world.sailboat._waypoints.append(wayp)
-
-    def updateSensorData(self,sensorDataDict):
-        if sensorDataDict['rudderAngle'] is not None:
-            sp.world.sailboat._relativeRudderAngle = sensorDataDict['rudderAngle']
-        if sensorDataDict['sailAngle'] is not None:
-            sp.world.sailboat._relativeSailAngle = sensorDataDict['sailAngle']
 
     def updateData(self, message):
         dataDict = message['update']
-        sensorDataDict = dataDict['data']
-        self.updateSensorData(sensorDataDict)
 
-        #update self._wayPoints.
+        sensorDataDict = dataDict['data']
+        self.updateRudderSail(sensorDataDict)
+
         waypointsDict = dataDict['route']['waypoints']
         self.updateWaypoints(waypointsDict)
+
+        sp.world.sailboat.latitude = dataDict["data"]["currentCoordinate"]["latitude"]
+        sp.world.sailboat.longitude = dataDict["data"]["currentCoordinate"]["longitude"]
+
+    def updateRudderSail(self,sensorDataDict):
+        if sensorDataDict['rudderAngle'] is not None:
+            sp.world.sailboat._rudderAngle = sensorDataDict['rudderAngle']
+        if sensorDataDict['sailAngle'] is not None:
+            sp.world.sailboat._sailAngle = sensorDataDict['sailAngle']
+
+    def updateWaypoints(self, waypointsDict):
+        # Reset waypoints list in world.sailboat
+        sp.world.waypoint._waypoints = []
+
+        # Make a list out of each waypoint coordinate and append to waypoints list in world.sailboat
+        for waypDict in waypointsDict:
+            xCoordinate = waypDict['coordinate']['latitude']
+            yCoordinate = waypDict['coordinate']['longitude']
+            waypoint = [xCoordinate, yCoordinate]
+            sp.world.waypoint._waypoints.append(waypoint)
+
+
 
 
     '''

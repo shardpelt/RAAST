@@ -7,11 +7,11 @@ class BaseIO:
         self._instructionMap = {1: self.setSailRudder, 2: self.setCourse, 3: self.setWaypoint, 4: self.setControlMode, 5: self.setControlParameters}
 
     def processIncommingMsg(self, msg):
-        for i in msg:
-            if msg[i]["type"] == "instruction":
-                self._instructionMap[msg[i]["id"]](msg[i]["body"])
-            elif msg[i]["type"] == "sensor":
-                self._sensorMap[msg[i]["id"]](msg[i]["body"])
+        for oneMsg in msg:
+            if oneMsg["type"] == "instruction":
+                self._instructionMap[oneMsg["id"]](oneMsg["body"])
+            elif oneMsg["type"] == "sensor":
+                self._sensorMap[oneMsg["id"]](oneMsg["body"])
 
     def setSailRudder(self, body):
         try:

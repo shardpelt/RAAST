@@ -1,4 +1,5 @@
 import threading as th
+import time
 import time as tm
 import Communication.communication as co
 import Helpers.sailHelper as sh
@@ -42,6 +43,8 @@ class Boat:
             controlLoopThread.start()
 
     def run(self):
+        debug_timer = time.time()
+
         while True:
             tm.sleep(0.2)
 
@@ -64,7 +67,7 @@ class Boat:
                         self.route.updateToNextWaypoint()
                         routeChanged = True
 
-                if self.course.shouldUpdate and (self.course.wantedAngle is None or routeChanged):
+                if self.course.shouldUpdate: #and (self.course.wantedAngle is None or routeChanged):
                     self.data.makeImage()
                     self.course.forgetToTheWindCourse()
                     self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
@@ -81,9 +84,15 @@ class Boat:
 
             self.communication.sendUpdate()
 
-            coor = (round(self.data.currentCoordinate.latitude, 1), round(self.data.currentCoordinate.longitude, 1))
-            waypoint = (round(self.route.currentWaypoint.coordinate.latitude, 1), round(self.route.currentWaypoint.coordinate.longitude, 1))
-            angle = round(self.data.compass.angle)
+            if debug_timer > time.time() - 1:
+                coor = (round(self.data.currentCoordinate.latitude, 1), round(self.data.currentCoordinate.longitude, 1))
+                waypoint = (round(self.route.currentWaypoint.coordinate.latitude, 1), round(self.route.currentWaypoint.coordinate.longitude, 1))
+                wantedAngle = round(self.course.wantedAngle)
+                compass = round(self.data.compass.angle)
+                relaWind = round(self.data.wind.angle)
+                sailAngle = round(self.data.sailAngle)
+                rudder = round(self.data.rudderAngle)
 
-            print(f"Coor:{coor}, Angle:{angle}, Wind:{self.data.wind.angle}, waypoint: {waypoint}, Sail:{self.data.sailAngle}")
+                print(f"Coor:{coor}, Wayp:{waypoint}, WantedAngle:{wantedAngle}, RelaWind:{relaWind}, Sail:{sailAngle}, Rudder:{rudder}")
+                debug_timer = time.time()
             ###

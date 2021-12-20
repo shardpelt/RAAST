@@ -77,13 +77,13 @@ class Visualisation (Scene):
         self.floor()
 
         #display all waypoints in the waypoint list
-        count=0
-        for way in world.waypoint._waywaypointypointy:
-            world.waypoint.setWay(count)
+        index = 0
+        while index < len(world.waypoint._waypoints):
+            world.waypoint.setWaypoint(index)
             self.waypoint(
                     position=tEva((world.waypoint.waypointX, world.waypoint.waypointY, world.waypoint.waypointZ))
                     )
-            count = count+1
+            index += 1
 
         #display all obstacles  in the obstacle list
         count=0

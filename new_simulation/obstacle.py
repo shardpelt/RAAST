@@ -13,7 +13,7 @@ class Obstacle (Module):
         self.obstacleY = Register(0)
         self.obstacleZ = Register(0)
         
-        self._obstaclesList = [[2,2,0],[3,3,0],[4,4,0]]
+        self._obstaclesList = []
 
     def setObstacle(self,index):
         self.obstacleX = Register(self._obstaclesList[index][0])
