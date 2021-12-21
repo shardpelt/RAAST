@@ -10,9 +10,6 @@ class WpType(en.Enum):
     AisAvoidance = 3
     SonarAvoidance = 4
 
-    # def getDict(self):
-    #     return self._name_
-
 class Waypoint:
     def __init__(self, coordinate: co.Coordinate, origin: WpType):
         self.coordinate = coordinate

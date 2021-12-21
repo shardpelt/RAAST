@@ -58,9 +58,9 @@ class Server:
 
     def toDataPackage(self, relativeWindAngle, compassAngle, latitude, longitude):
         sensorData = [
+                {"type": "sensor", "id": 3, "body": {"value": compassAngle}},
                 {"type": "sensor", "id": 1, "body": {"value": relativeWindAngle}},
                 {"type": "sensor", "id": 2, "body": {"value": (latitude, longitude)}},
-                {"type": "sensor", "id": 3, "body": {"value": compassAngle}}
                 ]
 
         return sensorData
@@ -74,8 +74,20 @@ class Server:
         waypointsDict = dataDict['route']['waypoints']
         self.updateWaypoints(waypointsDict)
 
-        sp.world.sailboat.latitude = dataDict["data"]["currentCoordinate"]["latitude"]
-        sp.world.sailboat.longitude = dataDict["data"]["currentCoordinate"]["longitude"]
+        sp.world.sailboat.latitude.set(round(dataDict["data"]["currentCoordinate"]["latitude"], 2))
+        sp.world.sailboat.longitude.set(round(dataDict["data"]["currentCoordinate"]["longitude"], 2))
+        sp.world.sailboat.wantedAngle.set(round(dataDict["course"]["wantedAngle"], 2))
+        sp.world.sailboat.optimalAngle.set(round(dataDict["course"]["optimalAngle"], 2))
+        sp.world.sailboat.toTheWind.set(self.evalSides(dataDict["course"]["toTheWind"]))
+        sp.world.sailboat.cantChooseSide.set(self.evalSides(dataDict["course"]["cantChooseSide"]))
+
+    def evalSides(self, side):
+        if side is None:
+            return -1
+        elif side == "left":
+            return 0
+        else:
+            return 1
 
     def updateRudderSail(self,sensorDataDict):
         if sensorDataDict['rudderAngle'] is not None:

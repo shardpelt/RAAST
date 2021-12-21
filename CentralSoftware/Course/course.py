@@ -11,6 +11,7 @@ class Course:
         self.shouldUpdate = True
         self._boat = boat
         self._angleHelper = ah.AngleHelper()
+        self.optimalAngle = None
         self.wantedAngle = None
         self.wantedAngleMarge = 5 # TODO: beste marge op de koers/zeil nader te bepalen
         self.wantedSailMarge = 5
@@ -28,20 +29,19 @@ class Course:
             :arg boarders: The absolute boarders in which the _boat should stay during the trip
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
-        optimalAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, waypoint.coordinate)
+        self.optimalAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, waypoint.coordinate)
 
         if self._boatAtBoarders(self._boat.data.currentCoordinate, boarders):
             self.forgetToTheWindCourse()
 
-        if self._angleHelper.windFromDeadzone(self._boat.data.wind.angle):
-            self.wantedAngle = self.calcBestAngleWindFromDeadzone(optimalAngle, self._boat.data.wind.angle)
+        if self._angleHelper.windFromDeadzone(self.optimalAngle, self._boat.data.wind):
+            self.wantedAngle = self.calcBestAngleWindFromDeadzone(self.optimalAngle)
         else:
-        #elif self._angleHelper.windFromBehind(optimalAngle, self._boat.data.wind.angle):
-            self.wantedAngle = optimalAngle
+            self.wantedAngle = self.optimalAngle
 
-    def calcBestAngleWindFromDeadzone(self, optimalAngle, windAngle):
-        angleLeftToDeadzone = ((windAngle - 45) % 360 + self._boat.data.compass.angle) % 360
-        angleRightToDeadzone = ((windAngle + 45) % 360 + self._boat.data.compass.angle) % 360
+    def calcBestAngleWindFromDeadzone(self, optimalAngle):
+        angleLeftToDeadzone = (self._boat.data.wind.toNorth - 45) % 360
+        angleRightToDeadzone = (self._boat.data.wind.toNorth + 45) % 360
 
         deltaAngles = self._angleHelper.getDeltaLeftAndRightToAngle(optimalAngle, angleLeftToDeadzone, angleRightToDeadzone)
 

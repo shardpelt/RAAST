@@ -79,20 +79,21 @@ class Boat:
                     self.communication.sendRudderAngle(self.data.rudderAngle)
 
                 if self.sailHelper.shouldUpdate: #and self.data.checkChangesInWind():
-                    self.data.sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.angle)
+                    self.data.sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.relative)
                     self.communication.sendSailAngle(self.data.sailAngle)
 
             self.communication.sendUpdate()
 
             if debug_timer > time.time() - 1:
                 coor = (round(self.data.currentCoordinate.latitude, 1), round(self.data.currentCoordinate.longitude, 1))
-                waypoint = (round(self.route.currentWaypoint.coordinate.latitude, 1), round(self.route.currentWaypoint.coordinate.longitude, 1))
-                wantedAngle = round(self.course.wantedAngle)
-                compass = round(self.data.compass.angle)
-                relaWind = round(self.data.wind.angle)
-                sailAngle = round(self.data.sailAngle)
-                rudder = round(self.data.rudderAngle)
+                #wantedAngle = round(self.course.wantedAngle)
+                #sailAngle = round(self.data.sailAngle)
+                #rudder = round(self.data.rudderAngle)
 
-                print(f"Coor:{coor}, Wayp:{waypoint}, WantedAngle:{wantedAngle}, RelaWind:{relaWind}, Sail:{sailAngle}, Rudder:{rudder}")
+                waypoints = []
+                for waypoint in self.route.waypoints:
+                    waypoints.append((waypoint.coordinate.latitude, waypoint.coordinate.longitude))
+
+                print(f"Coor:{coor}, Waypoints:{waypoints}")
                 debug_timer = time.time()
             ###

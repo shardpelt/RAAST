@@ -73,12 +73,15 @@ class Sailboat (sp.Module):
         # Private variables which are updated from the transat.
         self._rudderAngle = 0.0
         self._sailAngle = 0.0
-        #self._waypoints = []
 
         self.group('Transat boat')
-        self.compassAngle = sp.Register()
         self.latitude = sp.Register()
         self.longitude = sp.Register()
+        self.compassAngle = sp.Register()
+        self.wantedAngle = sp.Register()
+        self.optimalAngle = sp.Register()
+        self.toTheWind = sp.Register()
+        self.cantChooseSide = sp.Register()
 
         self.group('Overig')
         self.position_z = sp.Register()
@@ -110,7 +113,7 @@ class Sailboat (sp.Module):
 
         # Update other used variables
         self.global_sail_angle.set((self.sailboat_rotation + self.local_sail_angle + 180) % 360)
-        self.compassAngle.set(self.getCompassAngle())
+        self.compassAngle.set(round(self.getCompassAngle(), 2))
 
         # Calculate forward force in N based on the angle between the sail and the wind
         self.sail_alpha.set(distance_between_angles(sp.world.wind.wind_direction, self.global_sail_angle))

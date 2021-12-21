@@ -48,19 +48,18 @@ class BaseIO:
 
     def setWind(self, body):
         try:
-            self._boat.data.set_wind(body["value"], None)
+            self._boat.data.set_wind(body["value"])
         except Exception as e:
             print(e)
 
     def setGps(self, body):
         try:
-            self._boat.data.currentCoordinate.latitude = body["value"][0]
-            self._boat.data.currentCoordinate.longitude = body["value"][1]
+            self._boat.data.set_currentCoordinate(body["value"][0], body["value"][1])
         except Exception as e:
             print(e)
 
     def setCompass(self, body):
         try:
-            self._boat.data.compass.angle = body["value"]
+            self._boat.data.set_compassAngle(body["value"])
         except Exception as e:
             print(e)

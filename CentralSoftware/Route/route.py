@@ -78,7 +78,7 @@ class Route:
             TODO: Testing
             Creates an new waypoint which course to sail lays out of object's field
         """
-        if 0 <= self._boat.data.wind.angle <= 180: # _Boat traverses left from object so can't choose an course to the right side.
+        if 0 <= self._boat.data.wind.relative <= 180: # _Boat traverses left from object so can't choose an course to the right side.
             traversedCourseAngle = (self._boat.data.compass.angle - 90) % 360
             self._boat.course.cantChooseSide = "right"
         else:

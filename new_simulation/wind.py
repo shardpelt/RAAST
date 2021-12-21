@@ -7,7 +7,7 @@ class Wind (sp.Module):
         self.page('wind physics')
 
         self.group('wind direction', True)
-        self.wind_direction = sp.Register(310)
+        self.wind_direction = sp.Register(100)
         self.relative_direction = sp.Register(0)
         self.wind_scalar = sp.Register(15)
         

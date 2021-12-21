@@ -28,14 +28,13 @@ class SensorData:
         self._image.wind = copy(self.wind)
 
     def hasRequiredData(self) -> bool:
-        #self.gyroscope.isUpRight()
-        return True and self.currentCoordinate.hasData() and self.compass.hasData() and self.wind.hasData()
+        return self.gyroscope.isUpRight() and self.currentCoordinate.hasData() and self.compass.hasData() and self.wind.hasData()
 
     def checkChangesInWind(self) -> bool:
         maxWindDeviation = 10
 
         if self._image.wind is not None:
-            return self._angleHelper.angleIsBetweenAngles(self._image.wind.angle, self.wind.angle - maxWindDeviation, self.wind.angle + maxWindDeviation)
+            return self._angleHelper.angleIsBetweenAngles(self._image.wind.angle, self.wind.relative - maxWindDeviation, self.wind.relative + maxWindDeviation)
         return False
 
     def set_movementOnSonar(self, sonar: list):
@@ -48,9 +47,12 @@ class SensorData:
         # TODO: - Welke data krijgen we van de gyroscoop sensor?
         #		- Krijgen we data bij omslag of constant?
 
-    def set_wind(self, angle, speed):
-        self.wind.angle = angle % 360
+    def set_wind(self, relativeAngle, speed = None):
+        self.wind.relative = relativeAngle % 360
         self.wind.speed = speed
+
+        if self.compass.hasData():
+            self.wind.toNorth = (relativeAngle + self.compass.angle) % 360
 
     def set_rudderAngle(self, angle: float):
         self.rudderAngle = angle % 360

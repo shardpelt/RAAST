@@ -51,8 +51,8 @@ class Communication:
                 medium.send(data)
 
     def makePackage(self, header, payload):
-        i = json.dumps({header: od.DictSerializer.getDict(payload)})
-        return i
+        package = json.dumps({header: od.DictSerializer.getDict(payload)})
+        return package
 
     def sendRudderAngle(self, angle: int):
         self.send(self.makePackage("rudderAngle", angle), [self._can])
