@@ -5,14 +5,14 @@
     ],
   "boarders":
     {
-      "top": 55.0,
-      "down": -16.0,
-      "left": 51.0,
-      "right": -16.0
+      "top": 50.0,
+      "down": -50.0,
+      "left": 50.0,
+      "right": -50.0
     },
   "finish":
     {
-      "coordinateOne": {"latitude": 55.0, "longitude": -16.0},
-      "coordinateTwo": {"latitude": 51.0, "longitude": -16.0}
+      "latitude": 10.0,
+      "longitude": 5.0
     }
 }

@@ -21,11 +21,10 @@ class JsonHelper:
                 waypoints.append(wp.Waypoint(coordinate, wp.WpType.Predefined))
 
             # Loading finish
-            coordinateOne = routeFileObj["finish"]["coordinateOne"]
-            coordinateTwo = routeFileObj["finish"]["coordinateOne"]
-            finish = fi.Finish(co.Coordinate(coordinateOne["latitude"], coordinateOne["longitude"]), co.Coordinate(coordinateTwo["latitude"], coordinateTwo["longitude"]))
+            finishCoordinate = routeFileObj["finish"]
+            waypoints.append(wp.Waypoint(co.Coordinate(finishCoordinate["latitude"], finishCoordinate["longitude"]), wp.WpType.Finish))
 
             # Loading boarders
             boarders = bo.Boarders(routeFileObj["boarders"]["top"], routeFileObj["boarders"]["down"], routeFileObj["boarders"]["left"], routeFileObj["boarders"]["right"])
 
-        return waypoints, finish, boarders
+        return waypoints, boarders

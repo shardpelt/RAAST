@@ -50,10 +50,10 @@ class Boat:
 
             ### Input
             self.communication.receive()
-            ###
+            ### Input
 
             ### Sweep
-            if self.data.hasRequiredData() and self.route.hasNextWaypoint():
+            if self.data.hasRequiredData():
                 routeChanged = False
                 if self.route.shouldUpdate:
                     if self.data.sonar.checkThreat():
@@ -67,22 +67,25 @@ class Boat:
                         self.route.updateToNextWaypoint()
                         routeChanged = True
 
-                if self.course.shouldUpdate: #and (self.course.wantedAngle is None or routeChanged):
-                    self.data.makeImage()
-                    self.course.forgetToTheWindCourse()
-                    self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
-                ###
+                if self.route.hasNextWaypoint():
 
-                ### Output
-                if self.rudderHelper.shouldUpdate:
-                    self.data.rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
-                    self.communication.sendRudderAngle(self.data.rudderAngle)
+                    if self.course.shouldUpdate: #and (self.course.wantedAngle is None or routeChanged):
+                        self.data.makeImage()
+                        self.course.forgetToTheWindCourse()
+                        self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
+            ### Sweep
 
-                if self.sailHelper.shouldUpdate: #and self.data.checkChangesInWind():
-                    self.data.sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.relative)
-                    self.communication.sendSailAngle(self.data.sailAngle)
+            ### Output
+                    if self.rudderHelper.shouldUpdate:
+                        self.data.rudderAngle = self.rudderHelper.getNewBestAngle(self.data.compass.angle, self.course.wantedAngle)
+                        self.communication.sendRudderAngle(self.data.rudderAngle)
+
+                    if self.sailHelper.shouldUpdate: #and self.data.checkChangesInWind():
+                        self.data.sailAngle = self.sailHelper.getNewBestAngle(self.data.wind.relative)
+                        self.communication.sendSailAngle(self.data.sailAngle)
 
             self.communication.sendUpdate()
+            ### Output
 
             if debug_timer > time.time() - 1:
                 coor = (round(self.data.currentCoordinate.latitude, 1), round(self.data.currentCoordinate.longitude, 1))

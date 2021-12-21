@@ -12,31 +12,20 @@ class Route:
         self.shouldUpdate = True
         self._boat = boat
         self._angleHelper = ah.AngleHelper()
-        self.waypoints, self.finish, self.boarders = jh.JsonHelper.setupRoute("Recources/route.json")
+        self.waypoints, self.boarders = jh.JsonHelper.setupRoute("Recources/route.json")
         self._radiusOfTheEarth = 6378.1
         self.waypointMargin = 0.5 # 55 meter TODO: adjust to 55 meters
         self.obstacleMarginKm = 2
 
     @property
     def currentWaypoint(self) -> wp.Waypoint:
-        if not self.waypoints:
-            return self.getBestWaypointOnFinishLine()
-        else:
+        if self.waypoints:
             return self.waypoints[0]
+        else:
+            return None
 
     def addWaypoint(self, waypoint: wp.Waypoint):
         self.waypoints.insert(0, waypoint)
-
-    def getBestWaypointOnFinishLine(self) -> wp.Waypoint:
-        """
-            TODO
-            Calculates the best waypoint to sail at between te finish line according to the _boat's angle and wind angle
-        """
-        angleToCoorOne = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, self.finish.coordinateOne)
-        angleToCoorTwo = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, self.finish.coordinateTwo)
-
-        return wp.Waypoint()
-
 
     def calculateCoordinateAtDistance(self, currCoordinate, angle, distance) -> co.Coordinate:
         """
@@ -63,7 +52,7 @@ class Route:
             Whether the _boat's current coordinate is within the next waypoint's coordinate +/- margin
             :returns: True if _boat has reached the current waypoint zone, False if not
         """
-        if self._boat.data.currentCoordinate is not None:
+        if self._boat.data.currentCoordinate is not None and self.hasNextWaypoint():
             if (self.currentWaypoint.coordinate.latitude - self.waypointMargin) <= self._boat.data.currentCoordinate.latitude <= (self.currentWaypoint.coordinate.latitude + self.waypointMargin) \
                     and (self.currentWaypoint.coordinate.longitude - self.waypointMargin) <= self._boat.data.currentCoordinate.longitude <= (self.currentWaypoint.coordinate.longitude + self.waypointMargin):
                 return True
@@ -71,7 +60,8 @@ class Route:
         return False
 
     def updateToNextWaypoint(self) -> None:
-        self.waypoints.pop(0)
+        if self.waypoints:
+            self.waypoints.pop(0)
 
     def circumnavigateSonar(self) -> None:
         """
@@ -121,6 +111,11 @@ class Route:
         for coordinate in traversedCoordinates:
             self.addWaypoint(wp.Waypoint(coordinate, wp.WpType.AisAvoidance))
 
+    def getBestWaypointOnFinishLine(self) -> wp.Waypoint:
+        """
+            TODO: Could have, implement finish which consist of 2 coordinates and calculate best spot on that line to sail at.
+        """
+        pass
 
     def intersect(self, A, B, C, D) -> bool:
         """
