@@ -27,7 +27,7 @@ print()
 
 #calcAngleBetweenCoordinates
 currentCoordinate = co.Coordinate (0, 0)
-waypointCoordinate = co.Coordinate (100, 10)
+waypointCoordinate = co.Coordinate (10, 10)
 
 result2 = helper.calcAngleBetweenCoordinates(currentCoordinate, waypointCoordinate)
 print ('k=', result2)

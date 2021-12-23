@@ -5,4 +5,7 @@ import Helpers.sailHelper as sh
 
 helper = ah.SailHelper()
 
-result = helper.getNewBestAngle()
+relativeWindAngle = 200
+
+result = helper.getNewBestAngle(relativeWindAngle)
+print (result)
