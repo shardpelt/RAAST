@@ -1,17 +1,18 @@
 import sys
-sys.path.append("../PID")
+sys.path.append("..")
 
-import Helpers.helperBase as hb
-import PID.pid_controller as pc
+import Helpers.helper_base as hb
+import Rudder.Pid.pid_controller as pc
 
-class RudderHelper(hb.HelperBase):
+class Rudder(hb.HelperBase):
     def __init__(self):
         super().__init__()
-        self.shouldUpdate = True
+        self.isUpdatable = True
+        self.wantedAngle = 0
         self.pid = pc.PidController(0.5, 0.02, 0.0005)
         self.maxWantedAngle = 35
 
-    def getNewBestAngle(self, currentAngle, wantedAngle):
+    def setNewBestAngle(self, currentAngle, wantedAngle) -> None:
         newRudderAngle = self.pid.calcNewAngle(currentAngle, wantedAngle)
 
         if newRudderAngle > self.maxWantedAngle:
@@ -19,4 +20,4 @@ class RudderHelper(hb.HelperBase):
         elif newRudderAngle < -self.maxWantedAngle:
             newRudderAngle = -self.maxWantedAngle
 
-        return newRudderAngle
+        self.wantedAngle = newRudderAngle

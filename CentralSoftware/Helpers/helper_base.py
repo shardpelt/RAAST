@@ -14,6 +14,8 @@ class HelperBase:
         """
             Makes sure that for every angle as input, the angle is between 0 and 360 degrees
         """
+        if len(angles) == 1:
+            return angles[0] % 360
         return tuple(angle % 360 for angle in angles)
 
     def angleIsBetweenAngles(self, angle, left, right):

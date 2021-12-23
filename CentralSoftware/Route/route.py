@@ -2,14 +2,14 @@ import sys
 import math
 sys.path.append("..")
 
-import Helpers.angleHelper as ah
+import Helpers.angle_helper as ah
 import Route.coordinate as co
 import Route.waypoint as wp
-import Helpers.jsonHelper as jh
+import Helpers.json_helper as jh
 
 class Route:
     def __init__(self, boat):
-        self.shouldUpdate = True
+        self.isUpdatable = True
         self._boat = boat
         self._angleHelper = ah.AngleHelper()
         self.waypoints, self.boarders = jh.JsonHelper.setupRoute("Recources/route.json")
@@ -52,9 +52,9 @@ class Route:
             Whether the _boat's current coordinate is within the next waypoint's coordinate +/- margin
             :returns: True if _boat has reached the current waypoint zone, False if not
         """
-        if self._boat.data.currentCoordinate is not None and self.hasNextWaypoint():
-            if (self.currentWaypoint.coordinate.latitude - self.waypointMargin) <= self._boat.data.currentCoordinate.latitude <= (self.currentWaypoint.coordinate.latitude + self.waypointMargin) \
-                    and (self.currentWaypoint.coordinate.longitude - self.waypointMargin) <= self._boat.data.currentCoordinate.longitude <= (self.currentWaypoint.coordinate.longitude + self.waypointMargin):
+        if self._boat.sensors.gps.hasData() and self.hasNextWaypoint():
+            if (self.currentWaypoint.coordinate.latitude - self.waypointMargin) <= self._boat.sensors.gps.coordinate.latitude <= (self.currentWaypoint.coordinate.latitude + self.waypointMargin) \
+                    and (self.currentWaypoint.coordinate.longitude - self.waypointMargin) <= self._boat.sensors.gps.coordinate.longitude <= (self.currentWaypoint.coordinate.longitude + self.waypointMargin):
                 return True
 
         return False

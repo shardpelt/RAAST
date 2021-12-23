@@ -6,7 +6,7 @@ import time
 import Communication.socket_io as so
 import Communication.can_io as ca
 import Communication.http_io as ht
-import Helpers.objectToDictHelper as od
+import Helpers.obj_to_dict_helper as od
 
 class Communication:
     def __init__(self, boat):

@@ -4,11 +4,11 @@ sys.path.append("..")
 import Route.boarders as bo
 import Route.coordinate as co
 import Route.waypoint as wp
-import Helpers.angleHelper as ah
+import Helpers.angle_helper as ah
 
 class Course:
     def __init__(self, boat):
-        self.shouldUpdate = True
+        self.isUpdatable = True
         self._boat = boat
         self._angleHelper = ah.AngleHelper()
         self.optimalAngle = None
@@ -26,7 +26,7 @@ class Course:
         self.deltaR = None
 
     def isOffTrack(self):
-        return not self._angleHelper.angleIsBetweenAngles(self._boat.data.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
+        return not self._angleHelper.angleIsBetweenAngles(self._boat.sensors.compass.angle, self.wantedAngle - self.wantedAngleMarge, self.wantedAngle + self.wantedAngleMarge)
 
     def updateWantedAngle(self, waypoint: wp.Waypoint, boarders: bo.Boarders):
         """
@@ -34,20 +34,20 @@ class Course:
             :arg boarders: The absolute boarders in which the _boat should stay during the trip
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
-        self.optimalAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.data.currentCoordinate, waypoint.coordinate)
+        self.optimalAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.sensors.gps.coordinate, waypoint.coordinate)
 
-        # if self._boatAtBoarders(self._boat.data.currentCoordinate, boarders):
-        #     self.forgetToTheWindCourse()
+        if self._boatAtBoarders(self._boat.sensors.gps.coordinate, boarders):
+            self.forgetToTheWindCourse()
 
-        if self._angleHelper.windFromDeadzone(self.optimalAngle, self._boat.data.wind):
+        if self._angleHelper.windFromDeadzone(self.optimalAngle, self._boat.sensors.wind):
             self.wantedAngle = self.calcBestAngleWindFromDeadzone(self.optimalAngle)
         else:
             self.wantedAngle = self.optimalAngle
             self.forgetToTheWindCourse()
 
     def calcBestAngleWindFromDeadzone(self, optimalAngle):
-        self.angleLeftToDead = (self._boat.data.wind.toNorth - 45) % 360
-        self.angleRightToDead = (self._boat.data.wind.toNorth + 45) % 360
+        self.angleLeftToDead = (self._boat.sensors.wind.toNorth - 45) % 360
+        self.angleRightToDead = (self._boat.sensors.wind.toNorth + 45) % 360
 
         deltaAngles = self._angleHelper.getDeltaLeftAndRightToAngle(optimalAngle, self.angleLeftToDead, self.angleRightToDead)
 
