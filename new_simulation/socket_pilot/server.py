@@ -76,8 +76,8 @@ class Server:
 
         sp.world.sailboat.latitude.set(round(dataDict["data"]["currentCoordinate"]["latitude"], 2))
         sp.world.sailboat.longitude.set(round(dataDict["data"]["currentCoordinate"]["longitude"], 2))
-        sp.world.sailboat.wantedAngle.set(round(dataDict["course"]["wantedAngle"], 2))
-        sp.world.sailboat.optimalAngle.set(round(dataDict["course"]["optimalAngle"], 2))
+        sp.world.sailboat.wantedAngle.set(round(dataDict["course"]["wantedAngle"], 5))
+        sp.world.sailboat.optimalAngle.set(round(dataDict["course"]["optimalAngle"], 5))
         sp.world.sailboat.toTheWind.set(self.evalSides(dataDict["course"]["toTheWind"]))
         sp.world.sailboat.cantChooseSide.set(self.evalSides(dataDict["course"]["cantChooseSide"]))
 

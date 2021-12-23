@@ -1,7 +1,8 @@
 {
   "waypoints":
     [
-      {"latitude": 5.0, "longitude": 1.0}
+      {"latitude": 1.0, "longitude": 5.0},
+      {"latitude": 7.0, "longitude": 5.0}
     ],
   "boarders":
     {
@@ -12,7 +13,7 @@
     },
   "finish":
     {
-      "latitude": 10.0,
+      "latitude": 15.0,
       "longitude": 5.0
     }
 }

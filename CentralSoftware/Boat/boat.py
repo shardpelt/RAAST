@@ -71,7 +71,6 @@ class Boat:
 
                     if self.course.shouldUpdate: #and (self.course.wantedAngle is None or routeChanged):
                         self.data.makeImage()
-                        self.course.forgetToTheWindCourse()
                         self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
             ### Sweep
 
@@ -92,11 +91,13 @@ class Boat:
                 #wantedAngle = round(self.course.wantedAngle)
                 #sailAngle = round(self.data.sailAngle)
                 #rudder = round(self.data.rudderAngle)
+                altdz = self.course.angleLeftToDead
+                artdz = self.course.angleRightToDead
 
                 waypoints = []
                 for waypoint in self.route.waypoints:
                     waypoints.append((waypoint.coordinate.latitude, waypoint.coordinate.longitude))
 
-                print(f"Coor:{coor}, Waypoints:{waypoints}")
+                print(f"Coor:{coor}, AnglesOutOfDeadzone:{altdz, artdz}, deltasToDeadzone: {self.course.deltaL, self.course.deltaR}")
                 debug_timer = time.time()
             ###
