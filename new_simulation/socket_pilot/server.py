@@ -73,15 +73,15 @@ class Server:
 
         sp.world.sailboat.latitude.set(round(boatDict["sensors"]["gps"]["coordinate"]["latitude"], 2))
         sp.world.sailboat.longitude.set(round(boatDict["sensors"]["gps"]["coordinate"]["longitude"], 2))
-        sp.world.sailboat.wantedAngle.set(round(boatDict["course"]["wantedAngle"], 5))
-        sp.world.sailboat.optimalAngle.set(round(boatDict["course"]["optimalAngle"], 5))
-        sp.world.sailboat.toTheWind.set(self.evalSides(boatDict["course"]["toTheWind"]))
+        sp.world.sailboat.wantedAngle.set(round(boatDict["course"]["wantedCourseAngle"], 5))
+        sp.world.sailboat.optimalAngle.set(round(boatDict["course"]["optimalCourseAngle"], 5))
+        sp.world.sailboat.toTheWind.set(self.evalSides(boatDict["course"]["sailingToTheWind"]))
         sp.world.sailboat.cantChooseSide.set(self.evalSides(boatDict["course"]["cantChooseSide"]))
 
     def evalSides(self, side):
         if side is None:
             return -1
-        elif side == "left":
+        elif side == "Left":
             return 0
         else:
             return 1

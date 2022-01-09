@@ -53,22 +53,30 @@ class Boat:
 
             ### Sweep
             if self.sensors.gyroscope.isUpRight() and self.sensors.enoughDataToSail():
+
+                # Updating route if needed
                 if self.route.isUpdatable:
+                    routeChanged = False
                     if self.sensors.sonar.checkThreat():
                         self.route.circumnavigateSonar()
-                        self.sensors.sonar.objectDetected = False
-                    elif self.sensors.ais.checkThreat():
+                        routeChanged = True
+                    if self.sensors.ais.checkThreat():
                         self.route.circumnavigateAis()
-                    elif self.route.checkWaypointReached():
+                        routeChanged = True
+                    if self.route.checkWaypointReached():
                         self.route.updateToNextWaypoint()
+                        routeChanged = True
+                    if routeChanged:
+                        self.course.forgetDeadzoneFlags()
 
+                # Updating course if needed
                 if self.route.hasNextWaypoint():
-                    if self.course.isUpdatable: #and (self.course.wantedAngle is None or routeChanged):
+                    if self.course.isUpdatable:
                         self.sensors.makeImage()
                         self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
                     if self.rudder.isUpdatable:
-                        self.rudder.setNewBestAngle(self.sensors.compass.angle, self.course.wantedAngle)
+                        self.rudder.setNewBestAngle(self.sensors.compass.angle, self.course.wantedCourseAngle, self.course.tacking, self.sensors.wind)
                         self.communication.sendRudderAngle(self.rudder.wantedAngle)
 
                     if self.sail.isUpdatable:
@@ -80,18 +88,14 @@ class Boat:
             self.communication.sendUpdate()
             ### Output
 
+            ### Debug
             if debug_timer > tm.time() - 1:
                 coor = (round(self.sensors.gps.coordinate.latitude, 1), round(self.sensors.gps.coordinate.longitude, 1))
-                #wantedAngle = round(self.course.wantedAngle)
-                #sailAngle = round(self.sensors.sailAngle)
-                #rudder = round(self.sensors.rudderAngle)
                 altdz = self.course.angleLeftToDead
                 artdz = self.course.angleRightToDead
 
-                waypoints = []
-                for waypoint in self.route.waypoints:
-                    waypoints.append((waypoint.coordinate.latitude, waypoint.coordinate.longitude))
+                #print(f"Coor:{coor}, AnglesOutOfDeadzone:{altdz, artdz}, deltasToDeadzone: {self.course.deltaL, self.course.deltaR}")
+                print(f"toTheWind:{self.course.sailingToTheWind}, tacking:{self.course.tacking.inManeuver}, time:{tm.time() - self.course.tacking.timeManeuverStarted}")
 
-                print(f"Coor:{coor}, AnglesOutOfDeadzone:{altdz, artdz}, deltasToDeadzone: {self.course.deltaL, self.course.deltaR}")
                 debug_timer = tm.time()
             ###

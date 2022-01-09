@@ -1,7 +1,8 @@
 import sys
 sys.path.append("..")
 
-import time
+import time as tm
+import Helpers.helper_base as hb
 
 class PidController:
     def __init__(self, p, i, d):
@@ -11,11 +12,12 @@ class PidController:
         self.yI = 0                 # startwaarde (integrerende component)
         self.errorOld = 0           # om de toename te benaderen
         self.prevTime = None
+        self._helperBase = hb.HelperBase()
 
-    def calcNewAngle(self, actual, setpoint):
-        deltaT = self.getDeltaT(time.time())
+    def calcNewAngle(self, actual, setpoint, windToNorth, tackingAllowed):
+        deltaT = self.getDeltaT(tm.time())
 
-        error = self.calcError(actual, setpoint)
+        error = self.calcError(actual, setpoint, windToNorth, tackingAllowed)
 
         yP = self.p * error
 
@@ -30,6 +32,29 @@ class PidController:
 
         return angle
 
+    def calcError(self, actual, setpoint, windToNorth, tackingAllowed):
+        if tackingAllowed:
+            if abs(setpoint - actual) > 180:
+                if actual < setpoint:
+                    error = (0 - actual) - (360 - setpoint)
+                else:
+                    error = (360 - actual) + setpoint
+            else:
+                error = setpoint - actual
+        else:
+            if self._helperBase.angleIsBetweenAngles(windToNorth, actual, setpoint):  # Deadzone kruist aan rechterkant -> traverse links
+                if actual < setpoint:
+                    error = (0 - actual) - (360 - setpoint)
+                else:
+                    error = setpoint - actual
+            elif self._helperBase.angleIsBetweenAngles(windToNorth, setpoint, actual):  # Deadzone kruist aan linkerkant -> traverse rechts
+                if setpoint < actual:
+                    error = (360 - actual) + setpoint
+                else:
+                    error = setpoint - actual
+
+        return error
+
     def getDeltaT(self, currTime):
         if self.prevTime is None:
             return 0.001
@@ -37,20 +62,3 @@ class PidController:
         deltaT = currTime - self.prevTime
         self.prevTime = currTime
         return deltaT
-
-    @staticmethod
-    def calcError(actual, setpoint):
-        if abs(setpoint - actual) > 180:
-            if actual < setpoint:
-                error = (0 - actual) - (360 - setpoint)
-            else:
-                error = (360 - actual) + setpoint
-        else:
-            error = setpoint - actual
-
-        return error
-
-    def reset(self):
-        self.yI = None
-        self.errorOld = None
-        self.prevTime = None
