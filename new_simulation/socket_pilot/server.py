@@ -66,34 +66,31 @@ class Server:
         return sensorData
 
     def updateData(self, message):
-        dataDict = message['update']
+        boatDict = message["update"]
 
-        sensorDataDict = dataDict['data']
-        self.updateRudderSail(sensorDataDict)
+        self.updateRudderSail(boatDict)
+        self.updateWaypoints(boatDict["route"]["waypoints"])
 
-        waypointsDict = dataDict['route']['waypoints']
-        self.updateWaypoints(waypointsDict)
-
-        sp.world.sailboat.latitude.set(round(dataDict["data"]["currentCoordinate"]["latitude"], 2))
-        sp.world.sailboat.longitude.set(round(dataDict["data"]["currentCoordinate"]["longitude"], 2))
-        sp.world.sailboat.wantedAngle.set(round(dataDict["course"]["wantedAngle"], 5))
-        sp.world.sailboat.optimalAngle.set(round(dataDict["course"]["optimalAngle"], 5))
-        sp.world.sailboat.toTheWind.set(self.evalSides(dataDict["course"]["toTheWind"]))
-        sp.world.sailboat.cantChooseSide.set(self.evalSides(dataDict["course"]["cantChooseSide"]))
+        sp.world.sailboat.latitude.set(round(boatDict["sensors"]["gps"]["coordinate"]["latitude"], 2))
+        sp.world.sailboat.longitude.set(round(boatDict["sensors"]["gps"]["coordinate"]["longitude"], 2))
+        sp.world.sailboat.wantedAngle.set(round(boatDict["course"]["wantedCourseAngle"], 5))
+        sp.world.sailboat.optimalAngle.set(round(boatDict["course"]["optimalCourseAngle"], 5))
+        sp.world.sailboat.toTheWind.set(self.evalSides(boatDict["course"]["sailingToTheWind"]))
+        sp.world.sailboat.cantChooseSide.set(self.evalSides(boatDict["course"]["cantChooseSide"]))
 
     def evalSides(self, side):
         if side is None:
             return -1
-        elif side == "left":
+        elif side == "Left":
             return 0
         else:
             return 1
 
-    def updateRudderSail(self,sensorDataDict):
-        if sensorDataDict['rudderAngle'] is not None:
-            sp.world.sailboat._rudderAngle = sensorDataDict['rudderAngle']
-        if sensorDataDict['sailAngle'] is not None:
-            sp.world.sailboat._sailAngle = sensorDataDict['sailAngle']
+    def updateRudderSail(self, boatDict):
+        if boatDict["rudder"]["wantedAngle"] is not None:
+            sp.world.sailboat._rudderAngle = boatDict["rudder"]["wantedAngle"]
+        if boatDict["sail"]["wantedAngle"] is not None:
+            sp.world.sailboat._sailAngle = boatDict["sail"]["wantedAngle"]
 
     def updateWaypoints(self, waypointsDict):
         # Reset waypoints list in world.sailboat
@@ -109,6 +106,8 @@ class Server:
 
 
 
-    '''
-    {"update": {"controlMode": 3, "route": {"shouldUpdate": true, "waypoints": [{"coordinate": {"latitude": 55.0, "longitude": -14.0}, "origin": "Predefined"}, {"coordinate": {"latitude": 54.0, "longitude": -12.0}, "origin": "Predefined"}, {"coordinate": {"latitude": 53.0, "longitude": -10.0}, "origin": "Predefined"}], "finish": {"coordinateOne": {"latitude": 55.0, "longitude": -16.0}, "coordinateTwo": {"latitude": 55.0, "longitude": -16.0}}, "boarders": {"top": 55.0, "down": -16.0, "left": 51.0, "right": -16.0}, "waypointMargin": 0.0005, "obstacleMarginKm": 2}, "communication": {"allCommunications": ["SocketIO"], "activeCommunications": ["SocketIO"], "msgInterval": 10, "prevUpdateTime": -1}, "data": {"rudderAngle": null, "sailAngle": null, "gyroscope": {"xPos": null, "yPos": null, "zPos": null}, "currentCoordinate": {"latitude": null, "longitude": null}, "compass": {"angle": null}, "wind": {"angle": null, "speed": null}, "sonar": {"objectDetected": false, "totalScanAngle": 30}, "ais": {"reach": 30, "nearbyShips": null}}, "course": {"shouldUpdate": true, "wantedAngle": null, "wantedAngleMarge": 5, "wantedSailMarge": 5, "toTheWind": null, "cantChooseSide": null, "tackingAngleMarge": 5, "boarderMarge": 0.005}, "rudderHelper": {"shouldUpdate": true, "pid": {"p": 0.5, "i": 0.02, "d": 0.0005, "yI": 0, "errorOld": 0, "prevTime": null}, "maxWantedAngle": 35}, "sailHelper": {"shouldUpdate": true, "windRightToSail": [{"wind": 0, "sail": -10, "interpolate": false}, {"wind": 90, "sail": -10, "interpolate": true}, {"wind": 135, "sail": -45, "interpolate": true}, {"wind": 180, "sail": -90, "interpolate": null}], "windLeftToSail": [{"wind": 180, "sail": 90, "interpolate": true}, {"wind": 225, "sail": 45, "interpolate": true}, {"wind": 270, "sail": 10, "interpolate": false}, {"wind": 360, "sail": 10, "interpolate": null}]}}}
-    '''
+'''
+
+{"update": {"controlMode": 3, "rudder": {"isUpdatable": true, "wantedAngle": 0, "pid": {"p": 0.5, "i": 0.02, "d": 0.0005, "yI": 0, "errorOld": 0, "prevTime": null}, "maxWantedAngle": 35}, "sail": {"isUpdatable": true, "wantedAngle": 0, "windRightToSail": [{"wind": 0, "sail": -10, "interpolate": false}, {"wind": 90, "sail": -10, "interpolate": true}, {"wind": 135, "sail": -45, "interpolate": true}, {"wind": 180, "sail": -90, "interpolate": null}], "windLeftToSail": [{"wind": 180, "sail": 90, "interpolate": true}, {"wind": 225, "sail": 45, "interpolate": true}, {"wind": 270, "sail": 10, "interpolate": false}, {"wind": 360, "sail": 10, "interpolate": null}]}, "sensors": {"gyroscope": {"xPos": null, "yPos": null, "zPos": null}, "gps": {"coordinate": {"latitude": null, "longitude": null}}, "compass": {"angle": null}, "wind": {"relative": null, "toNorth": null, "speed": null}, "sonar": {"objectDetected": false, "totalScanAngle": 30}, "ais": {"reach": 30, "nearbyShips": null}, "rudderAngle": null, "sailAngle": null}, "route": {"isUpdatable": true, "waypoints": [{"coordinate": {"latitude": 1.0, "longitude": 5.0}, "origin": "Predefined"}, {"coordinate": {"latitude": 7.0, "longitude": 5.0}, "origin": "Predefined"}, {"coordinate": {"latitude": 15.0, "longitude": 5.0}, "origin": "Finish"}], "boarders": {"top": 50.0, "down": -50.0, "left": 50.0, "right": -50.0}, "waypointMargin": 0.5, "obstacleMarginKm": 2}, "course": {"isUpdatable": true, "optimalAngle": null, "wantedAngle": null, "wantedAngleMarge": 5, "wantedSailMarge": 5, "toTheWind": null, "cantChooseSide": null, "tackingAngleMarge": 0, "boarderMarge": 0.005, "angleLeftToDead": null, "angleRightToDead": null, "deltaL": null, "deltaR": null}, "communication": {"allCommunications": ["SocketIO"], "activeCommunications": ["SocketIO"], "msgInterval": 10, "prevUpdateTime": -1}}}
+
+'''

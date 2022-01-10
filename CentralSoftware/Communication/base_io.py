@@ -15,7 +15,7 @@ class BaseIO:
 
     def setSailRudder(self, body):
         try:
-            self._boat.sailHelper.shouldUpdate = self._boat.rudderHelper.shouldUpdate = self._boat.course.shouldUpdate = False
+            self._boat.sail.isUpdatable = self._boat.rudder.isUpdatable = self._boat.course.isUpdatable = False
             self._boat.communication.sendRudderAngle(body["rudderAngle"])
             self._boat.communication.sendSailAngle(body["sailAngle"])
         except Exception as e:
@@ -23,15 +23,15 @@ class BaseIO:
 
     def setCourse(self, body):
         try:
-            self._boat.sailHelper.shouldUpdate = self._boat.rudderHelper.shouldUpdate = True
-            self._boat.course.shouldUpdate = False
+            self._boat.sail.isUpdatable = self._boat.rudder.isUpdatable = True
+            self._boat.course.isUpdatable = False
             self._boat.course.wantedAngle = body["courseAngle"]
         except Exception as e:
             print(e)
 
     def setWaypoint(self, body):
         try:
-            self._boat.sailHelper.shouldUpdate = self._boat.rudderHelper.shouldUpdate = self._boat.course.shouldUpdate = True
+            self._boat.sail.isUpdatable = self._boat.rudder.isUpdatable = self._boat.course.isUpdatable = True
             self._boat.route.addWaypoint(co.Coordinate(body["latitude"], body["longitude"]))
         except Exception as e:
             print(e)
@@ -48,18 +48,18 @@ class BaseIO:
 
     def setWind(self, body):
         try:
-            self._boat.data.set_wind(body["value"])
+            self._boat.sensors.set_wind(body["value"])
         except Exception as e:
             print(e)
 
     def setGps(self, body):
         try:
-            self._boat.data.set_currentCoordinate(body["value"][0], body["value"][1])
+            self._boat.sensors.set_gps(body["value"][0], body["value"][1])
         except Exception as e:
             print(e)
 
     def setCompass(self, body):
         try:
-            self._boat.data.set_compassAngle(body["value"])
+            self._boat.sensors.set_compassAngle(body["value"])
         except Exception as e:
             print(e)

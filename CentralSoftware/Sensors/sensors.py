@@ -2,33 +2,33 @@ import sys
 sys.path.append("..")
 
 from copy import copy
-import SensorData.Entities.ais as ai
-import SensorData.sensor_data_image as di
-import SensorData.Entities.compass as cm
-import SensorData.Entities.gyroscope as gy
-import SensorData.Entities.sonar as so
-import SensorData.Entities.wind as wi
-import Route.coordinate as co
-import Helpers.angleHelper as ah
+import Sensors.Entities.gps as gp
+import Sensors.Entities.ais as ai
+import Sensors.sensors_image as di
+import Sensors.Entities.compass as cm
+import Sensors.Entities.gyroscope as gy
+import Sensors.Entities.sonar as so
+import Sensors.Entities.wind as wi
+import Helpers.angle_helper as ah
 
-class SensorData:
+class Sensors:
     def __init__(self):
-        self._angleHelper = ah.AngleHelper()
-        self.rudderAngle = None
-        self.sailAngle = None
         self.gyroscope = gy.Gyroscope()
-        self.currentCoordinate = co.Coordinate()
+        self.gps = gp.Gps()
         self.compass = cm.Compass()
         self.wind = wi.Wind()
         self.sonar = so.Sonar()
         self.ais = ai.Ais()
+        self.rudderAngle = None
+        self.sailAngle = None
         self._image = di.SensorDataImage()      # Storing important last used data for calculations
+        self._angleHelper = ah.AngleHelper()
 
     def makeImage(self) -> None:
         self._image.wind = copy(self.wind)
 
-    def hasRequiredData(self) -> bool:
-        return self.gyroscope.isUpRight() and self.currentCoordinate.hasData() and self.compass.hasData() and self.wind.hasData()
+    def enoughDataToSail(self) -> bool:
+        return self.gps.hasData() and self.compass.hasData() and self.wind.hasData()
 
     def checkChangesInWind(self) -> bool:
         maxWindDeviation = 10
@@ -63,9 +63,9 @@ class SensorData:
     def set_compassAngle(self, angle: float):
         self.compass.angle = angle % 360
 
-    def set_currentCoordinate(self, latitude: float, longitude: float):
-        self.currentCoordinate.latitude = latitude
-        self.currentCoordinate.longitude = longitude
+    def set_gps(self, latitude: float, longitude: float):
+        self.gps.coordinate.latitude = latitude
+        self.gps.coordinate.longitude = longitude
 
     def set_ais(self, ais):
         self.ais = ais
