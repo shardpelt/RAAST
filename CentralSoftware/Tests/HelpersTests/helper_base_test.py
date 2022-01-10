@@ -4,16 +4,25 @@ sys.path.append("../..")
 import Helpers.helperBase as hb
 
 helper = hb.HelperBase()
+
+#var for deg to rad and rad to deg
 inputDeg = [10,20,30,40,50]
 outputRad = [0.174,0.349,0.523,0.698,0.872]
-inputAngles = [-10,370,50]
 succes1 = 0
 succes2 = 0
+
+#var for reduceAngles
+inputAngles = [-10,370,50]
+
+#var for AngleIsBetweenAngles
 n = 30
 left = 360
 right = 60
+
+#var for WindFromDeadzone and WindFromBehind
 optimal = 180-46
 wind = 0
+
 
 def near (a,b,delta=5e-3):
     return (2 * abs (a-b) / (a+b)) < delta

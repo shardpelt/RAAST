@@ -3,7 +3,7 @@ import sys
 sys.path.append("../..")
 import Helpers.sailHelper as sh
 
-helper = ah.SailHelper()
+helper = sh.SailHelper()
 
 relativeWindAngle = 200
 
