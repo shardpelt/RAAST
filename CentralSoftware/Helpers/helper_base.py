@@ -33,6 +33,6 @@ class HelperBase:
     def windFromBehind(self, optimal, wind):
         backOfBoatAngle = optimal - 180
 
-        if self.angleIsBetweenAngles(backOfBoatAngle, wind - 45, wind + 45):
+        if self.angleIsBetweenAngles(backOfBoatAngle, wind.toNorth - 45, wind.toNorth + 45):
             return True
         return False

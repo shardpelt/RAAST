@@ -2,6 +2,7 @@ import math
 import sys
 sys.path.append("../..")
 import Helpers.helper_base as hb
+import Sensors.Entities.wind as wi 
 
 helper = hb.HelperBase()
 
@@ -21,7 +22,8 @@ right = 60
 
 #var for WindFromDeadzone and WindFromBehind
 optimal = 180-46
-wind = 0
+wind = wi.Wind()
+wind.toNorth = 0
 
 
 def near (a,b,delta=5e-3):
