@@ -1,37 +1,36 @@
 import math 
 import sys
 sys.path.append("../..")
+
 import Course.course as cou
 import Route.coordinate as co
 import Route.boarders as bo
-import SensorData.sensor_data as sd
+import Sensors.sensors as sd
+import Boat.boat as bt
+import Route.waypoint as wp
 
 x = 0
 y = 10
-waypoint = co.Coordinate (y, x)
+waypoint = wp.Waypoint(co.Coordinate (y, x), None)
 boarders = bo.Boarders (90, 10, 20, 60)
 
-sensorData = sd.SensorData()
-
-sensorData.wind.angle = 10
-sensorData.currentCoordinate = co.Coordinate (0, 0)
+boat = bt.Boat()
+boat.sensors.wind.toNorth = 10
+boat.sensors.gps.coordinate.latitude = 0
+boat.sensors.gps.coordinate.longitude = 0
 
 optimalAngle = 20
 
-course = cou.Course(sensorData)
-
-currentCoordinate = co.Coordinate (0, 0)
-
 
 #updateWantedAngle
-course.updateWantedAngle(waypoint, boarders)
-print (111, course.wantedAngle)
+boat.course.updateWantedAngle(waypoint, boarders)
+print (111, boat.course.wantedCourseAngle)
 
 #calcBestAngleWindFromDeadzone
-result2 = course.calcBestAngleWindFromDeadzone(optimalAngle, sensorData.wind.angle)
-print (222, course.toTheWind)
+result2 = boat.course.calcBestAngleWindFromDeadzone(optimalAngle)
+print (222, boat.course.sailingToTheWind)
 print (333, result2)
 
 #boatAtBoarders
-result3 = course.boatOutsideBoarders(currentCoordinate, boarders)
+result3 = boat.course.boatAtBoarders(co.Coordinate(0, 0), boarders)
 print (444, result3)
