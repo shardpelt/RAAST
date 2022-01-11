@@ -52,10 +52,6 @@ class Course:
             :arg boarders: The absolute boarders in which the _boat should stay during the trip
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
-        # TODO: Functionaliteit inbouwen voor wanneer tacking niet slaagt
-
-        self.checkTackingManeuver()
-
         self.optimalCourseAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.sensors.gps.coordinate, waypoint.coordinate)
 
         # TODO: Coordinaten upgraden met noord oost zuid west, voor meer functionaliteit
@@ -67,13 +63,16 @@ class Course:
         if self._angleHelper.windFromDeadzone(self.optimalCourseAngle, self._boat.sensors.wind):
             self.wantedCourseAngle = self.calcBestAngleWindFromDeadzone(self.optimalCourseAngle)
         else:
+            # If the boat was not previously sailing to the wind, a tacking maneuver is not tried
+            self.wantedCourseAngle = self.optimalCourseAngle
+
             # If boat was sailing to the wind, then a tacking maneuver is tried to achieve the fastest path
             if self.sailingToTheWind:
                 self.forgetDeadzoneFlags()
                 self.tacking.startManeuver()
 
-            # If the boat was not previously sailing to the wind, a tacking maneuver is not tried
-            self.wantedCourseAngle = self.optimalCourseAngle
+        self.checkTackingManeuver()
+
 
     def checkTackingManeuver(self) -> None:
         if self.tacking.inManeuver:

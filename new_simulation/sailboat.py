@@ -65,7 +65,7 @@ class Sailboat (sp.Module):
 
         self.group('Simulation boat', True)
         self.position_x = sp.Register() # x waarde stijgt in hoogte de + in, dus -> latitude
-        self.position_y = sp.Register(3) # y waarde stijg naar links de + in, dus -> longitude
+        self.position_y = sp.Register() # y waarde stijg naar links de + in, dus -> longitude
         self.sailboat_rotation = sp.Register(90)
         self.gimbal_rudder_angle = sp.Register(0.1)
         self.local_sail_angle = sp.Register(0.1)
@@ -99,7 +99,6 @@ class Sailboat (sp.Module):
         self.target_gimbal_rudder_angle = sp.Register(0)
         self.rotation_speed = sp.Register()
         self.passed_first_waypoint = sp.Register(False)
-
 
     def getCompassAngle(self):
         boatAngle = 360 - ((self.sailboat_rotation - 90) % 360)

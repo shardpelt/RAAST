@@ -46,7 +46,7 @@ class Server:
                         relativeWindAngle = sp.evaluate(sp.world.wind.relative_direction)
                         compassAngle = sp.evaluate(sp.world.sailboat.compassAngle)
                         latitude = sp.evaluate(sp.world.sailboat.position_x)
-                        longitude = sp.evaluate(sp.world.sailboat.position_y)
+                        longitude = sp.evaluate(sp.world.sailboat.position_y) * -1
                         sensors = self.toDataPackage(relativeWindAngle, compassAngle, latitude, longitude)
 
                         self.socketWrapper.send (sensors)
@@ -99,7 +99,7 @@ class Server:
         # Make a list out of each waypoint coordinate and append to waypoints list in world.sailboat
         for waypDict in waypointsDict:
             xCoordinate = waypDict['coordinate']['latitude']
-            yCoordinate = waypDict['coordinate']['longitude']
+            yCoordinate = waypDict['coordinate']['longitude'] * -1
             waypoint = [xCoordinate, yCoordinate]
             sp.world.waypoint._waypoints.append(waypoint)
 

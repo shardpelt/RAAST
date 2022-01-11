@@ -8,12 +8,12 @@ import Enums.course_sides_enum as se
 class Tacking:
     def __init__(self, sailingToTheWind):
         self._angleHelper = ah.AngleHelper()
+        self.sailingToTheWind = sailingToTheWind
         self.inManeuver = False
         self.timeManeuverStarted = 0
         self.timesManeuverTried = 0
-        self.sailingToTheWind = sailingToTheWind
         self.tackingAngleMarge = 0
-        self.maxSecondsToTry = 15
+        self.maxSecondsToTry = 30
 
     def startManeuver(self) -> None:
         self.stopManeuver()

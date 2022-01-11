@@ -32,16 +32,16 @@ class Boat:
     def start(self):
         if self.controlMode == 3: # If simulation mode -> cancel out threading
             self.communication.configure()
-            self.run()
+            self.control()
         else:
             communicationThread = th.Thread(target=self.communication.configure)
             tm.sleep(1)
-            controlLoopThread = th.Thread(target=self.run)
+            controlLoopThread = th.Thread(target=self.control)
 
             communicationThread.start()
             controlLoopThread.start()
 
-    def run(self):
+    def control(self):
         debug_timer = tm.time()
 
         while True:
