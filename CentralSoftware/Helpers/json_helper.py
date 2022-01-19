@@ -1,11 +1,12 @@
 import sys
 sys.path.append("..")
 
-import json
+import json as js
 import Route.boarders as bo
 import Route.coordinate as co
 import Route.waypoint as wp
 import Enums.waypoint_type_enum as wt
+import Helpers.obj_to_dict_helper as od
 
 class JsonHelper:
 
@@ -13,7 +14,7 @@ class JsonHelper:
     def setupRoute(file):
         waypoints = []
         with open(file) as routeFile:
-            routeFileObj = json.load(routeFile)
+            routeFileObj = js.load(routeFile)
 
             # Loading waypoints
             for waypoint in routeFileObj["waypoints"]:
@@ -28,3 +29,8 @@ class JsonHelper:
             boarders = bo.Boarders(routeFileObj["boarders"]["top"], routeFileObj["boarders"]["down"], routeFileObj["boarders"]["left"], routeFileObj["boarders"]["right"])
 
         return waypoints, boarders
+
+    @staticmethod
+    def makePackage(header, payload):
+        package = js.dumps({header: od.DictSerializer.getDict(payload)})
+        return package

@@ -22,6 +22,3 @@ class Ais:
             ship["distance"] = int(math.sqrt((ship["latitude"] - currentCoordinate.latitude)**2 + (ship["longitude"] - currentCoordinate.longitude)**2))
 
         return sorted([list(ship.values()) for ship in self.nearbyShips], key=lambda s: s[3])
-
-# ais = Ais()
-# print(ais.getAisOrderedByDistance(co.Coordinate(10, 15)))

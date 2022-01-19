@@ -10,7 +10,7 @@ class SocketIO(bs.BaseIO):
         self.alive = False
         self.simuSocket = None
         self.socketWrapper = None
-        self.simuAddress = ('127.0.0.1', 5678)
+        self.serverAddress = ('127.0.0.1', 5678)
         self.socketType = sc.AF_INET, sc.SOCK_STREAM
 
     def receive(self):
@@ -36,9 +36,9 @@ class SocketIO(bs.BaseIO):
         print("COMMUNICATION - Trying to start session with simulation")
         while True:
             try:
-                self.simuSocket.connect(self.simuAddress)
+                self.simuSocket.connect(self.serverAddress)
             except sc.error:
-                tm.sleep(3)
+                tm.sleep(2)
                 continue
             print(f"COMMUNICATION - Connection established with simulation {self.simuSocket}")
             break

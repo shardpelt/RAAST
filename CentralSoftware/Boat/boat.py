@@ -1,5 +1,3 @@
-import threading as th
-import time as tm
 import Communication.communication as co
 import Sail.sail as sh
 import Route.route as rt
@@ -30,25 +28,19 @@ class Boat:
         self.communication = co.Communication(self)            # Communication handler
 
     def start(self):
-        if self.controlMode == 3: # If simulation mode -> cancel out threading
-            self.communication.configure()
-            self.control()
+        if self.controlMode == 3:
+            self.communication.configure(threading = False)
+            self.control(threading = False)
         else:
-            communicationThread = th.Thread(target=self.communication.configure)
-            tm.sleep(1)
-            controlLoopThread = th.Thread(target=self.control)
+            self.communication.configure(threading = True)
+            self.control(threading = False)
 
-            communicationThread.start()
-            controlLoopThread.start()
-
-    def control(self):
-        debug_timer = tm.time()
-
+    def control(self, threading: bool):
         while True:
-            tm.sleep(0.2)
 
             ### Input
-            self.communication.receive()
+            if not threading:
+                self.communication.receive()
             ### Input
 
             ### Sweep
@@ -72,30 +64,23 @@ class Boat:
                 # Updating course if needed
                 if self.route.hasNextWaypoint():
                     if self.course.isUpdatable:
-                        self.sensors.makeImage()
                         self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
                     if self.rudder.isUpdatable:
                         self.rudder.setNewBestAngle(self.sensors.compass.angle, self.course.wantedCourseAngle, self.course.tacking, self.sensors.wind)
-                        self.communication.sendRudderAngle(self.rudder.wantedAngle)
 
-                    if self.sail.isUpdatable:
+                    if self.sail.isUpdatable and self.sail.isControllable:
                         self.sail.setNewBestAngle(self.sensors.wind.relative)
-                        self.communication.sendSailAngle(self.sensors.sailAngle)
             ### Sweep
 
             ### Output
-            self.communication.sendUpdate()
+            if threading:
+                if self.rudder.isUpdatable:
+                    self.communication.sendRudderAngle(self.rudder.wantedAngle)
+                if self.sail.isUpdatable and self.sail.isControllable:
+                    self.communication.sendSailAngle(self.sensors.sailAngle)
+                if self.communication.shouldGiveUpdate():
+                    self.communication.sendShoreUpdate()
+            else:
+                self.communication.sendSimuUpdate()
             ### Output
-
-            ### Debug
-            if debug_timer > tm.time() - 1:
-                coor = (round(self.sensors.gps.coordinate.latitude, 1), round(self.sensors.gps.coordinate.longitude, 1))
-                altdz = self.course.angleLeftToDead
-                artdz = self.course.angleRightToDead
-
-                #print(f"Coor:{coor}, AnglesOutOfDeadzone:{altdz, artdz}, deltasToDeadzone: {self.course.deltaL, self.course.deltaR}")
-                print(f"toTheWind:{self.course.sailingToTheWind}, tacking:{self.course.tacking.inManeuver}, time:{tm.time() - self.course.tacking.timeManeuverStarted}")
-
-                debug_timer = tm.time()
-            ###
