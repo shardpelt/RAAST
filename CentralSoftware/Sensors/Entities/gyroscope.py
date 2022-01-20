@@ -3,10 +3,12 @@ sys.path.append("..")
 
 class Gyroscope:
     def __init__(self):
-        self.xPos = None
-        self.yPos = None
-        self.zPos = None
+        self.pitch = None
+        self.roll = None
 
-    # TODO: With 3? given inputs define whether the boat is up right or not
     def isUpRight(self):
-        return True
+        if self.pitch is None and self.roll is None:
+            return True
+        else:
+            # TODO: With pitch and roll define whether the boat is up right enough to sail
+            return True

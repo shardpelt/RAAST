@@ -19,13 +19,13 @@ Control Loop flow:
 
 class Boat:
     def __init__(self):
-        self.controlMode = 3                                   # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
-        self.rudder = rh.Rudder()                              # Contains methods to determine best angle for rudder
-        self.sail = sh.Sail()                                  # Contains methods to determine best sail angle
-        self.sensors = se.Sensors()                            # sensors object in which all the incomming sensors from the sensors is stored
-        self.route = rt.Route(self)                            # Object in which the route information is stored
-        self.course = cs.Course(self)                          # Object in which the course is calculated and stored
-        self.communication = co.Communication(self)            # Communication handler
+        self.controlMode = 3                               # 0: remote-control / 1: semi-autonoom / 2: autonoom / 3: simulatie
+        self.rudder = rh.Rudder()                          # Contains methods to determine best angle for rudder
+        self.sail = sh.Sail()                              # Contains methods to determine best sail angle
+        self.sensors = se.Sensors()                        # sensors object in which all the incomming sensors from the sensors is stored
+        self.route = rt.Route(self)                        # Object in which the route information is stored
+        self.course = cs.Course(self)                      # Object in which the course is calculated and stored
+        self.communication = co.Communication(self)        # Communication handler
 
     def start(self):
         if self.controlMode == 3:
@@ -44,9 +44,9 @@ class Boat:
             ### Input
 
             ### Sweep
-            if self.sensors.gyroscope.isUpRight() and self.sensors.enoughDataToSail():
+            if self.sensors.enoughDataToSail():
 
-                # Updating route if needed
+                # Updating route
                 if self.route.isUpdatable:
                     routeChanged = False
                     if self.sensors.sonar.checkThreat():
@@ -61,11 +61,14 @@ class Boat:
                     if routeChanged:
                         self.course.forgetDeadzoneFlags()
 
-                # Updating course if needed
+                # If a next waypoint is available to set sail at the course is updated
                 if self.route.hasNextWaypoint():
+
+                    # Updating course
                     if self.course.isUpdatable:
                         self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
 
+                    # Updating rudder and sail
                     if self.rudder.isUpdatable:
                         self.rudder.setNewBestAngle(self.sensors.compass.angle, self.course.wantedCourseAngle, self.course.tacking, self.sensors.wind)
 
@@ -75,10 +78,11 @@ class Boat:
 
             ### Output
             if threading:
-                if self.rudder.isUpdatable:
-                    self.communication.sendRudderAngle(self.rudder.wantedAngle)
-                if self.sail.isUpdatable and self.sail.isControllable:
-                    self.communication.sendSailAngle(self.sensors.sailAngle)
+                if self.sensors.gyroscope.isUpRight():
+                    if self.rudder.isUpdatable:
+                        self.communication.sendRudderAngle(self.rudder.wantedAngle)
+                    if self.sail.isUpdatable and self.sail.isControllable:
+                        self.communication.sendSailAngle(self.sensors.sailAngle)
                 if self.communication.shouldGiveUpdate():
                     self.communication.sendShoreUpdate()
             else:

@@ -2,7 +2,6 @@ import sys
 sys.path.append("..")
 
 import Route.boarders as bo
-import Route.coordinate as co
 import Route.waypoint as wp
 import Course.tacking as ta
 import Enums.course_sides_enum as se
@@ -30,13 +29,8 @@ class Course:
         self.wantedCourseAngleMarge = 0
         self.sailingToTheWind = None
         self.cantChooseSide = None
+        self.wasAcrossBoarders = False
         self.tacking = ta.Tacking(self.sailingToTheWind)
-        self.boarderMarge = 0
-
-        self.angleLeftToDead = None
-        self.angleRightToDead = None
-        self.deltaL = None
-        self.deltaR = None
 
     def isOffTrack(self) -> bool:
         return not self._angleHelper.angleIsBetweenAngles(self._boat.sensors.compass.angle, self.wantedCourseAngle - self.wantedCourseAngleMarge, self.wantedCourseAngle + self.wantedCourseAngleMarge)
@@ -46,20 +40,21 @@ class Course:
         self.cantChooseSide = None
         self.tacking.stopManeuver()
 
-    def updateWantedAngle(self, waypoint: wp.Waypoint, boarders: bo.Boarders) -> None:
+    def updateWantedAngle(self, waypoint: wp.Waypoint) -> None:
         """
-            :arg waypoint: The current waypoint
-            :arg boarders: The absolute boarders in which the _boat should stay during the trip
+            arg waypoint: The current waypoint
             :returns: The best course angle to set, according to the wind and the current waypoint
         """
         self.optimalCourseAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.sensors.gps.coordinate, waypoint.coordinate)
 
-        # TODO: Coordinaten upgraden met noord oost zuid west, voor meer functionaliteit
-        # if self.boatAtBoarders(self._boat.sensors.gps.coordinate, boarders) and not self.tacking.inManeuver:
-        #     self.forgetDeadzoneFlags()
-        #     self.tacking.startManeuver()
+        if self.boatAcrossBoarders(self._boat.sensors.gps.coordinate) and not self.wasAcrossBoarders:
+            self.forgetDeadzoneFlags()
+            self.tacking.startManeuver()
+            self.wasAcrossBoarders = True
+        else:
+            self.wasAcrossBoarders = False
 
-        # If wind blows from deadzone choose shortest side to sail at
+        # If wind blows from deadzone choose the shortest side to sail at
         if self._angleHelper.windFromDeadzone(self.optimalCourseAngle, self._boat.sensors.wind):
             self.wantedCourseAngle = self.calcBestAngleWindFromDeadzone(self.optimalCourseAngle)
         else:
@@ -73,7 +68,6 @@ class Course:
 
         self.checkTackingManeuver()
 
-
     def checkTackingManeuver(self) -> None:
         if self.tacking.inManeuver:
             if self.tacking.isCompleted(self._boat.sensors.compass.angle, self.wantedCourseAngle):
@@ -82,51 +76,29 @@ class Course:
                 self.tacking.stopManeuver()
 
     def calcBestAngleWindFromDeadzone(self, optimalCourseAngle: float) -> float:
-        self.angleLeftToDead = (self._boat.sensors.wind.toNorth - 45) % 360
-        self.angleRightToDead = (self._boat.sensors.wind.toNorth + 45) % 360
+        angleLeftToDeadzone = (self._boat.sensors.wind.toNorth - 45) % 360
+        angleRightToDeadzone = (self._boat.sensors.wind.toNorth + 45) % 360
 
-        deltaAngles = self._angleHelper.getDeltaLeftAndRightToAngle(optimalCourseAngle, self.angleLeftToDead, self.angleRightToDead)
-
-        self.deltaL = deltaAngles["left"]
-        self.deltaR = deltaAngles["right"]
+        deltaAngles = self._angleHelper.getDeltaLeftAndRightToAngle(optimalCourseAngle, angleLeftToDeadzone, angleRightToDeadzone)
 
         # If already sailing to the wind continue chosen side, this disables continuous switching of sailingToTheWind side
         if self.sailingToTheWind is not None:
 
             if self.sailingToTheWind == se.Side.Left:
-                return self.angleLeftToDead
+                return angleLeftToDeadzone
             else:
-                return self.angleRightToDead
-
-            # if deltaAngles["left"] <= self.tackingAngleMarge:
-            #     self.sailingToTheWind = "left"
-            #     return angleLeftToDeadzone
-            # elif deltaAngles["right"] <= self.tackingAngleMarge:
-            #     self.sailingToTheWind = "right"
-            #     return angleRightToDeadzone
-            # else:
-            #     if self.sailingToTheWind == "left":
-            #         return angleLeftToDeadzone
-            #     return angleRightToDeadzone
+                return angleRightToDeadzone
 
         # If not already sailing to the wind, check which angle from deadzone is best to sail at.
         else:
             if deltaAngles["left"] <= deltaAngles["right"]:
                 self.sailingToTheWind = se.Side.Left
-                return self.angleLeftToDead
+                return angleLeftToDeadzone
             else:
                 self.sailingToTheWind = se.Side.Right
-                return self.angleRightToDead
+                return angleRightToDeadzone
 
-
-    def boatAtBoarders(self, currCoordinate: co.Coordinate, boarders: bo.Boarders) -> bool:
-        if currCoordinate.latitude <= (boarders.down + self.boarderMarge):
-            return True
-        elif currCoordinate.latitude >= (boarders.top - self.boarderMarge):
-            return True
-        elif currCoordinate.longitude <= (boarders.left + self.boarderMarge):
-            return True
-        elif currCoordinate.longitude >= (boarders.right - self.boarderMarge):
-            return True
-
-        return False
+    def boatAcrossBoarders(self, boarders: bo.Boarders) -> bool:
+        if boarders.down < self._boat.sensors.gps.coordinate.latitude < boarders.top and boarders.left < self._boat.sensors.gps.coordinate.longitude < boarders.right:
+            return False
+        return True

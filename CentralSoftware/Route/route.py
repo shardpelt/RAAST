@@ -112,9 +112,3 @@ class Route:
 
         for coordinate in traversedCoordinates:
             self.addWaypoint(wp.Waypoint(coordinate, wt.WpType.AisAvoidance))
-
-    def getBestWaypointOnFinishLine(self) -> wp.Waypoint:
-        """
-            TODO: Could have, implement finish which consist of 2 coordinates and calculate best spot on that line to sail at.
-        """
-        pass
