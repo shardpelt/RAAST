@@ -5,14 +5,12 @@ import time as ti
 import threading as th
 import Communication.socket_io as so
 import Communication.can_io as ca
-import Communication.http_io as ht
 import Helpers.json_helper as jh
 
 class Communication:
     def __init__(self, boat):
         self._boat = boat
         self._can = ca.CanIO(boat)
-        self._http = ht.HttpIO(boat)
         self._socket = so.SocketIO(boat)
         self.allCommunications = [self._socket]
         self.activeCommunications = []
@@ -39,7 +37,7 @@ class Communication:
         elif self._boat.controlMode == 1:                        # Semi-autonomous
             self.activeCommunications = [self._can, self._socket]
         elif self._boat.controlMode == 2:                        # Full-autonomous
-            self.activeCommunications = [self._can, self._http]
+            self.activeCommunications = [self._can]
             self.msgInterval = 60 * 60 * 6
         elif self._boat.controlMode == 3:                        # Simulation
             self.activeCommunications = [self._socket]

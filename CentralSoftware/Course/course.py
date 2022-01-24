@@ -47,7 +47,7 @@ class Course:
         """
         self.optimalCourseAngle = self._angleHelper.calcAngleBetweenCoordinates(self._boat.sensors.gps.coordinate, waypoint.coordinate)
 
-        if self.boatAcrossBoarders(self._boat.sensors.gps.coordinate) and not self.wasAcrossBoarders:
+        if self.boatAcrossBoarders(self._boat.route.boarders) and not self.wasAcrossBoarders:
             self.forgetDeadzoneFlags()
             self.tacking.startManeuver()
             self.wasAcrossBoarders = True

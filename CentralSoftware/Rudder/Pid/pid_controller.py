@@ -6,13 +6,13 @@ import Helpers.helper_base as hb
 
 class PidController:
     def __init__(self, p, i, d):
+        self._helperBase = hb.HelperBase()
         self.p = p
         self.i = i
         self.d = d
         self.yI = 0                 # startwaarde (integrerende component)
         self.errorOld = 0           # om de toename te benaderen
         self.prevTime = None
-        self._helperBase = hb.HelperBase()
 
     def calcNewAngle(self, actual, setpoint, windToNorth, tackingAllowed):
         deltaT = self.getDeltaT(tm.time())

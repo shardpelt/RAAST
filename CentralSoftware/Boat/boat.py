@@ -66,7 +66,7 @@ class Boat:
 
                     # Updating course
                     if self.course.isUpdatable:
-                        self.course.updateWantedAngle(self.route.currentWaypoint, self.route.boarders)
+                        self.course.updateWantedAngle(self.route.currentWaypoint)
 
                     # Updating rudder and sail
                     if self.rudder.isUpdatable:
@@ -82,7 +82,7 @@ class Boat:
                     if self.rudder.isUpdatable:
                         self.communication.sendRudderAngle(self.rudder.wantedAngle)
                     if self.sail.isUpdatable and self.sail.isControllable:
-                        self.communication.sendSailAngle(self.sensors.sailAngle)
+                        self.communication.sendSailAngle(self.sail.wantedAngle)
                 if self.communication.shouldGiveUpdate():
                     self.communication.sendShoreUpdate()
             else:

@@ -63,3 +63,18 @@ class BaseIO:
             self._boat.sensors.set_compassAngle(body["value"])
         except Exception as e:
             print(e)
+
+    def receive(self):
+        raise NotImplementedError("Communication interface should implement this!..")
+
+    def send(self, jsonData):
+        raise NotImplementedError("Communication interface should implement this!..")
+
+    def start(self):
+        raise NotImplementedError("Communication interface should implement this!..")
+
+    def reset(self):
+        raise NotImplementedError("Communication interface should implement this!..")
+
+    def stop(self):
+        raise NotImplementedError("Communication interface should implement this!..")
