@@ -1,7 +1,7 @@
 .idea
 testFile.py
-.csvenv
-.sivenv
+csvenv/*
+sivenv/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
